@@ -1,0 +1,28 @@
+h1 {
+    border-bottom: #0a53be 3px solid;
+}
+
+h2 {
+    border-bottom: #0a53be 2px solid;
+}
+
+.pytitle {
+    border: 0;
+    font-size: 4rem;
+}
+
+.pybody {
+    margin-left: 50px;
+}
+
+.sidebar {
+    border-right: #0a53be;
+    border-right-style: solid;
+    border-right-width: thin;
+}
+
+
+.body-text {
+    margin-left: 150px;
+    font-size: 18px;
+}
