@@ -6,6 +6,16 @@ h2 {
     border-bottom: #0a53be 2px solid;
 }
 
+body {
+    background-image: url('../images/background.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.btn-fixed-width {
+  width: 100px; /* Fixed width (ignores text length) */
+}
+
 .pytitle {
     border: 0;
     font-size: 4rem;
@@ -14,13 +24,6 @@ h2 {
 .pybody {
     margin-left: 50px;
 }
-
-.sidebar {
-    border-right: #0a53be;
-    border-right-style: solid;
-    border-right-width: thin;
-}
-
 
 .body-text {
     margin-left: 150px;

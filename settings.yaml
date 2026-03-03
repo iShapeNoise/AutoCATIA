@@ -2,11 +2,11 @@
 drawing_template:
   border_offset: 10
   company_details:
-    name: pycatia
+    name: AutoCATIA
     address:
     - github
-    - 'url: https://github.com/evereux/pycatia'
-    - 'email: evereux@gmail.com'
+    - 'url: https://github.com/iShapeNoise/AutoCATIA'
+    - 'email: yenz4xyz@gmail.com'
   parameters:
     APPROVED-BY: "[ approved ]"
     DATE: "[ mm / yyyy ]"
@@ -54,7 +54,7 @@ drawing_template:
       - 210
     - - 0
       - 0
-  logo: pycatia-logo.jpg
+  logo: autocatia-logo.jpg
   template_name: DT-001 A
   tolerances:
     ",X": "±1,5"
@@ -77,10 +77,18 @@ part_template:
     InternalBendRadius:
       type: length
       value: 2
-drafting:
+product_template:
+  # user defined properties
+  user_ref_properties:
+    TITLE: ''
+    DRAWN BY: ''
+    CHECKED BY: ''
+    DATE APPROVED: ''
+    REVISION: 'A'
+drawing:
   pdf:
     # list of strings, if exists in CATDrawing sheet names, that are excluded.
-    # For examples Sheet.Details or Details sheet names will be exluded.
+    # For examples Sheet.Details or Details sheet names will be excluded.
     exclude_sheets:
     - Details
     - DXF

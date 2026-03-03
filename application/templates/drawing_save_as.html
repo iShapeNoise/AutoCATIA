@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- {{ self._TemplateReference__context.name }} -->
+
+    {{ render_menu('drawing')|safe }}
+
+    {% include('partials.menu_drawing_save_as.html') %}
+    <h2>Save As</h2>
+
+    <p>
+        Select either PDF or DXF from options above.
+    </p>
+
+{% endblock %}
