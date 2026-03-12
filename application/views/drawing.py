@@ -1,4 +1,5 @@
 from pathlib import Path
+import yaml
 
 from flask import render_template
 
@@ -14,6 +15,12 @@ def drawing():
     return render_template(
         'drawing.html',
     )
+
+
+@app.route('/drawing/new')
+@catia_v5_required
+def drawing_new():
+    return render_template('drawing_new.html')
 
 
 @app.route('/drawing/views')
@@ -57,7 +64,25 @@ def drawing_save_as_dxf():
 @app.route('/drawing/insert_template')
 @catia_v5_required
 def drawing_insert_template():
+    # Load default parameters
+    parameters = drawing_template['parameters'].copy()
+
+    # Try to load saved values from userdata/settings.yaml
+    try:
+        # Get path to userdata/settings.yaml
+        app_root = Path(__file__).parent.parent.parent
+        settings_path = Path(app_root, 'userdata', 'settings.yaml')
+
+        if settings_path.exists():
+            with open(settings_path, 'r') as f:
+                settings_data = yaml.safe_load(f)
+                if 'drawing_template' in settings_data and 'parameters' in settings_data['drawing_template']:
+                    # Update with saved values
+                    parameters.update(settings_data['drawing_template']['parameters'])
+    except Exception:
+        pass  # Use defaults if loading fails
+
     return render_template(
         'drawing_template.html',
-        parameters=drawing_template['parameters']
+        parameters=parameters
     )

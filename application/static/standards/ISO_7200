@@ -1,0 +1,130 @@
+# ISO 7200:2004 – Data Fields in Title Blocks and Document Headers
+
+identifying_fields:
+  - field: Legal owner
+    description: Name of the legal owner (e.g., firm, company)
+    language_dependent: false
+    characters: Unspecified
+    mandatory: true
+
+  - field: Identification number
+    description: Unique document reference number
+    language_dependent: false
+    characters: 16
+    mandatory: true
+
+  - field: Revision index
+    description: Revision status (e.g., A, B, AA)
+    language_dependent: false
+    characters: 2
+    mandatory: false
+    note: Avoid letters I and O to prevent confusion with numbers
+
+  - field: Date of issue
+    description: Date the document was released
+    language_dependent: false
+    characters: 10 (YYYY-MM-DD or DD.MM.YYYY)
+    mandatory: true
+
+  - field: Segment/sheet number
+    description: Current sheet number (e.g., 1)
+    language_dependent: false
+    characters: 4
+    mandatory: true
+
+  - field: Number of segments/sheets
+    description: Total number of sheets in the document
+    language_dependent: false
+    characters: 4
+    mandatory: false
+
+  - field: Language code
+    description: Language identifier per ISO 639 (e.g., "en", "de")
+    language_dependent: false
+    characters: 4 per language
+    mandatory: false
+
+descriptive_fields:
+  - field: Title
+    description: Main document title (content description)
+    language_dependent: true
+    characters: 25–30
+    mandatory: true
+
+  - field: Supplementary title
+    description: Additional descriptive information
+    language_dependent: true
+    characters: 2 × 25–30
+    mandatory: false
+
+administrative_fields:
+  - field: Responsible department
+    description: Department responsible for document content
+    language_dependent: true
+    characters: 10
+    mandatory: false
+
+  - field: Technical reference
+    description: Technical contact person
+    language_dependent: true
+    characters: 20
+    mandatory: false
+
+  - field: Approval person
+    description: Name of the person approving the document
+    language_dependent: true
+    characters: 20
+    mandatory: true
+
+  - field: Creator
+    description: Name of the document creator
+    language_dependent: true
+    characters: 20
+    mandatory: true
+
+  - field: Document type
+    description: Type of document (e.g., assembly drawing, circuit diagram)
+    language_dependent: true
+    characters: 30
+    mandatory: true
+
+  - field: Classification / keywords
+    description: Classification codes or search keywords
+    language_dependent: true
+    characters: Unspecified
+    mandatory: false
+
+  - field: Document status
+    description: Lifecycle status (e.g., "In Work", "Released")
+    language_dependent: true
+    characters: 20
+    mandatory: false
+
+  - field: Page number
+    description: Current page number
+    language_dependent: false
+    characters: 4
+    mandatory: false
+
+  - field: Number of pages
+    description: Total number of pages
+    language_dependent: false
+    characters: 4
+    mandatory: false
+
+  - field: Paper size
+    description: Original document size (e.g., A4, A0)
+    language_dependent: false
+    characters: 4
+    mandatory: false
+
+layout:
+  width_mm: 180
+  position: Bottom-right corner of the drawing area
+  note: Height is variable; for A4 in landscape, placed directly below the drawing area
+
+general:
+  standard: ISO 7200:2004
+  title: Technical Product Documentation — Data Fields in Title Blocks and Document Headers
+  replaced: ISO 7200:1984
+  purpose: Facilitate document exchange, ensure compatibility, support reuse across systems and languages

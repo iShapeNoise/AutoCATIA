@@ -6,8 +6,17 @@
             {% set cls_active = 'active' %}
             {% endif %}
             <a class="btn btn-dark btn-sm border-white btn-fixed-width p-1 m-1 rounded-1 {{ cls_active }}" href={{ item['url'] }}>
-                {{ item['title'] }}
+                {{ lang_manager.t('menu.' + item['title'].lower(), item['title']) }}
             </a>
         {% endfor %}
+    </div>
+    <div class="col-sm-3 text-end">
+        {% set cls_active = '' %}
+        {% if 'settings' in request.url %}
+        {% set cls_active = 'active' %}
+        {% endif %}
+        <a class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1 {{ cls_active }}" href="{{ url_for('settings') }}">
+            ⚙️ {{ lang_manager.t('menu.settings', 'Settings') }}
+        </a>
     </div>
 </div>

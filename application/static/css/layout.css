@@ -8,8 +8,10 @@ h2 {
 
 body {
     background-image: url('../images/background.jpg');
-    background-size: cover;
+    background-size: auto;
     background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center center;
 }
 
 .btn-fixed-width {

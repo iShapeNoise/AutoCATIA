@@ -1,8 +1,10 @@
 <!-- {{ self._TemplateReference__context.name }} -->
-<h1 class="">{{ m_dict['title'] }}</h1>
+<h1 class="">{{ lang_manager.t('menu.' + m_dict['title'].lower(), m_dict['title']) }}</h1>
 
 <div class="text-center">
     {%- for item in m_dict['menu_items'] -%}
-        <a class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1" href="{{ item['url'] }}">{{ item['title'] }}</a>
+        <a class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1" href="{{ item['url'] }}">
+            {{ lang_manager.t('pages.part.' + item['title'].lower().replace(' ', '_'), item['title']) }}
+        </a>
     {%- endfor -%}
 </div>

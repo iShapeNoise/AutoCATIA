@@ -263,7 +263,7 @@ def create_title_block(sheet: DrawingSheet,
     add_title_block_text(texts, 'TICKET REF', text_x, text_y)
 
     text_y = h4['y'] + text_y_offset
-    add_title_block_text(texts, 'DRAWN BY', text_x, text_y)
+    add_title_block_text(texts, 'CREATED BY', text_x, text_y)
 
     text_y = h3_1['y'] + text_y_offset
     add_title_block_text(texts, 'APPROVED BY', text_x, text_y)
@@ -369,7 +369,7 @@ def create_title_block(sheet: DrawingSheet,
 
     # add text input fields that are linked to a parameter
     add_param_text(texts, parameters, "TICKET", v1_1["x"] + text_x_offset, h4_1['y'] + text_y_offset)
-    add_param_text(texts, parameters, "DRAWN-BY", v1_1["x"] + text_x_offset, h4['y'] + text_y_offset)
+    add_param_text(texts, parameters, "CREATED-BY", v1_1["x"] + text_x_offset, h4['y'] + text_y_offset)
     add_param_text(texts, parameters, "APPROVED-BY", v1_1["x"] + text_x_offset, h3_1['y'] + text_y_offset)
     add_param_text(texts, parameters, "DATE", v1_1["x"] + text_x_offset, h3['y'] + text_y_offset)
     # title

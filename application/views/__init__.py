@@ -4,6 +4,7 @@ from application.views import error_handlers
 from application.views import home
 from application.views import part
 from application.views import product
+from application.views import settings 
 from application.views.htmx import part_htmx
 from application.views.htmx import drawing_htmx
 from application.views.htmx import product_htmx

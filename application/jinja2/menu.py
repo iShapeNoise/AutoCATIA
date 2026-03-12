@@ -74,6 +74,14 @@ with app.app_context():
         'url': url_for('drawing'),
         'menu_items': [
             {
+                'url': url_for('drawing_new'),
+                'title': 'New'
+            },
+            {
+                'url': url_for('drawing_insert_template'),
+                'title': 'Edit Template'
+            },
+            {
                 'url': url_for('drawing_views'),
                 'title': 'Views'
             },
@@ -81,11 +89,12 @@ with app.app_context():
                 'url': url_for('drawing_save_as'),
                 'title': 'Save As'
             },
-            {
-                'url': url_for('drawing_insert_template'),
-                'title': 'Insert Template'
-            },
         ]
+    }
+
+    m_dict_settings = {
+    'title': '⚙️ Settings',  # Gear symbol
+    'url': url_for('settings'),
     }
 
     m_list = [

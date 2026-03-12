@@ -3,6 +3,7 @@ import os
 
 from flask import Flask
 
+
 load_dotenv('.env')
 app = Flask(__name__)
 app.config.update(TEMPLATES_AUTO_RELOAD=True)
@@ -13,11 +14,14 @@ app.config['SERVER_NAME'] = os.getenv('SERVER_NAME')
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
 
 from application import views
+from application.views import language
 from application.version import version
 from application.jinja2.menu import render_menu, render_menu_header
+from application.pycatia_scripts.language import lang_manager
 
 app.jinja_env.globals.update(
     version=version,
     render_menu=render_menu,
     render_menu_header=render_menu_header,
+    lang_manager=lang_manager,
 )

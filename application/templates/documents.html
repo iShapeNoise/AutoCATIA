@@ -11,10 +11,10 @@
     </p>
     <div class="row justify-content-center">
         <div class="col-2">
-            Total Documents: <button class="btn btn-info btn-sm rounded-0">{{ counter['total_docs'] }}</button>
+            Total Documents: <button class="btn btn-info btn-sm rounded-1">{{ counter['total_docs'] }}</button>
         </div>
         <div class="col-2">
-            Not Saved: <button class="btn btn-info btn-sm rounded-0">{{ counter['not_saved'] }}</button>
+            Not Saved: <button class="btn btn-info btn-sm rounded-1">{{ counter['not_saved'] }}</button>
         </div>
     </div>
     <form method="POST">
@@ -22,7 +22,7 @@
         <div class="row mb-1">
             <div class="col-sm-10"></div>
             <div class="col-sm-2 text-right">
-                <a class="btn btn-primary btn-sm rounded-0"
+                <a class="btn btn-primary btn-sm rounded-1"
                    href="{{ url_for('documents', **request.args) }}">Refresh</a>
                 {{ form.save() }}
             </div>
