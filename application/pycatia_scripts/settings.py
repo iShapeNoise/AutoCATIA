@@ -1,19 +1,19 @@
 from pathlib import Path
 import os
-import yaml
+import json
 
-def read_yaml(f: Path):
-    """Reads the contents of the yaml file `f` and returns the data."""
+def read_json(f: Path):
+    """Reads the contents of the json file `f` and returns the data."""
     data = None
     try:
         with open(f, encoding='utf-8') as file:
-            data = yaml.safe_load(file)
-    except (FileNotFoundError, yaml.YAMLError) as e:
+            data = json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError) as e:
         print(f"Error reading {f}: {e}")
     return data
 
 def create_default_settings(userdata_path: Path):
-    """Create default settings.yaml in userdata/ folder"""
+    """Create default settings in userdata/ folder"""
     default_settings = {
         'drawing_template': {
             'border_offset': 10,
@@ -26,112 +26,97 @@ def create_default_settings(userdata_path: Path):
                 ]
             },
             'parameters': {
-                'APPROVED-BY': "",
-                'DATE': "",
-                'DRAWING-NUMBER': "",
-                'CREATED-BY': "",
-                'REVISION': "",
-                'SCALE': "",
-                'SIZE': "",
-                'TICKET': "",
-                'TITLE': "",
-                'TOTAL-SHEETS': "",
-                'YEAR': ""
+                'APPROVED-BY': '[ approved ]',
+                'DATE': '[ mm / yyyy ]',
+                'DRAWING-NUMBER': '[ drawing number ]',
+                'CREATED-BY': '',
+                'REVISION': 'XX',
+                'SCALE': '[ scale ]',
+                'SIZE': 'aa',
+                'TICKET': '[ #00000 ]',
+                'TITLE': '[ title ]',
+                'TOTAL-SHEETS': '00',
+                'YEAR': '[ year ]'
             },
             'sheet_names': ['Sheet.1', 'Sheet.2'],
-            'template_name': 'AutoCATIA Template',
+            'logo': 'autocatia-logo.jpg',
+            'template_name': 'DT-001 A',
             'tolerances': {
-                'x': '±0.1',
-                'xx': '±0.01',
-                'xxx': '±0.001'
+                ',X': '±1,5',
+                ',XX': '±,75',
+                ',XXX': '±,25'
             },
-            'units': 'MILLIMETERS',
-            'logo': 'autocatia-logo.jpg'
+            'units': ['METRIC', 'MILLIMETRES']
         },
         'part_template': {
-            'geometric_sets': ['Geometrical Set.1', 'Geometrical Set.2'],
+            'geometric_sets': ['ReferenceGeometry', 'MasterGeometry', 'ConstructionGeometry'],
             'parameters': {
-                'Thickness': {
-                    'type': 'length',
-                    'value': 2
-                },
-                'InternalBendRadius': {
-                    'type': 'length',
-                    'value': 2
-                }
+                'Thickness': {'type': 'length', 'value': 2},
+                'InternalBendRadius': {'type': 'length', 'value': 2}
             }
         },
         'product_template': {
             'user_ref_properties': {
                 'TITLE': '',
+                'DRAWN BY': '',
                 'CHECKED BY': '',
                 'DATE APPROVED': '',
                 'REVISION': 'A'
             }
         },
         'drawing': {
-            'pdf': {
-                'exclude_sheets': ['Details', 'DXF']
-            },
-            'dxf': {
-                'include_sheets': ['DXF']
-            }
-        },
-        'language': 'en'
+            'pdf': {'exclude_sheets': ['Details', 'DXF']},
+            'dxf': {'include_sheets': ['DXF']}
+        }
     }
 
-    settings_file = userdata_path / 'settings.yaml'
-    try:
-        with open(settings_file, 'w', encoding='utf-8') as f:
-            yaml.dump(default_settings, f, default_flow_style=False, allow_unicode=True)
-        print(f"Created default settings at {settings_file}")
-    except Exception as e:
-        print(f"Error creating default settings: {e}")
+    settings_file = Path(userdata_path, 'settings')
+    with open(settings_file, 'w', encoding='utf-8') as f:
+        json.dump(default_settings, f, indent=2, ensure_ascii=False)
+    print(f"Created default settings at {settings_file}")
 
 def load_settings():
     """Load and merge settings from multiple sources"""
-    # Get application root (3 levels up from pycatia_scripts/settings.py)
     app_root = Path(__file__).parent.parent.parent
     userdata_path = Path(app_root, 'userdata')
-
-    # Read ISO standards
     iso_file = Path(app_root, 'application', 'static', 'standards', 'ISO_216')
-    iso_standards = read_yaml(iso_file) or {}
+    iso_5457_file = Path(app_root, 'application', 'static', 'standards', 'ISO_5457')
+    settings_file = Path(userdata_path, 'settings')
 
-    # Read user settings
-    settings_file = userdata_path / 'settings.yaml'
+    # Initialize settings_data before using it
+    settings_data = {}
 
-    if not settings_file.exists():
-        print("Settings file not found, creating defaults...")
-        userdata_path.mkdir(exist_ok=True)
-        create_default_settings(userdata_path)
-        yaml_data = read_yaml(settings_file)
-    else:
-        yaml_data = read_yaml(settings_file)
+    # Create userdata directory if it doesn't exist
+    userdata_path.mkdir(exist_ok=True)
 
-    # Merge ISO standards with user settings
-    if yaml_data and 'drawing_template' in yaml_data:
-        # Override sheet_sizes with ISO standards
-        yaml_data['drawing_template']['sheet_sizes'] = iso_standards.get('sheet_sizes', {})
-    else:
-        # Fallback if no user settings
-        yaml_data = {
-            'drawing_template': {
-                'sheet_sizes': iso_standards.get('sheet_sizes', {}),
-                # Add other required defaults...
-            }
-        }
+    # Load ISO standard
+    iso_standards_data = read_json(iso_file)
+    iso_5457_data = read_json(iso_5457_file)
 
-    return yaml_data
+    # Load user settings
+    if settings_file.exists():
+        user_settings = read_json(settings_file)
+        settings_data.update(user_settings)
 
-# Get application root for path construction
-app_root = Path(__file__).parent.parent.parent
-path_prefix = app_root
+    # Merge ISO standards into drawing template
+    if 'drawing_template' not in settings_data:
+        settings_data['drawing_template'] = {}
 
-# Load all settings
-yaml_data = load_settings()
+    if iso_standards_data:
+        settings_data['drawing_template']['sheet_sizes'] = iso_standards_data.get('sheet_sizes', {})
+        settings_data['iso_standards'] = iso_standards_data
 
-# Extract template data with defaults
-drawing_template = yaml_data.get('drawing_template', {})
-part_template = yaml_data.get('part_template', {})
-product_template = yaml_data.get('product_template', {})
+    if iso_5457_data:
+        settings_data['iso_5457'] = iso_5457_data
+
+    return settings_data
+
+# Load settings and expose module-level variables
+settings_data = load_settings()
+drawing_template = settings_data['drawing_template']
+part_template = settings_data.get('part_template', {})
+product_template = settings_data.get('product_template', {})
+yaml_data = settings_data  # Keep for backward compatibility
+iso_standards = settings_data.get('iso_standards', {})
+iso_5457 = settings_data.get('iso_5457', {})
+path_prefix = Path(__file__).parent.parent.parent

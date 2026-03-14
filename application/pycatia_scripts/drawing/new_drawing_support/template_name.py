@@ -3,12 +3,11 @@
 from pycatia.drafting_interfaces.drawing_sheet import DrawingSheet
 from pycatia.enumeration.enumeration_types import cat_text_anchor_position
 
-from application.pycatia_scripts.settings import drawing_template
 from .background_view import get_background_view_and_factory
 from .text_properties import set_text_properties
 
 
-def create_template_name(sheet: DrawingSheet, size_info: dict):
+def create_template_name(sheet: DrawingSheet, size_info: dict, template_config):
     """
     The drawing template name is added to the bottom right hand corner of the
     drawing inside the border itself.

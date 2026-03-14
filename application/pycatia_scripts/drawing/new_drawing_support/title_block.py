@@ -9,8 +9,6 @@ from pycatia.exception_handling.exceptions import CATIAApplicationException
 from pycatia.knowledge_interfaces.parameters import Parameters
 from pycatia.sketcher_interfaces.factory_2D import Factory2D
 
-from application.pycatia_scripts.settings import drawing_template
-from application.pycatia_scripts.settings import path_prefix
 from .background_view import get_background_view_and_factory
 from .lines import update_line_properties
 from .text_properties import set_text_properties
@@ -88,11 +86,8 @@ def create_2d_line(factory_2d: Factory2D, name: str, x_1: float, y_1: float, x_2
     return _line
 
 
-def create_title_block(sheet: DrawingSheet,
-                       size_info: dict,
-                       parameters: Parameters,
-                       sheet_number: int,
-                       ):
+def create_title_block(sheet: DrawingSheet, size_info: dict, parameters: Parameters,
+                      sheet_number: int, template_config):
     """
 
     :param DrawingSheet sheet:
@@ -101,6 +96,16 @@ def create_title_block(sheet: DrawingSheet,
     :param int sheet_number:
     :return:
     """
+
+    """
+    Create title block with company information
+    """
+    # Use passed configuration instead of global variable
+    bottom_left_hand_corner_x = size_info['sheet_x'] - template_config['border_offset'] - title_block_width
+    bottom_left_hand_corner_y = template_config['border_offset']
+
+    # Use passed configuration for company details
+    company_details = template_config['company_details']  
 
     background_view, factory_2d, _ = get_background_view_and_factory(sheet)
     texts = background_view.texts

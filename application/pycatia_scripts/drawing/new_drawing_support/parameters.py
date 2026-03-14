@@ -5,8 +5,6 @@ from pywintypes import com_error
 from pycatia.drafting_interfaces.drawing_document import DrawingDocument
 from pycatia.knowledge_interfaces.parameters import Parameters
 
-from application.pycatia_scripts.settings import drawing_template
-
 
 def create_parameters(drawing: DrawingDocument, form_parameters: dict) -> Parameters:
     """

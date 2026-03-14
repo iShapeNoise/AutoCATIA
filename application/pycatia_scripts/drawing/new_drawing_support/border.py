@@ -1,23 +1,29 @@
 #! /usr/bin/python3.8
-
 from pycatia.drafting_interfaces.drawing_sheet import DrawingSheet
 from pycatia.enumeration.enumeration_types import cat_text_anchor_position
 
-from application.pycatia_scripts.settings import drawing_template
+from application.pycatia_scripts.drawing.new_drawing import drawing_template
 
 from .background_view import get_background_view_and_factory
 from .lines import update_line_properties
 from .text_properties import set_text_properties
 
 
-def create_border(sheet: DrawingSheet, size_info: dict):
+def create_border(sheet: DrawingSheet, size_info: dict, template_config):
+    """
+    Create border with grid references
+    """
     legible_paper_size = size_info['legible_paper_size']
     sheet_x = size_info['sheet_x']
     sheet_y = size_info['sheet_y']
 
-    sheet_x_splits = drawing_template['sheet_sizes'][legible_paper_size][1][0]
-    sheet_y_splits = drawing_template['sheet_sizes'][legible_paper_size][1][1]
+    # Use passed configuration instead of global variable
+    sheet_x_splits = template_config['sheet_sizes'][legible_paper_size][1][0]
+    sheet_y_splits = template_config['sheet_sizes'][legible_paper_size][1][1]
 
+    # Use passed configuration for border offset
+    offset = template_config['border_offset']
+    
     background_view, factory_2d, main_view = get_background_view_and_factory(sheet)
     selection = sheet.application.active_document.selection
 

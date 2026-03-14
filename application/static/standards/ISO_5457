@@ -1,78 +1,134 @@
-# ISO 5457:1999 – Sizes and Layout of Drawing Sheets
-
-general:
-  standard: ISO 5457:1999
-  title: Technical Product Documentation — Sizes and Layout of Drawing Sheets
-  scope: Specifies size and layout of preprinted sheets for technical drawings, including CAD-generated documents
-  replaced: ISO 5457:1980
-  related_standards:
-    - ISO 128-20: Line conventions
-    - ISO 216: Paper sizes (A-series)
-    - ISO 3098-1: Lettering
-    - ISO 7200: Title blocks
-
-sheet_formats:
-  series: ISO-A
-  preferred_use: Smallest sheet allowing clarity and resolution
-  orientation:
-    A0–A3: Horizontal (landscape)
-    A4: Vertical (portrait)
-  reading_direction: Same as title block (bottom-right corner)
-
-borders:
-  left_margin: 20 mm (includes filing margin)
-  other_margins: 10 mm (top, right, bottom)
-  tolerance: ±0.5 mm for trimmed sheets (per ISO 216)
-
-drawing_space_frame:
-  line_type: Continuous thick line
-  line_width: 0.7 mm
-  position: Inner edge of borders
-  corner_style: Right-angled (standard), rounded (optional)
-
-centering_marks:
-  quantity: 4 (one at each end of symmetry axes)
-  placement: Ends of horizontal and vertical center lines
-  line_width: 0.7 mm
-  extension: 10 mm beyond drawing frame
-  tolerance: ±1 mm symmetry
-  note: Additional marks required for sizes larger than A0
-
-trimming_marks:
-  purpose: Facilitate manual or automatic trimming
-  shape: Two overlapping rectangles (10 mm × 5 mm)
-  location: All four corners, within borders
-  line_width: 0.7 mm
-
-grid_reference_system:
-  purpose: Enable precise location of details, revisions, and views
-  layout:
-    - Vertical division: Capital letters (top to bottom)
-    - Horizontal division: Numbers (left to right)
-    - I and O excluded (avoid confusion with 1 and 0)
-  field_size: 50 mm (preferred), starting from centering marks
-  line_width: 0.35 mm (continuous line)
-  position: In border area, outside drawing frame
-  offset: 5 mm from drawing frame
-  character_size: 3.5 mm
-  character_orientation: Vertical (on both sides of sheet)
-  field_count:
-    A0: 24 (letters) × 16 (numbers)
-    A1: 16 × 12
-    A2: 12 × 8
-    A3: 8 × 6
-    A4: 6 × 4
-  special_case_A4: Grid references only on top and right side
-
-title_block_location:
-  A0–A3: Bottom-right corner of drawing space
-  A4: Lower part of drawing space (vertical format)
-
-elongated_formats:
-  recommendation: Avoid if possible
-  construction: Combine short side of one A-size with long side of a larger A-size
-  example: A3×A1 (non-standard elongated sheet)
-
-designation_example:
-  description: Preprinted A1 drawing sheet on tracing paper (112.5 g/m²), reverse printed, with title block
-  format: "ISO 5457 – A1 – Tracing paper – 112.5 g/m² – Reverse printed – With title block"
+{
+  "A0": {
+    "trimmed_sheet_mm": [841, 1189],
+    "drawing_space_mm": [821, 1159],
+    "untrimmed_sheet_mm": [880, 1230],
+    "borders_mm": {
+      "left": 20,
+      "other_sides": 10
+    },
+    "orientation": "landscape",
+    "frame_line_width_mm": 0.7,
+    "trimming_marks_mm": [10, 5],
+    "centring_marks_mm": {
+      "extension_beyond_frame": 10
+    },
+    "grid_reference": {
+      "fields": [24, 16],
+      "field_size_mm": 50,
+      "letters": "A to H (excluding I, O)",
+      "numbers": "1 to 16",
+      "position": ["top", "right"]
+    }
+  },
+  "A1": {
+    "trimmed_sheet_mm": [594, 841],
+    "drawing_space_mm": [574, 811],
+    "untrimmed_sheet_mm": [625, 880],
+    "borders_mm": {
+      "left": 20,
+      "other_sides": 10
+    },
+    "orientation": "landscape",
+    "frame_line_width_mm": 0.7,
+    "trimming_marks_mm": [10, 5],
+    "centring_marks_mm": {
+      "extension_beyond_frame": 10
+    },
+    "grid_reference": {
+      "fields": [16, 12],
+      "field_size_mm": 50,
+      "letters": "A to H (excluding I, O)",
+      "numbers": "1 to 12",
+      "position": ["top", "right"]
+    }
+  },
+  "A2": {
+    "trimmed_sheet_mm": [420, 594],
+    "drawing_space_mm": [400, 564],
+    "untrimmed_sheet_mm": [450, 625],
+    "borders_mm": {
+      "left": 20,
+      "other_sides": 10
+    },
+    "orientation": "landscape",
+    "frame_line_width_mm": 0.7,
+    "trimming_marks_mm": [10, 5],
+    "centring_marks_mm": {
+      "extension_beyond_frame": 10
+    },
+    "grid_reference": {
+      "fields": [12, 8],
+      "field_size_mm": 50,
+      "letters": "A to H (excluding I, O)",
+      "numbers": "1 to 8",
+      "position": ["top", "right"]
+    }
+  },
+  "A3": {
+    "trimmed_sheet_mm": [297, 420],
+    "drawing_space_mm": [277, 390],
+    "untrimmed_sheet_mm": [330, 450],
+    "borders_mm": {
+      "left": 20,
+      "other_sides": 10
+    },
+    "orientation": "landscape",
+    "frame_line_width_mm": 0.7,
+    "trimming_marks_mm": [10, 5],
+    "centring_marks_mm": {
+      "extension_beyond_frame": 10
+    },
+    "grid_reference": {
+      "fields": [8, 6],
+      "field_size_mm": 50,
+      "letters": "A to H (excluding I, O)",
+      "numbers": "1 to 6",
+      "position": ["top", "right"]
+    }
+  },
+  "A4-portrait": {
+    "trimmed_sheet_mm": [210, 297],
+    "drawing_space_mm": [180, 277],
+    "untrimmed_sheet_mm": [240, 330],
+    "borders_mm": {
+      "left": 20,
+      "other_sides": 10
+    },
+    "orientation": "portrait",
+    "frame_line_width_mm": 0.7,
+    "trimming_marks_mm": [10, 5],
+    "centring_marks_mm": {
+      "extension_beyond_frame": 10
+    },
+    "grid_reference": {
+      "fields": [6, 4],
+      "field_size_mm": 50,
+      "letters": "A to H (excluding I, O)",
+      "numbers": "1 to 4",
+      "position": ["top", "right"]
+    }
+  },
+  "A4-landscape": {
+    "trimmed_sheet_mm": [297, 210],
+    "drawing_space_mm": [277, 180],
+    "untrimmed_sheet_mm": [330, 240],
+    "borders_mm": {
+      "top": 20,
+      "other_sides": 10
+    },
+    "orientation": "landscape",
+    "frame_line_width_mm": 0.7,
+    "trimming_marks_mm": [10, 5],
+    "centring_marks_mm": {
+      "extension_beyond_frame": 10
+    },
+    "grid_reference": {
+      "fields": [6, 4],
+      "field_size_mm": 50,
+      "letters": "A to H (excluding I, O)",
+      "numbers": "1 to 4",
+      "position": ["top", "right"]
+    }
+  },
+}
