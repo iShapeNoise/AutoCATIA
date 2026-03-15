@@ -1,4 +1,12 @@
 {
+  "grid_spacing_mm": {
+    "A0": {"x": 50, "y": 47.833},
+    "A1": {"x": 51.313, "y": 48.667},
+    "A2": {"x": 47.833, "y": 51.25},
+    "A3": {"x": 50, "y": 47.833},
+    "A4-landscape": {"x": 47.833, "y": 47.5},
+    "A4-portrait": {"x": 47.5, "y": 47.833}
+  },
   "A0": {
     "trimmed_sheet_mm": [841, 1189],
     "drawing_space_mm": [821, 1159],
@@ -16,7 +24,7 @@
     "grid_reference": {
       "fields": [24, 16],
       "field_size_mm": 50,
-      "letters": "A to H (excluding I, O)",
+      "letters": "A to X (excluding I, O)",
       "numbers": "1 to 16",
       "position": ["top", "right"]
     }
@@ -38,7 +46,7 @@
     "grid_reference": {
       "fields": [16, 12],
       "field_size_mm": 50,
-      "letters": "A to H (excluding I, O)",
+      "letters": "A to P (excluding I, O)",
       "numbers": "1 to 12",
       "position": ["top", "right"]
     }
@@ -89,10 +97,10 @@
   },
   "A4-portrait": {
     "trimmed_sheet_mm": [210, 297],
-    "drawing_space_mm": [180, 277],
+    "drawing_space_mm": [190, 267],
     "untrimmed_sheet_mm": [240, 330],
     "borders_mm": {
-      "left": 20,
+      "top": 20,
       "other_sides": 10
     },
     "orientation": "portrait",
@@ -130,5 +138,5 @@
       "numbers": "1 to 4",
       "position": ["top", "right"]
     }
-  },
+  }
 }
