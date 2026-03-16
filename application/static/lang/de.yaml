@@ -54,6 +54,7 @@ pages:
     a2: "A2"
     a1: "A1"
     created_by: "Erstellt durch"
+    scale: "Maßstab"
 
   settings:
     title: "Einstellungen"

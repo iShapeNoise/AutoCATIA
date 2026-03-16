@@ -22,7 +22,7 @@ from .new_drawing_support.purge import purge_background_view
 from .new_drawing_support.paper_size import get_sheet_size_info
 
 # Export drawing_template for support files that need it
-__all__ = ['drawing_template', 'path_prefix', 'insert_drawing_template', 'create_new_drawing_with_title']
+__all__ = ['drawing_template', 'p#insert_drawing_template', 'create_new_drawing_with_title']
 
 def insert_drawing_template(form_parameters):
     """Legacy function for backward compatibility"""
@@ -65,45 +65,73 @@ def insert_drawing_template(form_parameters):
 
     return output
 
+
 def create_new_drawing_with_title(paper_size_key, title):
     """
     Create a new CATIA drawing with specified paper size and title
     """
     from pycatia.enumeration.enumeration_types import cat_paper_size
-    from application.pycatia_scripts.settings import drawing_template
+    from application.pycatia_scripts.com_objects import get_app_object
+    from application.pycatia_scripts.settings import iso_standards
+    from application.pycatia_scripts.common import get_output
+    from application.pycatia_scripts.drawing.new_drawing_support.frames import create_frame_lines
+    from application.pycatia_scripts.drawing.new_drawing_support.text_field import create_text_field
 
-    # Map size keys to CATIA enum values
-    size_mapping = {
-        'A4-portrait': 4,    # catPaperA4
-        'A4-landscape': 5,   # catPaperA4Landscape
-        'A3': 3,             # catPaperA3
-        'A2': 2,             # catPaperA2
-        'A1': 1              # catPaperA1
-    }
+    # Get CATIA application using the helper function
+    application = get_app_object()
+
+    if not application:
+        output = get_output()
+        output['errors'].append('CATIA application is not running')
+        return output
 
     # Create new drawing
-    documents = catia.documents
-    new_drawing = documents.add('Drawing')
-    sheets = new_drawing.sheets
-    sheet = sheets.item(1)
+    documents = application.documents
+    drawing_document = documents.add('Drawing')
+    drawing = drawing_document.drawing_root
 
-    # Set paper size
-    sheet.paper_size = size_mapping[paper_size_key]
+    # Get the active sheet
+    sheet = drawing.sheets.active_sheet
+
+    # Map paper size keys to CATIA enum values
+    paper_size_mapping = {
+        'A0': 2,      # catPaperA0
+        'A1': 3,      # catPaperA1
+        'A2': 4,      # catPaperA2
+        'A3': 5,      # catPaperA3
+        'A4-portrait': 6,  # catPaperA4
+        'A4-landscape': 6   # catPaperA4Landscape
+    }
+
+    # Get the paper size enum value
+    catia_paper_size = paper_size_mapping.get(paper_size_key, 3)  # Default to A3
+
+    # Set the paper size
+    sheet.paper_size = catia_paper_size
+
+    # Set orientation to portrait only for A4 Portrait
+    if paper_size_key == 'A4-portrait':
+        try:
+            # Try direct integer value for portrait orientation
+            sheet.orientation = 0  # 0 = catPaperPortrait
+            sheet.force_update()
+        except:
+            # If orientation fails, continue without it
+            pass
+
     sheet.name = title
+    # Force update to apply changes
+    sheet.force_update()
 
-    # Get sheet size info
-    from application.pycatia_scripts.drawing.new_drawing_support.paper_size import get_sheet_size_info
-    size_info = get_sheet_size_info(sheet)
+    # Get sheet dimensions from ISO_216
+    sheet_dimensions = iso_standards['sheet_sizes'][paper_size_key][0]
+    sheet_x, sheet_y = sheet_dimensions
 
-    # Create parameters
-    from application.pycatia_scripts.drawing.new_drawing_support.parameters import create_parameters
-    parameters = create_parameters(new_drawing, {})
+    # Create frame lines
+    create_frame_lines(sheet, paper_size_key)
 
-    # Create template elements - PASS CONFIGURATION AS PARAMETER
-    from application.pycatia_scripts.drawing.new_drawing_support.border import create_border
-    create_border(sheet, size_info, drawing_template)
+    # Create text field with labels (after frames)
+    create_text_field(sheet, sheet_x, sheet_y, paper_size_key)
 
-    from application.pycatia_scripts.drawing.new_drawing_support.title_block import create_title_block
-    create_title_block(sheet, size_info, parameters, 1, drawing_template)
 
-    return {"success": True, "message": f"Created {paper_size_key} drawing: {title}"}
+    return {"success": True, "message": f"Created {paper_size_key} drawing with title: {title}"}
