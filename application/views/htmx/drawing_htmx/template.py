@@ -3,7 +3,6 @@ from pathlib import Path
 import json
 
 from application import app
-from application.pycatia_scripts.drawing.new_drawing import insert_drawing_template
 from application.views.url_prefixes import htmx
 
 
@@ -30,10 +29,9 @@ def save_template_settings(form_parameters):
         if 'parameters' not in settings_data['drawing_template']:
             settings_data['drawing_template']['parameters'] = {}
 
-        # Save only non-empty values
+        # Save ALL values (not just non-empty ones)  
         for key, value in form_parameters.items():
-            if value:  # Only save if not empty
-                settings_data['drawing_template']['parameters'][key] = value
+            settings_data['drawing_template']['parameters'][key] = value
 
         # Write back to file
         with open(settings_file, 'w', encoding='utf-8') as f:
@@ -47,47 +45,30 @@ def save_template_settings(form_parameters):
 
 @app.route(f'{htmx}/drawing/template', methods=['POST'])
 def htmx_drawing_template():
-    """Handle template form submission - saves settings and optionally inserts template"""
-    # Get all form parameters
-    part_number = request.form.get('DRAWING-NUMBER', type=str) or ""
-    title = request.form.get('TITLE', type=str) or ""
-    created_by = request.form.get('CREATED-BY', type=str) or ""
-    revision = request.form.get('REVISION', type=str) or ""
+    """Handle template form submission - saves settings only"""
+    from datetime import datetime
 
+    # Get all form parameters with the NEW field structure
     form_parameters = {
-        'DRAWING-NUMBER': part_number,
-        'TITLE': title,
-        'CREATED-BY': created_by,
-        'REVISION': revision,
+        'SCALE': request.form.get('SCALE', type=str) or "1:1",
+        'DOCUMENT-TYPE': request.form.get('DOCUMENT-TYPE', type=str) or "",
+        'CREATED-BY': request.form.get('CREATED-BY', type=str) or "",
+        'APPROVED-BY': request.form.get('APPROVED-BY', type=str) or "",
+        'TITLE': request.form.get('TITLE', type=str) or "",
+        'EXTRA-TITLE': request.form.get('EXTRA-TITLE', type=str) or "",
+        'NUMBER': request.form.get('NUMBER', type=str) or "",
+        'MATERIAL': request.form.get('MATERIAL', type=str) or "",
+        'BLANK': request.form.get('BLANK', type=str) or "",
+        'REVISION': request.form.get('REVISION', type=str) or "",
+        'DATE': request.form.get('DATE', type=str) or datetime.now().strftime("%m/%Y"),
+        'FORMAT': request.form.get('FORMAT', type=str) or "",
+        'PAGE': request.form.get('PAGE', type=str) or "1/1"
     }
 
-    # Save settings first
+    # Only save settings - no CATIA interaction
     save_success, save_message = save_template_settings(form_parameters)
 
-    # Try to insert template into CATIA (optional)
-    try:
-        output = insert_drawing_template(form_parameters)
-        data = output['data']
-        errors = output['errors']
-
-        if errors:
-            # If CATIA insertion fails but settings saved, show partial success
-            if save_success:
-                combined_message = f"{save_message}\nCATIA Error: {errors}"
-                return render_template('partials/errors.html', errors=[combined_message])
-            else:
-                return render_template('partials/errors.html', errors=errors)
-
-        if data:
-            # Combine success messages
-            combined_message = f"{save_message}\n{data}"
-            return render_template('partials/success.html', data=combined_message)
-
-    except Exception as e:
-        # If CATIA is not available, just show settings save status
-        if save_success:
-            return render_template('partials/success.html', data=save_message)
-        else:
-            return render_template('partials/errors.html', errors=[str(e)])
-
-    return render_template('partials/error.html')
+    if save_success:
+        return render_template('partials/success.html', data=save_message)
+    else:
+        return render_template('partials/errors.html', errors=[save_message])

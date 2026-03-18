@@ -89,6 +89,10 @@ def load_settings():
     # Create userdata directory if it doesn't exist
     userdata_path.mkdir(exist_ok=True)
 
+    # Create default settings if file doesn't exist
+    if not settings_file.exists():
+        create_default_settings(userdata_path)
+
     # Load ISO standard
     iso_standards_data = read_json(iso_file)
     iso_5457_data = read_json(iso_5457_file)

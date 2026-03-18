@@ -1,5 +1,5 @@
 from pathlib import Path
-import yaml
+import json
 import os
 from flask import session, request
 
@@ -19,10 +19,10 @@ class LanguageManager:
         # If not in session, try to load from settings file
         try:
             app_root = Path(__file__).parent.parent.parent
-            settings_path = Path(app_root, 'userdata', 'settings.yaml')
+            settings_path = Path(app_root, 'userdata', 'settings.json')
             if settings_path.exists():
                 with open(settings_path, 'r') as f:
-                    settings_data = yaml.safe_load(f)
+                    settings_data = json.load(f)
                     if settings_data and 'language' in settings_data:
                         # Store in session for future requests
                         session['language'] = settings_data['language']
@@ -35,10 +35,11 @@ class LanguageManager:
 
     def _load_translations(self):
         translations = {}
-        for lang_file in self.lang_dir.glob('*.yaml'):
-            lang_code = lang_file.stem
-            with open(lang_file, 'r', encoding='utf-8') as f:
-                translations[lang_code] = yaml.safe_load(f)
+        for lang_file in self.lang_dir.glob('*'):
+            if lang_file.is_file() and lang_file.suffix == '':  # Files without extension
+                lang_code = lang_file.name
+                with open(lang_file, 'r', encoding='utf-8') as f:
+                    translations[lang_code] = json.load(f)
         return translations
 
     def get_available_languages(self):
