@@ -10,7 +10,7 @@ def save_template_settings(form_parameters):
     """Save template parameters to settings file"""
     try:
         # Get the correct path to userdata folder
-        app_root = Path(__file__).parent.parent.parent.parent
+        app_root = Path(__file__).parent.parent.parent.parent.parent
         userdata_path = Path(app_root, 'userdata')
         settings_file = Path(userdata_path, 'settings')
 
@@ -29,7 +29,7 @@ def save_template_settings(form_parameters):
         if 'parameters' not in settings_data['drawing_template']:
             settings_data['drawing_template']['parameters'] = {}
 
-        # Save ALL values (not just non-empty ones)  
+        # Save ALL values (not just non-empty ones)
         for key, value in form_parameters.items():
             settings_data['drawing_template']['parameters'][key] = value
 
@@ -48,7 +48,7 @@ def htmx_drawing_template():
     """Handle template form submission - saves settings only"""
     from datetime import datetime
 
-    # Get all form parameters with the NEW field structure
+    # Extract ALL form fields from the new template structure
     form_parameters = {
         'SCALE': request.form.get('SCALE', type=str) or "1:1",
         'DOCUMENT-TYPE': request.form.get('DOCUMENT-TYPE', type=str) or "",
@@ -60,12 +60,12 @@ def htmx_drawing_template():
         'MATERIAL': request.form.get('MATERIAL', type=str) or "",
         'BLANK': request.form.get('BLANK', type=str) or "",
         'REVISION': request.form.get('REVISION', type=str) or "",
-        'DATE': request.form.get('DATE', type=str) or datetime.now().strftime("%m/%Y"),
+        'DATE': request.form.get('DATE', type=str) or datetime.now().strftime("%d%m/%y"),
         'FORMAT': request.form.get('FORMAT', type=str) or "",
         'PAGE': request.form.get('PAGE', type=str) or "1/1"
     }
 
-    # Only save settings - no CATIA interaction
+    # Save settings
     save_success, save_message = save_template_settings(form_parameters)
 
     if save_success:
