@@ -1,6 +1,8 @@
 from flask import request, render_template
 from pathlib import Path
 import json
+import os
+from werkzeug.utils import secure_filename
 
 from application import app
 from application.views.url_prefixes import htmx
@@ -45,8 +47,24 @@ def save_template_settings(form_parameters):
 
 @app.route(f'{htmx}/drawing/template', methods=['POST'])
 def htmx_drawing_template():
-    """Handle template form submission - saves settings only"""
+    """Handle template form submission - saves settings and handles logo upload"""
     from datetime import datetime
+
+    # Handle logo upload
+    logo_filename = None
+    if 'LOGO' in request.files:
+        logo_file = request.files['LOGO']
+        if logo_file and logo_file.filename != '':
+            # Get userdata path
+            app_root = Path(__file__).parent.parent.parent.parent.parent
+            userdata_path = Path(app_root, 'userdata')
+            userdata_path.mkdir(exist_ok=True)
+
+            # Save uploaded file
+            filename = secure_filename(logo_file.filename)
+            logo_filename = f"logo_{filename}"
+            logo_path = Path(userdata_path, logo_filename)
+            logo_file.save(str(logo_path))
 
     # Extract ALL form fields from the new template structure
     form_parameters = {
@@ -64,6 +82,10 @@ def htmx_drawing_template():
         'FORMAT': request.form.get('FORMAT', type=str) or "",
         'PAGE': request.form.get('PAGE', type=str) or "1/1"
     }
+
+    # Add logo filename if uploaded
+    if logo_filename:
+        form_parameters['LOGO_FILENAME'] = logo_filename
 
     # Save settings
     save_success, save_message = save_template_settings(form_parameters)

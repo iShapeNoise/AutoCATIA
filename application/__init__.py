@@ -18,6 +18,8 @@ from application.views import language
 from application.version import version
 from application.jinja2.menu import render_menu, render_menu_header
 from application.pycatia_scripts.language import lang_manager
+from application.views import settings
+from application.views.htmx.drawing_htmx import add_page
 
 app.jinja_env.globals.update(
     version=version,

@@ -110,7 +110,7 @@
       "extension_beyond_frame": 10
     },
     "grid_reference": {
-      "fields": [6, 4],
+      "fields": [6, 6],
       "field_size_mm": 50,
       "letters": "A to H (excluding I, O)",
       "numbers": "1 to 4",

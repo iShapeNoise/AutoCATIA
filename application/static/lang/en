@@ -16,6 +16,7 @@
     "part": {
       "new_part": "Create New Part",
       "bounding_box": "Create Bounding Box",
+      "points": "Points",
       "export_points": "Export Points",
       "import_points": "Import Points",
       "points_export_desc": "Export the point coordinates of all the points in the Geometric Set",
@@ -27,15 +28,17 @@
     },
     "product": {
       "new_product": "Create New Product",
-      "reorder_tree": "Reorder Tree",
+      "reorder_product_tree": "Reorder Tree",
       "renumber_instances": "Renumber Instances",
-      "edit_properties": "Edit Product Properties",
+      "edit_product_properties": "Edit Product Properties",
       "product_tools": "Product Tools",
       "reorder_desc": "Alphanumerically sorts Products within a Product",
       "renumber_desc": "Renumbers the child instances of the currently open product",
       "edit_attributes_desc": "Edit the Products attributes"
     },
     "drawing": {
+      "new": "New Drawing",
+      "add_page": "Add Page",
       "edit_template": "Edit Drawing Template",
       "views": "Views",
       "save_as": "Save As",
@@ -84,7 +87,13 @@
       "logo_placeholder": "Enter logo file path",
       "save_settings": "Save Settings",
       "saved_successfully": "Settings saved successfully!",
-      "no_options": "No options available yet"
+      "no_options": "No options available yet",
+      "no_image": "No image",
+      "current_logo": "Current logo",
+      "no_logo_selected": "No logo selected",
+      "projection_method": "Projection Method",
+      "projection_method_eu": "European Projection",
+      "projection_method_us": "US Projection"
     }
   },
   "common": {

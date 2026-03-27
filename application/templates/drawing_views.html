@@ -11,8 +11,8 @@
     </p>
     <form class="row row-cols-lg-auto align-items-center" hx-post="/htmx/drawing/locking" hx-target="#locking" hx-swap="innerHtml" hx-indicator="#locking">
         <div class="input-group">
-            <button name="locker" class="btn btn-success rounded-1 m-2" value="lock" script="on click remove #output">{{ lang_manager.t('pages.drawing.lock_views', 'Lock Views') }}</button>
-            <button name="locker" class="btn btn-success rounded-1 m-2" value="unlock" script="on click remove #output">{{ lang_manager.t('pages.drawing.unlock_views', 'Unlock Views') }}</button>
+            <button name="locker" class="btn btn-light btn-sm border-white p-1 m-1 rounded-1" value="lock" script="on click remove #output">{{ lang_manager.t('pages.drawing.lock_views', 'Lock Views') }}</button>
+            <button name="locker" class="btn btn-light btn-sm border-white p-1 m-1 rounded-1" value="unlock" script="on click remove #output">{{ lang_manager.t('pages.drawing.unlock_views', 'Unlock Views') }}</button>
         </div>
         <div class="form-check">
             <input name="includeMainViewLock" value="True" class="form-check-input rounded-0" type="checkbox" value="" id="includeMainViewLock">
@@ -38,8 +38,8 @@
     </p>
     <form class="row row-cols-lg-auto align-items-center" hx-post="/htmx/drawing/frames" hx-target="#frames" hx-swap="innerHtml" hx-indicator="#frames">
         <div class="input-group">
-            <button name="framer" class="btn btn-success rounded-1 m-2" value="on" script="on click remove #output">{{ lang_manager.t('pages.drawing.frame_on', 'Frame On') }}</button>
-            <button name="framer" class="btn btn-success rounded-1 m-2" value="off" script="on click remove #output">{{ lang_manager.t('pages.drawing.frame_off', 'Frame Off') }}</button>
+            <button name="framer" class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1" value="on" script="on click remove #output">{{ lang_manager.t('pages.drawing.frame_on', 'Frame On') }}</button>
+            <button name="framer" class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1" value="off" script="on click remove #output">{{ lang_manager.t('pages.drawing.frame_off', 'Frame Off') }}</button>
         </div>
     </form>
     <div id="frames">

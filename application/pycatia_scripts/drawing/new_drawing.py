@@ -129,9 +129,7 @@ def create_new_drawing_with_title(paper_size_key, title):
 
     # Create frame lines
     create_frame_lines(sheet, paper_size_key)
-
     # Create text field with labels (after frames)
     create_text_field(sheet, sheet_x, sheet_y, paper_size_key)
-
 
     return {"success": True, "message": f"Created {paper_size_key} drawing with title: {title}"}

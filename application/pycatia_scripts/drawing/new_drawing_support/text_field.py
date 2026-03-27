@@ -2,7 +2,76 @@ from pycatia.drafting_interfaces.drawing_sheet import DrawingSheet
 from application.pycatia_scripts.settings import iso_standards
 from .background_view import get_background_view_and_factory
 from .text_properties import set_text_properties
-from datetime import datetime 
+from datetime import datetime
+
+
+def add_logo_to_cell(sheet: DrawingSheet, text_field_x: float, text_field_y: float):
+    """
+    Add firm logo to the merged cell with proper aspect ratio and sizing
+    """
+    from .background_view import get_background_view_and_factory
+    from application.pycatia_scripts.settings import load_settings
+    from pathlib import Path
+    from PIL import Image
+    import os
+
+    background_view, factory_2d, main_view = get_background_view_and_factory(sheet)
+    pictures = background_view.pictures
+
+    # Load settings to get logo path
+    settings_data = load_settings()
+    logo_filename = settings_data.get('drawing_template', {}).get('logo_filename', '')
+
+    if not logo_filename:
+        return  # No logo configured
+
+    # Get userdata path and construct full logo path
+    app_root = Path(__file__).parent.parent.parent.parent
+    userdata_path = Path(app_root, 'userdata')
+    logo_file = Path(userdata_path, logo_filename)
+
+    if not logo_file.exists():
+        return  # Logo file not found
+
+    try:
+        # Cell dimensions: 12mm width, 20mm height (merged rows 2-3)
+        cell_width_mm = 12.0
+        cell_height_mm = 20.0
+
+        # Load image to get dimensions
+        with Image.open(logo_file) as img:
+            img_width, img_height = img.size
+
+        # Calculate aspect ratio
+        aspect_ratio = img_width / img_height
+
+        # Calculate optimal size to fit within cell
+        if aspect_ratio > (cell_width_mm / cell_height_mm):
+            # Wider image - fit to width
+            final_width = cell_width_mm
+            final_height = cell_width_mm / aspect_ratio
+        else:
+            # Taller or square image - fit to height
+            final_height = cell_height_mm
+            final_width = cell_height_mm * aspect_ratio
+
+        # Center the logo in the cell
+        cell_x = text_field_x + 1  # Left edge of cell
+        cell_y = text_field_y + 10  # Center of merged cell (20mm height)
+
+        # Calculate centered position
+        logo_x = cell_x + (cell_width_mm - final_width) / 2
+        logo_y = cell_y + (cell_height_mm - final_height) / 2
+
+        # Add picture to CATIA
+        pictures.add(str(logo_file), logo_x, logo_y)
+
+        # Set picture size (CATIA uses different units, may need conversion)
+        # This might require additional CATIA API calls to set dimensions
+
+    except Exception as e:
+        # Fail silently if logo can't be processed
+        pass
 
 
 def add_text_field_values(sheet: DrawingSheet, text_field_x: float, text_field_y: float):
@@ -119,6 +188,10 @@ def add_text_field_labels(sheet: DrawingSheet, text_field_x: float, text_field_y
     import os
     import json
 
+    # Load settings data first (moved here to fix UnboundLocalError)
+    from application.pycatia_scripts.settings import load_settings
+    settings_data = load_settings()
+
     # Load language files from static/lang/
     path_prefix = Path(os.path.dirname(__file__)).parent.parent.parent
     lang_file = Path(path_prefix, 'static', 'lang', f'{language.lower()}')  # No extension
@@ -174,18 +247,67 @@ def add_text_field_labels(sheet: DrawingSheet, text_field_x: float, text_field_y
     blank_props.font_size = fnt_size
     blank_props.update()
 
+    # Cell 5: Projection Method (100-163mm) - Add PM image if available
+    projection_method = settings_data.get('drawing_template', {}).get('projection_method', 'PM_EU.jpg')
+    # print(f"DEBUG: Projection method from settings: {projection_method}")
+
+    if projection_method:
+        try:
+            pm_file = Path(path_prefix, 'static', 'images', projection_method)
+
+            if pm_file.exists():
+                # Position PM image in 5th cell (100-163mm width, 10mm height)
+                pm_image = pictures.add(pm_file, text_field_x + 163, y_position_row1-4)
+                # Set logo properties to maintain aspect ratio and fit in cell
+                pm_image.ratio_lock = True
+                pm_image.width = 16.0  # Max width for 12mm cell
+                pm_image.height = 9.0
+                print(f"DEBUG: Successfully added PM image at position ({text_field_x + 101}, {text_field_y + 10})")
+            else:
+                print(f"DEBUG: PM image file not found at {pm_file}")
+        except Exception as e:
+            print(f"DEBUG: Error adding PM image: {e}")
+            pass  # Fail silently if PM image can't be loaded
+    else:
+        print("DEBUG: No projection method setting found")
+
     # Second row labels (using lower region vertical lines: 34, 77, 132)
     y_position_row2 = text_field_y + 17 - fnt_size  # Middle of upper row
 
     # Cell 1: Logo (merged rows 2-3, 0-12mm) - Add logo if available
-    if logo_path:
+    logo_filename = settings_data.get('drawing_template', {}).get('logo', '')
+    # print(f"DEBUG: Logo filename from settings: {logo_filename}")
+
+    if logo_filename:
         try:
-            logo_file = Path(path_prefix, 'application', 'static', 'images', logo_path)
+            # Get userdata path and construct full logo path
+            app_root = Path(__file__).parent.parent.parent.parent.parent
+            userdata_path = Path(app_root, 'userdata')
+            logo_file = Path(userdata_path, logo_filename)
+
+            # print(f"DEBUG: App root: {app_root}")
+            # print(f"DEBUG: Userdata path: {userdata_path}")
+            # print(f"DEBUG: Full logo path: {logo_file}")
+            # print(f"DEBUG: File exists: {logo_file.exists()}")
+
             if logo_file.exists():
                 # Position logo in merged cell (0-12mm width, 20mm height)
-                pictures.add(str(logo_file), text_field_x + 1, text_field_y + 10)
-        except:
+                # print(f"DEBUG: Adding logo to CATIA at position ({text_field_x + 1}, {text_field_y + 10})")
+                logo_picture = pictures.add(logo_file, text_field_x + 1, text_field_y + 1)
+
+                # Set logo properties to maintain aspect ratio and fit in cell
+                logo_picture.ratio_lock = True
+                logo_picture.width = 31.0  # Max width for 12mm cell
+                logo_picture.height = 17.0
+
+                print(f"DEBUG: Logo added successfully with ratio_lock=True and width=10.0")
+            else:
+                print(f"DEBUG: Logo file not found at {logo_file}")
+        except Exception as e:
+            print(f"DEBUG: Error loading logo: {e}")
             pass  # Fail silently if logo can't be loaded
+    else:
+        print("DEBUG: No logo filename found in settings")
 
     # Cell 2: Created by (12-34mm in upper part)
     created_by_text = texts.add(translations.get('labels', {}).get('created_by', 'Created by'), text_field_x + 35, y_position_row2)

@@ -41,7 +41,8 @@ def create_default_settings(userdata_path: Path):
                 'PAGE': '1/1'
             },
             'sheet_names': ['Sheet.1', 'Sheet.2'],
-            'logo': 'autocatia-logo.jpg',
+            'logo': '',
+            'projection_method': 'PM_EU.jpg',
             'template_name': 'DT-001 A',
             'tolerances': {
                 ',X': '±1,5',
@@ -76,6 +77,7 @@ def create_default_settings(userdata_path: Path):
     with open(settings_file, 'w', encoding='utf-8') as f:
         json.dump(default_settings, f, indent=2, ensure_ascii=False)
     print(f"Created default settings at {settings_file}")
+
 
 def load_settings():
     """Load and merge settings from multiple sources"""

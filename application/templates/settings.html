@@ -96,12 +96,62 @@
             </h4>
             <div class="row">
                 <div class="col-md-6">
-                    <!-- Logo Path -->
+                    <!-- Projection Method Selection -->  
                     <div class="mb-3">
-                        <label for="logo_path" class="form-label">{{ lang_manager.t('pages.settings.logo_path', 'Firm Logo Image Path') }}</label>
-                        <input name="logo_path" type="text" class="form-control rounded-0"
-                               id="logo_path" value="{{ logo_path }}"
-                               placeholder="path/to/logo.jpg">
+                      <h5>{{ lang_manager.t('pages.settings.projection_method', 'Projection Method') }}</h5>
+                      <div class="row">
+                          <div class="col-md-6">
+                              <div class="card">
+                                  <div class="card-body text-center">
+                                      <img src="{{ url_for('static', filename='images/PM_EU.jpg') }}"
+                                           class="img-fluid mb-2" style="max-height: 100px;">
+                                      <div class="form-check">
+                                          <input class="form-check-input" type="radio"
+                                                 name="projection_method" id="projection_eu"
+                                                 value="PM_EU.jpg" {% if drawing_template.get('projection_method', 'PM_EU.jpg') == 'PM_EU.jpg' %}checked{% endif %}>
+                                          <label class="form-check-label" for="projection_eu">
+                                              {{ lang_manager.t('pages.settings.projection_method_eu', 'European Projection') }}
+                                          </label>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="col-md-6">
+                              <div class="card">
+                                  <div class="card-body text-center">
+                                      <img src="{{ url_for('static', filename='images/PM_US.jpg') }}"
+                                           class="img-fluid mb-2" style="max-height: 100px;">
+                                      <div class="form-check">
+                                          <input class="form-check-input" type="radio"
+                                                 name="projection_method" id="projection_us"
+                                                 value="PM_US.jpg" {% if drawing_template.get('projection_method', 'PM_EU.jpg') == 'PM_US.jpg' %}checked{% endif %}>
+                                          <label class="form-check-label" for="projection_us">
+                                              {{ lang_manager.t('pages.settings.projection_method_us', 'US Projection') }}
+                                          </label>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+                    <!-- Logo Path -->
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="formLogo" class="form-label">{{ lang_manager.t('pages.settings.logo_path', 'Company Logo') }}</label>
+                            <select name="LOGO_SELECT" class="form-control rounded-0" id="formLogo">
+                                <option value="">{{ lang_manager.t('pages.settings.no_image', 'No image') }}</option>
+                                {% for logo in available_logos %}
+                                <option value="{{ logo }}" {% if logo == current_logo %}selected{% endif %}>{{ logo }}</option>
+                                {% endfor %}
+                            </select>
+                            <small class="form-text text-muted">
+                                {% if current_logo %}
+                                    {{ lang_manager.t('pages.settings.current_logo', 'Current logo') }}: {{ current_logo }}
+                                {% else %}
+                                    {{ lang_manager.t('pages.settings.no_logo_selected', 'No logo selected') }}
+                                {% endif %}
+                            </small>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -111,15 +161,10 @@
         </div>
 
         <div class="text-center mt-4">
-            <button type="submit" class="btn btn-success rounded-1">{{ lang_manager.t('pages.settings.save_settings', 'Save Settings') }}</button>
+          <button type="submit" class="btn btn-light btn-sm border-white p-1 m-1 rounded-1"> {{ lang_manager.t('pages.settings.save_settings', 'Save Settings') }}
+          </button>
         </div>
     </form>
 
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-success mt-3">{{ lang_manager.t('pages.settings.saved_successfully', 'Settings saved successfully!') }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+
 {% endblock %}

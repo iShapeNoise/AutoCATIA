@@ -12,26 +12,30 @@ from .lines import update_line_properties
 
 def create_trimming_marks(sheet: DrawingSheet, paper_size_key: str):
     """
-    Create trimming marks at each corner according to ISO_5457 standards.
-
-    Pattern: l1=10mm, l2=5mm, l3=5mm, l4=5mm, l5=5mm, l6=10mm (connecting to l1)
+    Create trimming marks: 6 lines at each corner.
+    - 2 lines: 10mm from corner (0,0 offset)
+    - 2 lines: 5mm parallel to long lines with 10mm offset
+    - 2 lines: 5mm completing rectangle pattern at specific positions
+    One horizontal and one vertical for each set.
     """
+    from .background_view import get_background_view_and_factory
+    from application.pycatia_scripts.settings import iso_standards
+
     background_view, factory_2d, _ = get_background_view_and_factory(sheet)
     selection = sheet.application.active_document.selection
 
-    # Get sheet dimensions from ISO_216 (already loaded in settings)
-    from application.pycatia_scripts.settings import iso_standards
+    # Get sheet dimensions from ISO_216 (page size)
     sheet_dimensions = iso_standards['sheet_sizes'][paper_size_key][0]
     sheet_x, sheet_y = sheet_dimensions
 
-    # Get trimming mark dimensions from ISO_5457
-    if paper_size_key not in iso_5457:
-        return  # Skip if format not in ISO_5457
+    # Line lengths
+    long_line_length = 10.0
+    short_line_length = 5.0
+    offset = 10.0  # 10mm offset for short lines
 
-    trimming_marks = iso_5457[paper_size_key]['trimming_marks_mm']
-    l1, l2 = trimming_marks  # l1=10mm, l2=5mm
+    all_lines = []
 
-    # Create trimming marks at each corner
+    # Define corners and create lines
     corners = [
         (0, 0),  # Bottom-left
         (sheet_x, 0),  # Bottom-right
@@ -39,50 +43,75 @@ def create_trimming_marks(sheet: DrawingSheet, paper_size_key: str):
         (0, sheet_y)  # Top-left
     ]
 
-    all_lines = []
-
     for corner_x, corner_y in corners:
-        # Create L-shaped trimming mark pattern
         if corner_x == 0 and corner_y == 0:  # Bottom-left
-            # Horizontal line (l1)
-            line1 = factory_2d.create_line(corner_x, corner_y, corner_x + l1, corner_y)
-            # Vertical line (l1)
-            line2 = factory_2d.create_line(corner_x, corner_y, corner_x, corner_y + l1)
-            # Inner lines (l2 segments)
-            line3 = factory_2d.create_line(corner_x + l1, corner_y, corner_x + l1 + l2, corner_y)
-            line4 = factory_2d.create_line(corner_x, corner_y + l1, corner_x, corner_y + l1 + l2)
+            # Long lines (10mm from corner) - keep as is
+            long_h = factory_2d.create_line(corner_x, corner_y, corner_x + long_line_length, corner_y)
+            long_v = factory_2d.create_line(corner_x, corner_y, corner_x, corner_y + long_line_length)
+
+            # Short parallel lines (10mm offset from corner) - keep as is
+            short_h = factory_2d.create_line(corner_x, corner_y + offset, corner_x + short_line_length, corner_y + offset)
+            short_v = factory_2d.create_line(corner_x + offset, corner_y, corner_x + offset, corner_y + short_line_length)
+
+            # Rectangle completing lines - position at (5, 5)
+            start_x = 5.0
+            start_y = 5.0
+            rect_h = factory_2d.create_line(start_x, start_y, start_x + short_line_length, start_y)
+            rect_v = factory_2d.create_line(start_x, start_y, start_x, start_y + short_line_length)
 
         elif corner_x == sheet_x and corner_y == 0:  # Bottom-right
-            # Horizontal line (l1) going left
-            line1 = factory_2d.create_line(corner_x, corner_y, corner_x - l1, corner_y)
-            # Vertical line (l1)
-            line2 = factory_2d.create_line(corner_x, corner_y, corner_x, corner_y + l1)
-            # Inner lines
-            line3 = factory_2d.create_line(corner_x - l1, corner_y, corner_x - l1 - l2, corner_y)
-            line4 = factory_2d.create_line(corner_x, corner_y + l1, corner_x, corner_y + l1 + l2)
+            # Long lines (10mm from corner) - keep as is
+            long_h = factory_2d.create_line(corner_x, corner_y, corner_x - long_line_length, corner_y)
+            long_v = factory_2d.create_line(corner_x, corner_y, corner_x, corner_y + long_line_length)
+
+            # Short parallel lines (10mm offset from corner) - keep as is
+            short_h = factory_2d.create_line(corner_x, corner_y + offset, corner_x - short_line_length, corner_y + offset)
+            short_v = factory_2d.create_line(corner_x - offset, corner_y, corner_x - offset, corner_y + short_line_length)
+
+            # Rectangle completing lines - position at (sheet_x - 5, 5)
+            start_x = sheet_x - 5.0
+            start_y = 5.0
+            rect_h = factory_2d.create_line(start_x, start_y, start_x - short_line_length, start_y)
+            rect_v = factory_2d.create_line(start_x, start_y, start_x, start_y + short_line_length)
 
         elif corner_x == sheet_x and corner_y == sheet_y:  # Top-right
-            # Horizontal line (l1) going left
-            line1 = factory_2d.create_line(corner_x, corner_y, corner_x - l1, corner_y)
-            # Vertical line (l1) going down
-            line2 = factory_2d.create_line(corner_x, corner_y, corner_x, corner_y - l1)
-            # Inner lines
-            line3 = factory_2d.create_line(corner_x - l1, corner_y, corner_x - l1 - l2, corner_y)
-            line4 = factory_2d.create_line(corner_x, corner_y - l1, corner_x, corner_y - l1 - l2)
+            # Long lines (10mm from corner) - keep as is
+            long_h = factory_2d.create_line(corner_x, corner_y, corner_x - long_line_length, corner_y)
+            long_v = factory_2d.create_line(corner_x, corner_y, corner_x, corner_y - long_line_length)
+
+            # Short parallel lines (10mm offset from corner) - keep as is
+            short_h = factory_2d.create_line(corner_x, corner_y - offset, corner_x - short_line_length, corner_y - offset)
+            short_v = factory_2d.create_line(corner_x - offset, corner_y, corner_x - offset, corner_y - short_line_length)
+
+            # Rectangle completing lines - position at (sheet_x - 5, sheet_y - 5)
+            start_x = sheet_x - 5.0
+            start_y = sheet_y - 5.0
+            rect_h = factory_2d.create_line(start_x, start_y, start_x - short_line_length, start_y)
+            rect_v = factory_2d.create_line(start_x, start_y, start_x, start_y - short_line_length)
 
         else:  # Top-left
-            # Horizontal line (l1)
-            line1 = factory_2d.create_line(corner_x, corner_y, corner_x + l1, corner_y)
-            # Vertical line (l1) going down
-            line2 = factory_2d.create_line(corner_x, corner_y, corner_x, corner_y - l1)
-            # Inner lines
-            line3 = factory_2d.create_line(corner_x + l1, corner_y, corner_x + l1 + l2, corner_y)
-            line4 = factory_2d.create_line(corner_x, corner_y - l1, corner_x, corner_y - l1 - l2)
+            # Long lines (10mm from corner) - keep as is
+            long_h = factory_2d.create_line(corner_x, corner_y, corner_x + long_line_length, corner_y)
+            long_v = factory_2d.create_line(corner_x, corner_y, corner_x, corner_y - long_line_length)
 
-        all_lines.extend([line1, line2, line3, line4])
+            # Short parallel lines (10mm offset from corner) - keep as is
+            short_h = factory_2d.create_line(corner_x, corner_y - offset, corner_x + short_line_length, corner_y - offset)
+            short_v = factory_2d.create_line(corner_x + offset, corner_y, corner_x + offset, corner_y - short_line_length)
 
-    # Apply line properties using existing utility
-    update_line_properties(all_lines, selection, line_width=0)
+            # Rectangle completing lines - position at (5, 292)
+            start_x = 5.0
+            start_y = sheet_y - 5.0
+            rect_h = factory_2d.create_line(start_x, start_y, start_x + short_line_length, start_y)
+            rect_v = factory_2d.create_line(start_x, start_y, start_x, start_y - short_line_length)
+
+        all_lines.extend([long_h, long_v, short_h, short_v, rect_h, rect_v])
+
+    # Apply inner frame line thickness (0.7mm = value 3)
+    selection.clear()
+    for line in all_lines:
+        selection.add(line)
+    vp = selection.vis_properties
+    vp.set_real_width(1, 0)  # 0.7mm thickness (same as inner frame) [1](#26-0)
 
 
 def create_frame_lines(sheet: DrawingSheet, paper_size_key: str):
@@ -185,8 +214,11 @@ def create_frame_lines(sheet: DrawingSheet, paper_size_key: str):
     # Create the reference grid
     create_drawing_grid(sheet, sheet_x, sheet_y, paper_size_key)
 
+    # Add grid reference letters and numbers
+    add_grid_references(sheet, sheet_x, sheet_y, paper_size_key)
+
     # Create trimming marks on each corner
-    #create_trimming_marks(sheet, paper_size_key)
+    create_trimming_marks(sheet, paper_size_key)
 
 
 def create_drawing_grid(sheet: DrawingSheet, sheet_x: float, sheet_y: float, paper_size_key: str):
@@ -260,3 +292,110 @@ def create_drawing_grid(sheet: DrawingSheet, sheet_x: float, sheet_y: float, pap
         selection.add(line)
     vp = selection.vis_properties
     vp.set_real_width(2, 0)  # 0.35mm thickness
+
+
+def add_grid_references(sheet: DrawingSheet, sheet_x: float, sheet_y: float, paper_size_key: str):
+    """
+    Add alphanumeric grid references (letters and numbers) to the cells
+    between inner and outer frame borders according to ISO 5457
+    """
+    from .background_view import get_background_view_and_factory
+    from pycatia.enumeration.enumeration_types import cat_text_anchor_position
+    from application.pycatia_scripts.settings import iso_5457
+
+    background_view, factory_2d, main_view = get_background_view_and_factory(sheet)
+    texts = background_view.texts
+
+    # Get grid reference configuration
+    grid_config = iso_5457[paper_size_key]['grid_reference']
+    fields_x, fields_y = grid_config['fields']
+
+    # Get the SAME grid spacing that create_drawing_grid() uses
+    grid_spacing = iso_5457['grid_spacing_mm'].get(paper_size_key, {'x': 50, 'y': 47.833})
+    spacing_x = grid_spacing['x']
+    spacing_y = grid_spacing['y']
+
+    # Get frame coordinates (same logic as create_drawing_grid)
+    is_a4_landscape = paper_size_key == 'A4-landscape'
+
+    if is_a4_landscape:
+        outer_x1 = 5
+        outer_x2 = sheet_x - 5
+        outer_y1 = sheet_y - 15
+        outer_y2 = 5
+        inner_x1 = 10
+        inner_x2 = sheet_x - 10
+        inner_y1 = sheet_y - 20
+        inner_y2 = 10
+    else:
+        outer_x1 = 15
+        outer_x2 = sheet_x - 5
+        outer_y1 = sheet_y - 5
+        outer_y2 = 5
+        inner_x1 = 20
+        inner_x2 = sheet_x - 10
+        inner_y1 = sheet_y - 10
+        inner_y2 = 10
+
+    # Font settings
+    fnt_size = 2.5
+    center_anchor = cat_text_anchor_position.index('catMiddleCenter')
+
+    # Generate letters (excluding I, O)
+    letters = []
+    for i in range(fields_x):
+        char_code = ord('A') + i
+        if char_code >= ord('I'):
+            char_code += 1  # Skip I
+        if char_code >= ord('O'):
+            char_code += 1  # Skip O
+        letters.append(chr(char_code))
+
+    # Add letters to top and bottom horizontal bands
+    # Use the SAME positioning logic as the grid lines
+    x = outer_x1
+    for i, letter in enumerate(letters):
+        if x >= outer_x2:
+            break
+
+        # Position at center of each grid cell
+        x_pos = x + (spacing_x / 2)
+
+        # Top band
+        y_top = (outer_y1 + inner_y1) / 2
+        text_top = texts.add(letter, x_pos, y_top)
+        text_top.anchor_position = center_anchor
+        text_top.text_properties.font_size = fnt_size
+        text_top.text_properties.update()
+
+        # Bottom band
+        y_bottom = (outer_y2 + inner_y2) / 2
+        text_bottom = texts.add(letter, x_pos, y_bottom)
+        text_bottom.anchor_position = center_anchor
+        text_bottom.text_properties.font_size = fnt_size
+        text_bottom.text_properties.update()
+
+        x += spacing_x
+
+    # Add numbers to left and right vertical bands
+    # Start from TOP and align with actual grid cells
+    y = outer_y1 - (spacing_y / 2)  # Start at center of first cell
+    for i in range(1, fields_y + 1):
+        if y < outer_y2 + (spacing_y / 2):
+            break
+
+        # Left band
+        x_left = (outer_x1 + inner_x1) / 2
+        text_left = texts.add(str(i), x_left, y)
+        text_left.anchor_position = center_anchor
+        text_left.text_properties.font_size = fnt_size
+        text_left.text_properties.update()
+
+        # Right band
+        x_right = (outer_x2 + inner_x2) / 2
+        text_right = texts.add(str(i), x_right, y)
+        text_right.anchor_position = center_anchor
+        text_right.text_properties.font_size = fnt_size
+        text_right.text_properties.update()
+
+        y -= spacing_y  # Move to next cell center

@@ -18,6 +18,7 @@
       "bounding_box": "Begrenzungsrahmen erstellen",
       "export_points": "Punkte exportieren",
       "import_points": "Punkte importieren",
+      "points": "Punkte",
       "points_export_desc": "Exportieren der Punktkoordinaten aller Punkte im geometrischen Set",
       "points_import_desc": "Punkte aus der bereitgestellten CSV importieren und zum geometrischen Set hinzufügen",
       "geometric_set": "Geometrisches Set",
@@ -27,15 +28,17 @@
     },
     "product": {
       "new_product": "Neues Produkt erstellen",
-      "reorder_tree": "Baum neu ordnen",
+      "reorder_product_tree": "Baum neu ordnen",
       "renumber_instances": "Instanzen neu nummerieren",
-      "edit_properties": "Produkteigenschaften bearbeiten",
+      "edit_product_properties": "Produkteigenschaften bearbeiten",
       "product_tools": "Produktwerkzeuge",
       "reorder_desc": "Alphanumerische Sortierung von Produkten innerhalb eines Produkts",
       "renumber_desc": "Neunummerierung der untergeordneten Instanzen des aktuell geöffneten Produkts",
       "edit_attributes_desc": "Attribute des Produkts bearbeiten"
     },
     "drawing": {
+      "new": "Neue Zeichnung",
+      "add_page": "Seite hinzufügen",
       "edit_template": "Zeichnungsvorlage bearbeiten",
       "views": "Ansichten",
       "save_as": "Speichern unter",
@@ -84,7 +87,13 @@
       "logo_placeholder": "Logo-Dateipfad eingeben",
       "save_settings": "Einstellungen speichern",
       "saved_successfully": "Einstellungen erfolgreich gespeichert!",
-      "no_options": "Noch keine Optionen verfügbar"
+      "no_options": "Noch keine Optionen verfügbar",
+      "no_image": "Ohne Logo",
+      "current_logo": "Firmen Logo",
+      "no_logo_selected": "Kein Logo gewählt",
+      "projection_method": "Projektionsmethode",
+      "projection_method_eu": "Europäische Projektion",
+      "projection_method_us": "US-Projektion"
     }
   },
   "common": {
