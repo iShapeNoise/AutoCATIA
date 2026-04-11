@@ -1,0 +1,125 @@
+<!-- Add JavaScript for auto-date and format detection -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-fill date with current month/year
+    const dateField = document.getElementById('formDate');
+    if (dateField && !dateField.value) {
+        const today = new Date();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const year = today.getFullYear();
+        dateField.value = `${day}/${month}/${year}`;
+    }
+
+    // Auto-fill format based on current drawing
+    const formatField = document.getElementById('formFormat');
+    if (formatField && !formatField.value) {
+        formatField.value = 'A4';
+    }
+});
+</script>
+
+<form>
+    <!-- Row 1: Scale, Document Type -->
+    <div class="row mb-3">
+        <div class="col">
+            <label for="formScale" class="form-label">{{ lang_manager.t('labels.scale', 'Scale') }}</label>
+            <input name="SCALE" type="text" class="form-control rounded-0" id="formScale"
+                   value="{{ parameters.get('SCALE', '1:1') }}">
+            <small class="form-text text-muted">{{ lang_manager.t('pages.drawing.scale_help', 'Scale ratio for the drawing') }}</small>
+        </div>
+        <div class="col">
+            <label for="formDocumentType" class="form-label">{{ lang_manager.t('labels.document_type', 'Document Type') }}</label>
+            <input name="DOCUMENT-TYPE" type="text" class="form-control rounded-0" id="formDocumentType"
+                   value="{{ parameters.get('DOCUMENT-TYPE', '') }}">
+        </div>
+    </div>
+
+    <!-- Row 2: Created By, Approved By -->
+    <div class="row mb-3">
+        <div class="col">
+            <label for="formCreatedBy" class="form-label">{{ lang_manager.t('labels.created_by', 'Created By') }}</label>
+            <input name="CREATED-BY" type="text" class="form-control rounded-0" id="formCreatedBy"
+                   value="{{ parameters.get('CREATED-BY', '') }}">
+        </div>
+        <div class="col">
+            <label for="formApprovedBy" class="form-label">{{ lang_manager.t('labels.approved_by', 'Approved By') }}</label>
+            <input name="APPROVED-BY" type="text" class="form-control rounded-0" id="formApprovedBy"
+                   value="{{ parameters.get('APPROVED-BY', '') }}">
+        </div>
+    </div>
+
+    <!-- Row 3: Title, Extra Title -->
+    <div class="row mb-3">
+        <div class="col">
+            <label for="formTitle" class="form-label">{{ lang_manager.t('labels.title', 'Title') }}</label>
+            <input name="TITLE" type="text" class="form-control rounded-0" id="formTitle"
+                   value="{{ parameters.get('TITLE', '') }}">
+        </div>
+        <div class="col">
+            <label for="formExtraTitle" class="form-label">{{ lang_manager.t('labels.extra_title', 'Extra Title') }}</label>
+            <input name="EXTRA-TITLE" type="text" class="form-control rounded-0" id="formExtraTitle"
+                   value="{{ parameters.get('EXTRA-TITLE', '') }}">
+        </div>
+    </div>
+
+    <!-- Row 4: Number, Material -->
+    <div class="row mb-3">
+        <div class="col">
+            <label for="formNumber" class="form-label">{{ lang_manager.t('labels.number', 'Number') }}</label>
+            <input name="NUMBER" type="text" class="form-control rounded-0" id="formNumber"
+                   value="{{ parameters.get('NUMBER', '') }}">
+        </div>
+        <div class="col">
+            <label for="formMaterial" class="form-label">{{ lang_manager.t('labels.material', 'Material') }}</label>
+            <input name="MATERIAL" type="text" class="form-control rounded-0" id="formMaterial"
+                   value="{{ parameters.get('MATERIAL', '') }}">
+        </div>
+    </div>
+
+    <!-- Row 5: Blank, Revision -->
+    <div class="row mb-3">
+        <div class="col">
+            <label for="formBlank" class="form-label">{{ lang_manager.t('labels.blank', 'Blank') }}</label>
+            <input name="BLANK" type="text" class="form-control rounded-0" id="formBlank"
+                   value="{{ parameters.get('BLANK', '') }}">
+        </div>
+        <div class="col">
+            <label for="formRevision" class="form-label">{{ lang_manager.t('labels.revision', 'Revision') }}</label>
+            <input name="REVISION" type="text" class="form-control rounded-0" id="formRevision"
+                   value="{{ parameters.get('REVISION', '') }}">
+        </div>
+    </div>
+
+    <!-- Row 6: Date, Format -->
+    <div class="row mb-3">
+        <div class="col">
+            <label for="formDate" class="form-label">{{ lang_manager.t('labels.release_date', 'Release Date') }}</label>
+            <input name="DATE" type="text" class="form-control rounded-0" id="formDate"
+                   value="{{ parameters.get('DATE', '') }}" placeholder="DD/MM/YYYY">
+            <small class="form-text text-muted">{{ lang_manager.t('pages.drawing.date_help', 'Auto-filled with current month/year, but editable') }}</small>
+        </div>
+        <div class="col">
+            <label for="formFormat" class="form-label">{{ lang_manager.t('labels.format', 'Format') }}</label>
+            <input name="FORMAT" type="text" class="form-control rounded-0" id="formFormat"
+                   value="{{ parameters.get('FORMAT', '') }}" readonly>
+            <small class="form-text text-muted">{{ lang_manager.t('pages.drawing.format_help', 'Automatically set based on template size (A4, A3, A2, A1)') }}</small>
+        </div>
+    </div>
+
+    <!-- Row 7: Page -->
+    <div class="row mb-3">
+        <div class="col">
+            <label for="formPage" class="form-label">{{ lang_manager.t('labels.page', 'Page') }}</label>
+            <input name="PAGE" type="text" class="form-control rounded-0" id="formPage"
+                   value="{{ parameters.get('PAGE', '1/1') }}" readonly>
+            <small class="form-text text-muted">{{ lang_manager.t('pages.drawing.page_help', 'Page number will update when pages are added') }}</small>
+        </div>
+        <div class="col">
+            <!-- Empty column for layout balance -->
+        </div>
+    </div>
+</form>
+
+<div id="template">
+    {% include('partials/spinner.html') %}
+</div>

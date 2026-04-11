@@ -1,8 +1,11 @@
 <!-- {{ self._TemplateReference__context.name }} -->
 {% include('partials/spinner.html') %}
 
-<p class="alert alert-danger mt-2" id="output">
+{% if settings.notifications.enabled %}
+<p class="alert alert-danger mt-2" id="output"
+   style="animation: fadeOut {{ settings.notifications.visibility_seconds }}s forwards;">
     {% for error in errors %}
     {{ error }}<br>
     {% endfor %}
 </p>
+{% endif %}

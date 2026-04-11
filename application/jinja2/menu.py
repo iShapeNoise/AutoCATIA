@@ -61,10 +61,6 @@ with app.app_context():
                 'title': 'pages.drawing.add_page'
             },
             {
-                'url': url_for('drawing_insert_template'),
-                'title': 'pages.drawing.edit_template'
-            },
-            {
                 'url': url_for('drawing_views'),
                 'title': 'pages.drawing.views'
             },

@@ -73,14 +73,5 @@ def drawing_save_as_dxf():
 @app.route('/drawing/insert_template')
 @catia_v5_required
 def drawing_insert_template():
-    """Load and display the Edit Template form with saved values"""
-    from application.pycatia_scripts.settings import load_settings
-
-    # Load settings using JSON
-    settings_data = load_settings()
-    parameters = settings_data.get('drawing_template', {}).get('parameters', {})
-
-    return render_template(
-        'drawing_template.html',
-        parameters=parameters
-    )
+    """Redirect to Settings page for template editing"""
+    return redirect(url_for('settings') + '#drawing')

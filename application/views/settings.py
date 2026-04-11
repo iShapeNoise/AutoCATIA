@@ -40,33 +40,76 @@ def settings():
     available_logos.sort()  # Sort alphabetically
 
     if request.method == 'POST':
-        # Handle logo selection from dropdown
-        selected_logo = request.form.get('LOGO_SELECT', '')
+        # Debug: Print all form data
+        print(f"DEBUG: Form data received: {dict(request.form)}")
 
-        # Handle projection method selection
-        projection_method = request.form.get('projection_method', 'PM_EU.jpg')
+        try:
+            # Handle logo selection from dropdown
+            selected_logo = request.form.get('LOGO_SELECT', '')
 
-        # Update drawing template settings
-        if 'drawing_template' not in settings_data:
-            settings_data['drawing_template'] = {}
+            # Handle projection method selection
+            projection_method = request.form.get('projection_method', 'PM_EU.jpg')
 
-        settings_data['drawing_template']['logo'] = selected_logo
-        settings_data['drawing_template']['projection_method'] = projection_method
+            # Update drawing template settings
+            if 'drawing_template' not in settings_data:
+                settings_data['drawing_template'] = {}
 
-        # Handle other form fields (language, etc.)
-        language = request.form.get('LANGUAGE', '')
-        if language:
-            settings_data['language'] = language
+            settings_data['drawing_template']['logo'] = selected_logo
+            settings_data['drawing_template']['projection_method'] = projection_method
 
-        # Save settings
-        with open(settings_path, 'w', encoding='utf-8') as f:
-            json.dump(settings_data, f, indent=2, ensure_ascii=False)
+            # Handle language setting
+            language = request.form.get('LANGUAGE', '')
+            if language:
+                settings_data['language'] = language
 
-        flash(lang_manager.t('pages.settings.saved_successfully', 'Settings saved successfully!'), 'success')
-        return redirect(url_for('settings'))
+            # Handle theme setting
+            theme = request.form.get('THEME', 'dark')
+            if theme:
+                settings_data['ui_theme'] = theme
+
+            # Handle notification settings
+            notifications_enabled = request.form.get('notifications_enabled') == 'on'
+            visibility_seconds = int(request.form.get('visibility_seconds', 2))
+
+            if 'notifications' not in settings_data:
+                settings_data['notifications'] = {}
+
+            settings_data['notifications']['enabled'] = notifications_enabled
+            settings_data['notifications']['visibility_seconds'] = visibility_seconds
+
+            # Handle drawing template parameters
+            if 'parameters' not in settings_data['drawing_template']:
+                settings_data['drawing_template']['parameters'] = {}
+
+            template_params = [
+                'SCALE', 'DOCUMENT-TYPE', 'CREATED-BY', 'APPROVED-BY',
+                'TITLE', 'EXTRA-TITLE', 'NUMBER', 'MATERIAL', 'BLANK',
+                'REVISION', 'DATE', 'FORMAT', 'PAGE'
+            ]
+
+            for param in template_params:
+                value = request.form.get(param, '')
+                settings_data['drawing_template']['parameters'][param] = value
+
+            # Save settings
+            with open(settings_path, 'w', encoding='utf-8') as f:
+                json.dump(settings_data, f, indent=2, ensure_ascii=False)
+
+            flash(lang_manager.t('pages.settings.changes_saved', 'Changes saved in /userdata/settings'), 'success')
+            return redirect(url_for('settings'))
+
+        except Exception as e:
+            print(f"DEBUG: Error saving settings: {e}")
+            flash(lang_manager.t('pages.settings.save_error', f'Error saving settings: {e}'), 'danger')
+            return redirect(url_for('settings'))
+
+    # Extract parameters for the drawing template form
+    parameters = drawing_template.get('parameters', {})
 
     return render_template('settings.html',
                          current_logo=current_logo,
                          current_projection_method=current_projection_method,
                          available_logos=available_logos,
-                         drawing_template=drawing_template)
+                         drawing_template=drawing_template,
+                         parameters=parameters,
+                         settings=settings_data)

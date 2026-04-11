@@ -27,3 +27,8 @@ app.jinja_env.globals.update(
     render_menu_header=render_menu_header,
     lang_manager=lang_manager,
 )
+
+@app.context_processor
+def inject_settings():
+    from application.pycatia_scripts.settings import load_settings
+    return dict(settings=load_settings())

@@ -19,7 +19,7 @@ class LanguageManager:
         # If not in session, try to load from settings file
         try:
             app_root = Path(__file__).parent.parent.parent
-            settings_path = Path(app_root, 'userdata', 'settings.json')
+            settings_path = Path(app_root, 'userdata', 'settings')
             if settings_path.exists():
                 with open(settings_path, 'r') as f:
                     settings_data = json.load(f)

@@ -1,12 +1,13 @@
 <!-- {{ self._TemplateReference__context.name }} -->
 {% include('partials/spinner.html') %}
 
-<div class="alert alert-success mt-2" id="output">
+{% if settings.notifications.enabled %}
+<div class="alert alert-success mt-2" id="output"
+     style="animation: fadeOut {{ settings.notifications.visibility_seconds }}s forwards;">
     {% if data is mapping %}
-
         <ul>
             {% for item in data %}
-                    <li>{{ item }}</li>
+                <li>{{ item }}</li>
                 {% if data[item] is iterable %}
                     <ul>
                     {% for item_1 in data[item] %}
@@ -16,10 +17,8 @@
                 {% endif %}
             {% endfor %}
         </ul>
-
     {% else %}
-
         {{ data }}
-
     {% endif %}
 </div>
+{% endif %}

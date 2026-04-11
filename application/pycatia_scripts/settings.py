@@ -70,6 +70,10 @@ def create_default_settings(userdata_path: Path):
         'drawing': {
             'pdf': {'exclude_sheets': ['Details', 'DXF']},
             'dxf': {'include_sheets': ['DXF']}
+        },
+        'notifications': {
+            'enabled': False,
+            'visibility_seconds': 2
         }
     }
 
@@ -116,6 +120,10 @@ def load_settings():
 
     if iso_5457_data:
         settings_data['iso_5457'] = iso_5457_data
+
+    # Ensure notifications structure exists  
+    if 'notifications' not in settings_data:
+        settings_data['notifications'] = {'enabled': False, 'visibility_seconds': 2}
 
     return settings_data
 
