@@ -15,7 +15,11 @@ body {
 }
 
 .btn-fixed-width {
-  width: 100px; /* Fixed width (ignores text length) */
+    width: 100px; /* Fixed width (ignores text length) */
+}
+
+.bg-theme-aware {
+    background-color: var(--bs-tertiary-bg) !important;
 }
 
 .pytitle {

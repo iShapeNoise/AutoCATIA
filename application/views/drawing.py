@@ -22,12 +22,35 @@ def drawing_new():
     return render_template('drawing_new.html')
 
 
-@app.route('/drawing/add_page')
+@app.route('/drawing/edit_page')
 @catia_v5_required
-def drawing_add_page():
-    from application.views.htmx.drawing_htmx import add_page
-    return render_template('drawing_add_page.html')
+def drawing_edit_page():
+    from application.pycatia_scripts.the_document import PTDrawingDocument
+    from application.pycatia_scripts.com_objects import get_app_object
 
+    # Get CATIA application
+    application = get_app_object()
+    if not application:
+        return render_template('drawing_edit_page.html',
+                             error="CATIA application is not running")
+
+    # Get drawing document details
+    try:
+        pt_drawing = PTDrawingDocument()
+        if not pt_drawing.is_drawing_document():
+            return render_template('drawing_edit_page.html',
+                                 error="No active drawing document")
+
+        details = pt_drawing.details
+        sheets = list(details.get('sheets', {}).keys())
+
+        return render_template('drawing_edit_page.html',
+                             sheets=sheets,
+                             file_name=details.get('file_name', ''))
+
+    except Exception as e:
+        return render_template('drawing_edit_page.html',
+                             error=f"Error getting drawing details: {str(e)}")
 
 @app.route('/drawing/views')
 @catia_v5_required

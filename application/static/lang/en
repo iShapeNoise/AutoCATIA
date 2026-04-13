@@ -38,7 +38,10 @@
     },
     "drawing": {
       "new": "New Drawing",
-      "add_page": "Edit Page",
+      "edit_page": "Edit Page",
+      "update_pages": "Update Pages",
+      "select_page": "Select Page",
+      "add_page": "Add Page",
       "views": "Edit Views",
       "save_as": "Save As",
       "view_locks": "View Locks",

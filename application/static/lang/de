@@ -38,7 +38,10 @@
     },
     "drawing": {
       "new": "Neue Zeichnung",
-      "add_page": "Seite bearbeiten",
+      "edit_page": "Blatt bearbeiten",
+      "update_pages": "Update Blatt",
+      "select_page": "Wähle ein Blatt",
+      "add_page": "Addiere Blatt",
       "views": "Ansichten bearbeiten",
       "save_as": "Speichern unter",
       "view_locks": "Ansichtssperren",

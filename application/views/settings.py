@@ -6,6 +6,7 @@ from application.views.view_wrappers import catia_v5_required
 from application.pycatia_scripts.language import lang_manager
 from application.views.url_prefixes import htmx
 from application.pycatia_scripts.settings import load_settings
+from flask import render_template, request, redirect, url_for, flash, session
 import os
 from werkzeug.utils import secure_filename
 
@@ -58,9 +59,12 @@ def settings():
             settings_data['drawing_template']['projection_method'] = projection_method
 
             # Handle language setting
-            language = request.form.get('LANGUAGE', '')
+            language = request.form.get('LANGUAGE', 'en')
             if language:
                 settings_data['language'] = language
+                # Clear session to force LanguageManager to read from settings
+                session.pop('language', None)
+
 
             # Handle theme setting
             theme = request.form.get('THEME', 'dark')

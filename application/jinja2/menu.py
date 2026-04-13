@@ -57,8 +57,8 @@ with app.app_context():
                 'title': 'pages.drawing.new_drawing'
             },
             {
-                'url': url_for('drawing_add_page'),
-                'title': 'pages.drawing.add_page'
+                'url': url_for('drawing_edit_page'),
+                'title': 'pages.drawing.edit_page'
             },
             {
                 'url': url_for('drawing_views'),

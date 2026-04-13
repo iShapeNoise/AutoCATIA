@@ -40,7 +40,6 @@ def create_default_settings(userdata_path: Path):
                 'FORMAT': '',
                 'PAGE': '1/1'
             },
-            'sheet_names': ['Sheet.1', 'Sheet.2'],
             'logo': '',
             'projection_method': 'PM_EU.jpg',
             'template_name': 'DT-001 A',
@@ -121,7 +120,7 @@ def load_settings():
     if iso_5457_data:
         settings_data['iso_5457'] = iso_5457_data
 
-    # Ensure notifications structure exists  
+    # Ensure notifications structure exists
     if 'notifications' not in settings_data:
         settings_data['notifications'] = {'enabled': False, 'visibility_seconds': 2}
 
