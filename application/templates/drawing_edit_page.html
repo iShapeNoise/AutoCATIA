@@ -17,7 +17,7 @@
                   <label for="page_select" class="form-label">Select Page</label>
                   <select class="form-select" id="page_select" name="selected_page">
                       {% if sheets %}
-                          {% for sheet in sheets %}  
+                          {% for sheet in sheets %}
                               <option value="{{ sheet }}">{{ sheet }}</option>
                           {% endfor %}
                       {% else %}
@@ -35,12 +35,11 @@
             <div class="row g-3">
                 <!-- A4 Portrait -->
                 <div class="col-6 col-lg-3">
-                    <a href="/htmx/drawing/add_page/a4_portrait"
-                       class="text-decoration-none thumbnail-link"
-                       hx-post="/htmx/drawing/add_page/a4_portrait"
-                       hx-target="#drawing_result"
-                       hx-swap="innerHtml"
-                       hx-indicator="#drawing_result">
+                    <button type="button"
+                            class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
+                            data-bs-toggle="modal"
+                            data-bs-target="#pageInfoModal"
+                            data-format="a4_portrait">
                         <div class="card h-100 border-dark">
                             <div class="card-img-container">
                                 <img src="{{ url_for('static', filename='images/A4_Portrait_thumb.png') }}"
@@ -51,17 +50,16 @@
                                 <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a4_portrait', 'A4 Portrait') }}</h6>
                             </div>
                         </div>
-                    </a>
+                    </button>
                 </div>
 
                 <!-- A4 Landscape -->
                 <div class="col-6 col-lg-3">
-                    <a href="/htmx/drawing/add_page/a4_landscape"
-                       class="text-decoration-none thumbnail-link"
-                       hx-post="/htmx/drawing/add_page/a4_landscape"
-                       hx-target="#drawing_result"
-                       hx-swap="innerHtml"
-                       hx-indicator="#drawing_result">
+                    <button type="button"
+                            class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
+                            data-bs-toggle="modal"
+                            data-bs-target="#pageInfoModal"
+                            data-format="a4_landscape">
                         <div class="card h-100 border-dark">
                             <div class="card-img-container">
                                 <img src="{{ url_for('static', filename='images/A4_Landscape_thumb.png') }}"
@@ -72,17 +70,16 @@
                                 <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a4_landscape', 'A4 Landscape') }}</h6>
                             </div>
                         </div>
-                    </a>
+                    </button>
                 </div>
 
                 <!-- A3 -->
                 <div class="col-6 col-lg-3">
-                    <a href="/htmx/drawing/add_page/a3"
-                       class="text-decoration-none thumbnail-link"
-                       hx-post="/htmx/drawing/add_page/a3"
-                       hx-target="#drawing_result"
-                       hx-swap="innerHtml"
-                       hx-indicator="#drawing_result">
+                    <button type="button"
+                            class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
+                            data-bs-toggle="modal"
+                            data-bs-target="#pageInfoModal"
+                            data-format="a3">
                         <div class="card h-100 border-dark">
                             <div class="card-img-container">
                                 <img src="{{ url_for('static', filename='images/A3_Landscape_thumb.png') }}"
@@ -93,17 +90,16 @@
                                 <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a3', 'A3') }}</h6>
                             </div>
                         </div>
-                    </a>
+                    </button>
                 </div>
 
                 <!-- A2 -->
                 <div class="col-6 col-lg-3">
-                    <a href="/htmx/drawing/add_page/a2"
-                       class="text-decoration-none thumbnail-link"
-                       hx-post="/htmx/drawing/add_page/a2"
-                       hx-target="#drawing_result"
-                       hx-swap="innerHtml"
-                       hx-indicator="#drawing_result">
+                    <button type="button"
+                            class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
+                            data-bs-toggle="modal"
+                            data-bs-target="#pageInfoModal"
+                            data-format="a2">
                         <div class="card h-100 border-dark">
                             <div class="card-img-container">
                                 <img src="{{ url_for('static', filename='images/A2_Landscape_thumb.png') }}"
@@ -114,17 +110,16 @@
                                 <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a2', 'A2') }}</h6>
                             </div>
                         </div>
-                    </a>
+                    </button>
                 </div>
 
                 <!-- A1 -->
                 <div class="col-6 col-lg-3">
-                    <a href="/htmx/drawing/add_page/a1"
-                       class="text-decoration-none thumbnail-link"
-                       hx-post="/htmx/drawing/add_page/a1"
-                       hx-target="#drawing_result"
-                       hx-swap="innerHtml"
-                       hx-indicator="#drawing_result">
+                    <button type="button"
+                            class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
+                            data-bs-toggle="modal"
+                            data-bs-target="#pageInfoModal"
+                            data-format="a1">
                         <div class="card h-100 border-dark">
                             <div class="card-img-container">
                                 <img src="{{ url_for('static', filename='images/A1_Landscape_thumb.png') }}"
@@ -135,7 +130,7 @@
                                 <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a1', 'A1') }}</h6>
                             </div>
                         </div>
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -143,51 +138,75 @@
         <div id="drawing_result" class="mt-3">
             {% include('partials/spinner.html') %}
         </div>
+    </div>
 
+    <!-- Page Information Modal -->
+    {% include('partials/page_info_modal.html') %}
 
-    <style>
-        .thumbnail-link {
-            text-decoration: none;
-            color: inherit;
+    <script>
+        // Debug function to log form data
+        function debugLog(message, data = null) {
+            console.log('DEBUG:', message, data || '');
         }
 
-        .thumbnail-link:hover {
-            text-decoration: none;
-            color: inherit;
-        }
+        // Handle modal form submission
+        document.getElementById('appendPageBtn').addEventListener('click', function() {
+            debugLog('Append button clicked');
 
-        .card-img-container {
-            width: 100%;
-            height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--bs-info-bg-subtle);  /* Changed to match alert-info */
-            overflow: hidden;
-        }
+            const format = document.getElementById('pageFormat').value;
+            const pageName = document.getElementById('pageName').value;
+            const documentType = document.getElementById('documentType').value;
+            const partNumber = document.getElementById('partNumber').value;
 
-        .thumbnail-img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            transition: transform 0.2s ease;
-        }
+            debugLog('Form data collected', {
+                format: format,
+                page_name: pageName,
+                document_type: documentType,
+                partNumber: partNumber
+            });
 
-        .thumbnail-link:hover .thumbnail-img {
-            transform: scale(1.05);
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .card-img-container {
-                height: 100px;
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('pageInfoModal'));
+            if (modal) {
+                modal.hide();
+                debugLog('Modal closed');
             }
-        }
 
-        @media (min-width: 992px) {
-            .card-img-container {
-                height: 140px;
-            }
-        }
-    </style>
+            // Show spinner
+            document.getElementById('drawing_result').innerHTML = '<div class="text-center p-3"><div class="spinner-border" role="status"></div></div>';
+
+            // Submit to HTMX endpoint
+            debugLog('Submitting to HTMX endpoint', `/htmx/drawing/add_page/${format}`);
+
+            htmx.ajax('POST', `/htmx/drawing/add_page/${format}`, {
+                target: '#drawing_result',
+                swap: 'innerHTML',
+                values: {
+                    'page_name': pageName,
+                    'document_type': documentType,
+                    'partNumber': partNumber
+                }
+            }).then(function(response) {
+                debugLog('HTMX request completed', response);
+            }).catch(function(error) {
+                debugLog('HTMX request failed', error);
+                document.getElementById('drawing_result').innerHTML =
+                    '<div class="alert alert-danger">Error creating page: ' + error + '</div>';
+            });
+        });
+
+        // Set format when modal is shown
+        document.getElementById('pageInfoModal').addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const format = button.getAttribute('data-format');
+            document.getElementById('pageFormat').value = format;
+            debugLog('Modal shown with format', format);
+        });
+
+        // Check for multiple drawings on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            debugLog('Page loaded');
+            // You can add AJAX call here to check for multiple drawings if needed
+        });
+    </script>
 {% endblock %}

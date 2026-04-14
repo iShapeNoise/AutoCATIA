@@ -39,9 +39,6 @@
     "drawing": {
       "new": "Neue Zeichnung",
       "edit_page": "Blatt bearbeiten",
-      "update_pages": "Update Blatt",
-      "select_page": "Wähle ein Blatt",
-      "add_page": "Addiere Blatt",
       "views": "Ansichten bearbeiten",
       "save_as": "Speichern unter",
       "view_locks": "Ansichtssperren",
@@ -75,7 +72,20 @@
       "date_placeholder": "MM/JJJJ",
       "date_help": "Automatisch ausgefüllt, aber bearbeitbar",
       "format_help": "Automatisch aus Zeichnungsgröße ausgefüllt",
-      "page_help": "Automatisch aus Blattanzahl ausgefüllt"
+      "page_help": "Automatisch aus Blattanzahl ausgefüllt",
+      "update_pages": "Update Blatt",
+      "select_page": "Wähle ein Blatt",
+      "add_page": "Addiere Blatt",
+      "page_info": "Seiteninformationen",
+      "page_name": "Seitenname",
+      "page_name_placeholder": "Seitenname eingeben",
+      "document_type": "Dokumententyp",
+      "document_type_placeholder": "Dokumententyp eingeben",
+      "part_number": "Teilenummer",
+      "part_number_placeholder": "Teilenummer eingeben",
+      "append": "Anhängen",
+      "update_pages": "Seiten aktualisieren",
+      "select_page": "Seite auswählen"
     },
     "settings": {
       "title": "Einstellungen",

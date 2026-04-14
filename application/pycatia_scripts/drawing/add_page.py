@@ -34,8 +34,8 @@ def check_open_drawings():
         return []
 
 
-def add_page_to_drawing(paper_size_key, title):
-    """Add a new page to an existing CATIA drawing"""
+def add_page_to_drawing_with_info(paper_size_key, page_name, document_type, part_number):
+    """Add a new page to an existing CATIA drawing with custom info"""
     try:
         # Get the active drawing document
         pt_drawing_document, errors = get_drawing_document()
@@ -47,28 +47,19 @@ def add_page_to_drawing(paper_size_key, title):
 
         # Create new sheet
         sheets = drawing.sheets
-        new_sheet = sheets.add(title)
+        new_sheet = sheets.add(page_name or f"{paper_size_key} Page")
 
-        # Set paper size
+        # Set paper size and orientation (same as add_page_to_drawing)
         paper_size_mapping = {
-            'A0': 2,      # catPaperA0
-            'A1': 3,      # catPaperA1
-            'A2': 4,      # catPaperA2
-            'A3': 5,      # catPaperA3
-            'A4-portrait': 6,  # catPaperA4
-            'A4-landscape': 6   # catPaperA4Landscape
+            'A0': 2, 'A1': 3, 'A2': 4, 'A3': 5, 'A4-portrait': 6, 'A4-landscape': 6
         }
-
-        catia_paper_size = paper_size_mapping.get(paper_size_key, 3)  # Default to A3
+        catia_paper_size = paper_size_mapping.get(paper_size_key, 3)
         new_sheet.paper_size = catia_paper_size
 
-        # Explicitly set orientation for all formats
         if paper_size_key == 'A4-portrait':
-            new_sheet.orientation = 0  # Portrait
-        elif paper_size_key in ['A3', 'A2', 'A1', 'A4-landscape']:
-            new_sheet.orientation = 1  # Landscape
-        elif paper_size_key == 'A0':
-            new_sheet.orientation = 1  # Landscape
+            new_sheet.orientation = 0
+        elif paper_size_key in ['A3', 'A2', 'A1', 'A4-landscape', 'A0']:
+            new_sheet.orientation = 1
 
         new_sheet.force_update()
 
@@ -79,18 +70,18 @@ def add_page_to_drawing(paper_size_key, title):
         # Create frame lines
         create_frame_lines(new_sheet, paper_size_key)
 
-        # Create text field
-        create_text_field(new_sheet, sheet_x, sheet_y, paper_size_key)
+        # Create text field with custom info
+        create_text_field_with_info(new_sheet, sheet_x, sheet_y, paper_size_key, page_name, document_type, part_number)
 
-        return {"success": True, "message": f"Added {paper_size_key} page with title: {title}"}
+        return {"success": True, "message": f"Added {paper_size_key} page with custom info"}
 
     except Exception as e:
         return {'success': False, 'errors': [f"Failed to add page: {str(e)}"]}
 
 
-def add_page_with_title(paper_size_key, title):
+def add_page_with_info(paper_size_key, page_name, document_type, part_number):
     """
-    Wrapper function with error handling for adding a new page to existing drawing
+    Add a new page with custom information from modal
     """
     try:
         # Check for multiple open drawings first
@@ -109,7 +100,7 @@ def add_page_with_title(paper_size_key, title):
             }
 
         # Add the new page to the existing drawing
-        result = add_page_to_drawing(paper_size_key, title)
+        result = add_page_to_drawing_with_info(paper_size_key, page_name, document_type, part_number)
         return result
 
     except Exception as e:
@@ -117,3 +108,47 @@ def add_page_with_title(paper_size_key, title):
             'success': False,
             'errors': [f"Error adding new page: {str(e)}"]
         }
+
+
+def create_text_field_with_info(sheet: DrawingSheet, sheet_x: float, sheet_y: float, paper_size_key: str, page_name: str, document_type: str, part_number: str):
+    """
+    Create text field with custom information from modal for add_page
+    """
+    from .new_drawing_support.text_field import create_text_field, add_text_field_values
+    from .new_drawing_support.background_view import get_background_view_and_factory
+    from pycatia.enumeration.enumeration_types import cat_text_anchor_position
+    from application.pycatia_scripts.settings import load_settings, iso_standards
+
+    # Create the standard text field first
+    create_text_field(sheet, sheet_x, sheet_y, paper_size_key)
+
+    # Get background view and factory for adding custom text
+    background_view, factory_2d, main_view = get_background_view_and_factory(sheet)
+    texts = background_view.texts
+
+    # Get text field position
+    if paper_size_key == 'A4-landscape':
+        text_field_x = sheet_x - 10 - 180
+        text_field_y = 10
+    else:
+        text_field_x = sheet_x - 10 - 180
+        text_field_y = 10
+
+    # Set font properties
+    fnt_size = 2.5  # 2.5mm font height
+
+    # Override Document Type if provided
+    if document_type:
+        doc_text = texts.add(document_type, text_field_x + 13, text_field_y + 20)
+        doc_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
+        doc_props = doc_text.text_properties
+        doc_props.font_size = fnt_size
+        doc_props.update()
+
+    # Override Part Number if provided
+    if part_number:
+        number_text = texts.add(part_number, text_field_x + 133, text_field_y + 10)
+        number_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
+        number_props = number_text.text_properties
+        number_props.font_size = fnt_size
+        number_props.update()

@@ -11,12 +11,10 @@
     <div class="row g-3">
         <!-- A4 Portrait -->
         <div class="col-6 col-lg-3">
-            <a href="/htmx/drawing/new/a4_portrait"
-               class="text-decoration-none thumbnail-link"
-               hx-post="/htmx/drawing/new/a4_portrait"
-               hx-target="#drawing_result"
-               hx-swap="innerHtml"
-               hx-indicator="#drawing_result">
+            <div class="text-decoration-none thumbnail-link"
+                 data-bs-toggle="modal"
+                 data-bs-target="#pageInfoModal"
+                 data-format="a4_portrait">
                 <div class="card h-100 border-dark">
                     <div class="card-img-container">
                         <img src="{{ url_for('static', filename='images/A4_Portrait_thumb.png') }}"
@@ -27,17 +25,15 @@
                         <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a4_portrait', 'A4 Portrait') }}</h6>
                     </div>
                 </div>
-            </a>
+            </div>
         </div>
 
         <!-- A4 Landscape -->
         <div class="col-6 col-lg-3">
-            <a href="/htmx/drawing/new/a4_landscape"
-               class="text-decoration-none thumbnail-link"
-               hx-post="/htmx/drawing/new/a4_landscape"
-               hx-target="#drawing_result"
-               hx-swap="innerHtml"
-               hx-indicator="#drawing_result">
+            <div class="text-decoration-none thumbnail-link"
+                 data-bs-toggle="modal"
+                 data-bs-target="#pageInfoModal"
+                 data-format="a4_landscape">
                 <div class="card h-100 border-dark">
                     <div class="card-img-container">
                         <img src="{{ url_for('static', filename='images/A4_Landscape_thumb.png') }}"
@@ -48,17 +44,15 @@
                         <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a4_landscape', 'A4 Landscape') }}</h6>
                     </div>
                 </div>
-            </a>
+            </div>
         </div>
 
         <!-- A3 -->
         <div class="col-6 col-lg-3">
-            <a href="/htmx/drawing/new/a3"
-               class="text-decoration-none thumbnail-link"
-               hx-post="/htmx/drawing/new/a3"
-               hx-target="#drawing_result"
-               hx-swap="innerHtml"
-               hx-indicator="#drawing_result">
+            <div class="text-decoration-none thumbnail-link"
+                 data-bs-toggle="modal"
+                 data-bs-target="#pageInfoModal"
+                 data-format="a3">
                 <div class="card h-100 border-dark">
                     <div class="card-img-container">
                         <img src="{{ url_for('static', filename='images/A3_Landscape_thumb.png') }}"
@@ -69,17 +63,15 @@
                         <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a3', 'A3') }}</h6>
                     </div>
                 </div>
-            </a>
+            </div>
         </div>
 
         <!-- A2 -->
         <div class="col-6 col-lg-3">
-            <a href="/htmx/drawing/new/a2"
-               class="text-decoration-none thumbnail-link"
-               hx-post="/htmx/drawing/new/a2"
-               hx-target="#drawing_result"
-               hx-swap="innerHtml"
-               hx-indicator="#drawing_result">
+            <div class="text-decoration-none thumbnail-link"
+                 data-bs-toggle="modal"
+                 data-bs-target="#pageInfoModal"
+                 data-format="a2">
                 <div class="card h-100 border-dark">
                     <div class="card-img-container">
                         <img src="{{ url_for('static', filename='images/A2_Landscape_thumb.png') }}"
@@ -90,7 +82,7 @@
                         <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a2', 'A2') }}</h6>
                     </div>
                 </div>
-            </a>
+            </div>
         </div>
     </div>
 
@@ -98,10 +90,14 @@
         {% include('partials/spinner.html') %}
     </div>
 
+    <!-- Include Page Info Modal -->
+    {% include 'partials/page_info_modal.html' %}
+
     <style>
         .thumbnail-link {
             text-decoration: none;
             color: inherit;
+            cursor: pointer;
         }
 
         .thumbnail-link:hover {
@@ -115,7 +111,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: var(--bs-info-bg-subtle);  /* Changed to match alert-info */
+            background-color: var(--bs-info-bg-subtle);
             overflow: hidden;
         }
 
@@ -143,4 +139,65 @@
             }
         }
     </style>
+
+    <script>
+    function createDrawingWithInfo(format) {
+        console.log('DEBUG: createDrawingWithInfo called with format:', format);
+
+        const pageName = document.getElementById('pageName').value || '';
+        const documentType = document.getElementById('documentType').value || '';
+        const partNumber = document.getElementById('partNumber').value || '';
+
+        console.log('DEBUG: Form data:', {
+            page_name: pageName,
+            document_type: documentType,
+            partNumber: partNumber
+        });
+
+        // Map format to endpoint
+        const endpointMap = {
+            'a4_portrait': '/htmx/drawing/new/a4_portrait',
+            'a4_landscape': '/htmx/drawing/new/a4_landscape',
+            'a3': '/htmx/drawing/new/a3',
+            'a2': '/htmx/drawing/new/a2'
+        };
+
+        const endpoint = endpointMap[format];
+        if (!endpoint) {
+            console.error('DEBUG: Unknown format:', format);
+            return;
+        }
+
+        console.log('DEBUG: Submitting to endpoint:', endpoint);
+
+        // Submit to HTMX endpoint with form data
+        htmx.ajax('POST', endpoint, {
+            values: {
+                'page_name': pageName,
+                'document_type': documentType,
+                'partNumber': partNumber
+            },
+            target: '#drawing_result',
+            swap: 'innerHTML'
+        }).then(() => {
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('pageInfoModal'));
+            if (modal) {
+                modal.hide();
+            }
+        }).catch((error) => {
+            console.error('DEBUG: HTMX request failed:', error);
+        });
+    }
+
+    // Update modal button onclick when modal is shown
+    document.getElementById('pageInfoModal').addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const format = button.getAttribute('data-format');
+
+        // Update the Append button to call createDrawingWithInfo with the correct format
+        const appendBtn = document.querySelector('#pageInfoModal .btn-primary');
+        appendBtn.setAttribute('onclick', `createDrawingWithInfo('${format}')`);
+    });
+    </script>
 {% endblock %}

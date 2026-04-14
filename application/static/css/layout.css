@@ -8,7 +8,7 @@ h2 {
 
 body {
     background-image: url('../images/background.jpg');
-    background-size: auto;
+    background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center center;
@@ -40,4 +40,22 @@ body {
     0% { opacity: 1; }
     70% { opacity: 1; }
     100% { opacity: 0; visibility: hidden; }
+}
+
+/* Page Info Modal Styles */
+.modal-content.bg-theme-aware {
+    background-color: var(--bs-tertiary-bg) !important;
+}
+
+.thumbnail-img {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    border-radius: var(--bs-border-radius);
+}
+
+.card-img-container {
+    padding: 5px;
+    background-color: rgba(var(--bs-tertiary-bg-rgb), 0.5);
+    border-radius: var(--bs-border-radius);
 }

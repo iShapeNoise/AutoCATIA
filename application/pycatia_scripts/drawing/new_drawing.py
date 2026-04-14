@@ -22,7 +22,7 @@ from .new_drawing_support.purge import purge_background_view
 from .new_drawing_support.paper_size import get_sheet_size_info
 
 # Export drawing_template for support files that need it
-__all__ = ['drawing_template', 'p#insert_drawing_template', 'create_new_drawing_with_title']
+__all__ = ['drawing_template', 'p#insert_drawing_template', 'create_new_drawing_with_info']
 
 def insert_drawing_template(form_parameters):
     """Legacy function for backward compatibility"""
@@ -66,18 +66,17 @@ def insert_drawing_template(form_parameters):
     return output
 
 
-def create_new_drawing_with_title(paper_size_key, title):
+def create_new_drawing_with_info(paper_size_key, page_name, document_type, part_number):
     """
-    Create a new CATIA drawing with specified paper size and title
+    Create a new CATIA drawing with custom information from modal
     """
     from pycatia.enumeration.enumeration_types import cat_paper_size
     from application.pycatia_scripts.com_objects import get_app_object
     from application.pycatia_scripts.settings import iso_standards
     from application.pycatia_scripts.common import get_output
     from application.pycatia_scripts.drawing.new_drawing_support.frames import create_frame_lines
-    from application.pycatia_scripts.drawing.new_drawing_support.text_field import create_text_field
 
-    # Get CATIA application using the helper function
+    # Get CATIA application
     application = get_app_object()
 
     if not application:
@@ -112,15 +111,13 @@ def create_new_drawing_with_title(paper_size_key, title):
     # Set orientation to portrait only for A4 Portrait
     if paper_size_key == 'A4-portrait':
         try:
-            # Try direct integer value for portrait orientation
             sheet.orientation = 0  # 0 = catPaperPortrait
             sheet.force_update()
         except:
-            # If orientation fails, continue without it
             pass
 
-    sheet.name = title
-    # Force update to apply changes
+    # Set sheet name using page_name from modal
+    sheet.name = page_name or f"{paper_size_key} Drawing"
     sheet.force_update()
 
     # Get sheet dimensions from ISO_216
@@ -129,7 +126,64 @@ def create_new_drawing_with_title(paper_size_key, title):
 
     # Create frame lines
     create_frame_lines(sheet, paper_size_key)
-    # Create text field with labels (after frames)
+
+    # Create text field with custom information
+    create_text_field_with_info(sheet, sheet_x, sheet_y, paper_size_key, page_name, document_type, part_number)
+
+    return {"success": True, "message": f"Created {paper_size_key} drawing with custom information"}
+
+
+def create_text_field_with_info(sheet: DrawingSheet, sheet_x: float, sheet_y: float, paper_size_key: str, page_name: str, document_type: str, part_number: str):
+    """
+    Create text field with custom information from modal
+    """
+    from .new_drawing_support.text_field import create_text_field, add_text_field_values
+    from .new_drawing_support.background_view import get_background_view_and_factory
+    from pycatia.enumeration.enumeration_types import cat_text_anchor_position
+    from application.pycatia_scripts.settings import load_settings, iso_standards
+
+    # First create the standard text field with labels and default values
     create_text_field(sheet, sheet_x, sheet_y, paper_size_key)
 
-    return {"success": True, "message": f"Created {paper_size_key} drawing with title: {title}"}
+    # Get background view for adding custom text
+    background_view, factory_2d, main_view = get_background_view_and_factory(sheet)
+    texts = background_view.texts
+
+    # Get text field position (same as used in create_text_field)
+    sheet_dimensions = iso_standards['sheet_sizes'][paper_size_key][0]
+    sheet_x, sheet_y = sheet_dimensions
+
+    # Calculate text field position
+    if paper_size_key == 'A4-landscape':
+        text_field_x = sheet_x - 10 - 180
+        text_field_y = 10
+    else:
+        text_field_x = sheet_x - 10 - 180
+        text_field_y = 10
+
+    # Font settings
+    fnt_size = 2.5
+
+    # Override Document Type if provided
+    if document_type:
+        # Position matches add_text_field_values: text_field_x + 13, first_row_y
+        doc_text = texts.add(document_type, text_field_x + 13, text_field_y + 21)
+        doc_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
+        from .new_drawing_support.text_properties import set_text_properties
+        set_text_properties(doc_text, size=fnt_size)
+
+    # Override Part Number if provided
+    if part_number:
+        # Position matches add_text_field_values: text_field_x + 133, second_row_y
+        number_text = texts.add(part_number, text_field_x + 133, text_field_y + 12)
+        number_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
+        from .new_drawing_support.text_properties import set_text_properties
+        set_text_properties(number_text, size=fnt_size)
+
+    # Override Title if provided (using page_name as title)
+    if page_name:
+        # Position matches add_text_field_values: text_field_x + 78, second_row_y
+        title_text = texts.add(page_name, text_field_x + 78, text_field_y + 12)
+        title_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
+        from .new_drawing_support.text_properties import set_text_properties
+        set_text_properties(title_text, size=fnt_size)

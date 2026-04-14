@@ -39,9 +39,6 @@
     "drawing": {
       "new": "New Drawing",
       "edit_page": "Edit Page",
-      "update_pages": "Update Pages",
-      "select_page": "Select Page",
-      "add_page": "Add Page",
       "views": "Edit Views",
       "save_as": "Save As",
       "view_locks": "View Locks",
@@ -75,7 +72,20 @@
       "date_placeholder": "MM/YYYY",
       "date_help": "Auto-filled but editable",
       "format_help": "Auto-filled from drawing size",
-      "page_help": "Auto-filled from sheet count"
+      "page_help": "Auto-filled from sheet count",
+      "update_pages": "Update Pages",
+      "select_page": "Select Page",
+      "add_page": "Add Page",
+      "page_info": "Page Information",
+      "page_name": "Page Name",
+      "page_name_placeholder": "Enter page name",
+      "document_type": "Document Type",
+      "document_type_placeholder": "Enter document type",
+      "part_number": "Part Number",
+      "part_number_placeholder": "Enter part number",
+      "append": "Append",
+      "update_pages": "Update Pages",
+      "select_page": "Select Page"
     },
     "settings": {
       "title": "Settings",

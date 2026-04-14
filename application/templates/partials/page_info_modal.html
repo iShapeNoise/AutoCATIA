@@ -1,0 +1,34 @@
+<!-- Page Information Modal -->
+<div class="modal fade" id="pageInfoModal" tabindex="-1" aria-labelledby="pageInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-theme-aware">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pageInfoModalLabel">{{ lang_manager.t('pages.drawing.page_info', 'Page Information') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="pageInfoForm">
+                    <div class="mb-3">
+                        <label for="pageName" class="form-label">{{ lang_manager.t('pages.drawing.page_name', 'Page Name') }}</label>
+                        <input type="text" class="form-control" id="pageName" name="page_name"
+                               placeholder="{{ lang_manager.t('pages.drawing.page_name_placeholder', 'Enter page name') }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="documentType" class="form-label">{{ lang_manager.t('pages.drawing.document_type', 'Document Type') }}</label>
+                        <input type="text" class="form-control" id="documentType" name="document_type"
+                               placeholder="{{ lang_manager.t('pages.drawing.document_type_placeholder', 'Enter document type') }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="partNumber" class="form-label">{{ lang_manager.t('pages.drawing.part_number', 'Part Number') }}</label>
+                        <input type="text" class="form-control" id="partNumber" name="partNumber"
+                               placeholder="{{ lang_manager.t('pages.drawing.part_number_placeholder', 'Enter part number') }}">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ lang_manager.t('common.cancel', 'Cancel') }}</button>
+                <button type="button" class="btn btn-primary" onclick="addPageWithInfo()">{{ lang_manager.t('pages.drawing.append', 'Append') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
