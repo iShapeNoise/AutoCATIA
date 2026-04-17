@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, render_template
 from application import app
 from application.views.url_prefixes import htmx
 from application.pycatia_scripts.drawing.add_page import add_page_with_info

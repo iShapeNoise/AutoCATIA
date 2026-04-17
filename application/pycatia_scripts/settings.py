@@ -71,9 +71,23 @@ def create_default_settings(userdata_path: Path):
             'dxf': {'include_sheets': ['DXF']}
         },
         'notifications': {
-            'enabled': False,
+            'enabled': True,
             'visibility_seconds': 2
-        }
+        },
+        # Add new checkbox defaults at root level
+        'text_field_enabled': True,
+        'gdt_enabled': False,
+        'gdt_general_abc': False,
+        'gdt_general_ab': False,
+        'gdt_welded_structure': False,
+        'gdt_of_rz_63': False,
+        'gdt_ofz_general': False,
+        'gdt_ofz_wxy': False,
+        'gdt_ofz_main_specs': False,
+        'gdt_ofz_main_raw': False,
+        'gdt_ofz_main': False,
+        'gdt_edges_iso': False,
+        'gdt_thermally_cut': False
     }
 
     settings_file = Path(userdata_path, 'settings')

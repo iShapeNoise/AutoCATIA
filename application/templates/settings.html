@@ -118,6 +118,8 @@
             <h4 class="h5 text-white border-bottom border-white pb-1 mb-3">
                 {{ lang_manager.t('pages.settings.drawing', 'Drawing') }}
             </h4>
+
+            <!-- First Row: Projection Method (Left) and Logo Dropdown (Right) -->
             <div class="row">
                 <div class="col-md-6">
                     <!-- Projection Method Selection -->
@@ -161,7 +163,135 @@
                         <input type="hidden" name="projection_method" id="projection_method_value" value="{{ drawing_template.get('projection_method', 'PM_EU.jpg') }}">
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <!-- Logo Dropdown -->
+                    <div class="mb-3">
+                        <h5>{{ lang_manager.t('pages.settings.current_logo', 'Firm Logo') }}</h5>
+                        <select name="LOGO_SELECT" class="form-control rounded-0">
+                            <option value="">{{ lang_manager.t('pages.settings.no_logo_selected', 'No logo selected') }}</option>
+                            {% for logo in available_logos %}
+                                <option value="{{ logo }}" {% if logo == current_logo %}selected{% endif %}>{{ logo }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
             </div>
+
+            <!-- Second Row: Drawing Options -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="border border-secondary rounded p-3 mb-3 bg-dark bg-opacity-50">
+                        <!-- First Row: Text Field and GD&T Checkbox -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="text_field_enabled" id="text_field_enabled"
+                                           {% if settings.get('text_field_enabled', false) %}checked{% endif %}>
+                                    <label class="form-check-label" for="text_field_enabled">
+                                        Text Field
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="gdt_enabled" id="gdt_enabled"
+                                           {% if settings.get('gdt_enabled', false) %}checked{% endif %}>
+                                    <label class="form-check-label" for="gdt_enabled">
+                                        GD&T Defaults
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Second Row: GD&T Options -->
+                        <div class="row" id="gdtOptions">
+                            <div class="col-12">
+                                <h6 class="mb-3">GD&T Defaults</h6>
+                                <div class="row">
+                                    <div class="col-6 col-md-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="gdt_general_abc" id="gdt_general_abc"
+                                                   {% if settings.get('gdt_general_abc', false) %}checked{% endif %}>
+                                            <label class="form-check-label" for="gdt_general_abc">General Tolerances: ABC</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="gdt_general_ab" id="gdt_general_ab"
+                                                   {% if settings.get('gdt_general_ab', false) %}checked{% endif %}>
+                                            <label class="form-check-label" for="gdt_general_ab">General Tolerances: AB</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="gdt_welded_structure" id="gdt_welded_structure"
+                                                   {% if settings.get('gdt_welded_structure', false) %}checked{% endif %}>
+                                            <label class="form-check-label" for="gdt_welded_structure">General Tolerances for welded structure</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="gdt_of_rz_63" id="gdt_of_rz_63"
+                                                   {% if settings.get('gdt_of_rz_63', false) %}checked{% endif %}>
+                                            <label class="form-check-label" for="gdt_of_rz_63">OF Rz 63 (all) ISO 21920</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="gdt_ofz_general" id="gdt_ofz_general"
+                                                   {% if settings.get('gdt_ofz_general', false) %}checked{% endif %}>
+                                            <label class="form-check-label" for="gdt_ofz_general">OFZ General</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="gdt_ofz_wxy" id="gdt_ofz_wxy"
+                                                   {% if settings.get('gdt_ofz_wxy', false) %}checked{% endif %}>
+                                            <label class="form-check-label" for="gdt_ofz_wxy">OFZ w x y</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="gdt_ofz_main_specs" id="gdt_ofz_main_specs"
+                                                   {% if settings.get('gdt_ofz_main_specs', false) %}checked{% endif %}>
+                                            <label class="form-check-label" for="gdt_ofz_main_specs">OFZ Main with specs</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="gdt_ofz_main_raw" id="gdt_ofz_main_raw"
+                                                   {% if settings.get('gdt_ofz_main_raw', false) %}checked{% endif %}>
+                                            <label class="form-check-label" for="gdt_ofz_main_raw">OFZ Main raw ()</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="gdt_ofz_main" id="gdt_ofz_main"
+                                                   {% if settings.get('gdt_ofz_main', false) %}checked{% endif %}>
+                                            <label class="form-check-label" for="gdt_ofz_main">OFZ Main ()</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="gdt_edges_iso" id="gdt_edges_iso"
+                                                   {% if settings.get('gdt_edges_iso', false) %}checked{% endif %}>
+                                            <label class="form-check-label" for="gdt_edges_iso">Edges ISO 13715</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="gdt_thermally_cut" id="gdt_thermally_cut"
+                                                   {% if settings.get('gdt_thermally_cut', false) %}checked{% endif %}>
+                                            <label class="form-check-label" for="gdt_thermally_cut">Thermally cut</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Drawing Template Form -->
             <div class="border border-secondary rounded p-3 mb-3 bg-dark bg-opacity-50">
                 <h5>{{ lang_manager.t('pages.drawing.edit_template', 'Drawing Template') }}</h5>
@@ -193,7 +323,6 @@
                                value="{{ parameters.get('APPROVED-BY', '') }}">
                     </div>
                 </div>
-
                 <!-- Row 3: Title, Extra Title -->
                 <div class="row mb-3">
                     <div class="col">
@@ -256,25 +385,53 @@
                     </div>
                 </div>
             </div>
+        </div>
+
         <div class="text-center mt-4">
-          <button type="submit" class="btn btn-light btn-sm border-white p-1 m-1 rounded-1"> {{ lang_manager.t('pages.settings.save_settings', 'Save Settings') }}
-          </button>
+            <button type="submit" class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1">
+                {{ lang_manager.t('pages.settings.save_settings', 'Save Settings') }}
+            </button>
         </div>
     </form>
 
     <script>
-    function setProjectionMethod(button) {
-        // Remove active class from all buttons
-        document.querySelectorAll('.projection-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
+      // Handle GD&T Defaults checkbox state
+      document.addEventListener('DOMContentLoaded', function() {
+          const gdtMainCheckbox = document.getElementById('gdt_enabled');
+          const gdtSubCheckboxes = document.querySelectorAll('[id^="gdt_"]:not(#gdt_enabled)');
 
-        // Add active class to clicked button
-        button.classList.add('active');
+          function updateGdtSubCheckboxes() {
+              const isEnabled = gdtMainCheckbox.checked;
+              gdtSubCheckboxes.forEach(checkbox => {
+                  checkbox.disabled = !isEnabled;
+                  if (isEnabled) {
+                      checkbox.parentElement.classList.remove('opacity-50');
+                  } else {
+                      checkbox.parentElement.classList.add('opacity-50');
+                  }
+              });
+          }
 
-        // Update hidden input value
-        document.getElementById('projection_method_value').value = button.dataset.value;
-    }
+          // Set initial state
+          updateGdtSubCheckboxes();
+
+          // Update on change
+          gdtMainCheckbox.addEventListener('change', updateGdtSubCheckboxes);
+      });
+
+      // Projection method selection
+      function setProjectionMethod(button) {
+          // Remove active class from all buttons
+          document.querySelectorAll('.projection-btn').forEach(btn => {
+              btn.classList.remove('active');
+          });
+
+          // Add active class to clicked button
+          button.classList.add('active');
+
+          // Update hidden input
+          document.getElementById('projection_method_value').value = button.getAttribute('data-value');
+      }
     </script>
 
     <style>

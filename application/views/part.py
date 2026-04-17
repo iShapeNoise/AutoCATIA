@@ -26,6 +26,24 @@ def part_new():
     )
 
 
+@app.route('/part/edit')
+@catia_v5_required
+def part_edit():
+    from application.pycatia_scripts.part.edit_part import check_open_parts
+
+    # Get all open parts
+    open_parts = check_open_parts()
+
+    # Select part automatically if only one, or empty if multiple
+    selected_part = open_parts[0] if len(open_parts) == 1 else ''
+
+    return render_template(
+        'part_edit.html',
+        open_parts=open_parts,
+        selected_part=selected_part
+    )
+
+
 @app.route('/part/points')
 @catia_v5_required
 def part_points():

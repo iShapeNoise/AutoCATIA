@@ -124,6 +124,28 @@ def create_new_drawing_with_info(paper_size_key, page_name, document_type, part_
     sheet_dimensions = iso_standards['sheet_sizes'][paper_size_key][0]
     sheet_x, sheet_y = sheet_dimensions
 
+    # Set FORMAT parameter in settings before creating text field
+    format_value = paper_size_key.replace('-portrait', '').replace('-landscape', '').upper()
+
+    from application.pycatia_scripts.settings import load_settings
+    settings_data = load_settings()
+    if 'drawing_template' not in settings_data:
+        settings_data['drawing_template'] = {}
+    if 'parameters' not in settings_data['drawing_template']:
+        settings_data['drawing_template']['parameters'] = {}
+
+    settings_data['drawing_template']['parameters']['FORMAT'] = format_value
+
+    # Save updated settings back to file
+    from pathlib import Path
+    app_root = Path(__file__).parent.parent.parent.parent
+    userdata_path = Path(app_root, 'userdata')
+    settings_file = Path(userdata_path, 'settings')
+
+    import json
+    with open(settings_file, 'w', encoding='utf-8') as f:
+        json.dump(settings_data, f, indent=2, ensure_ascii=False)
+
     # Create frame lines
     create_frame_lines(sheet, paper_size_key)
 
@@ -137,21 +159,17 @@ def create_text_field_with_info(sheet: DrawingSheet, sheet_x: float, sheet_y: fl
     """
     Create text field with custom information from modal
     """
-    from .new_drawing_support.text_field import create_text_field, add_text_field_values
+    from .new_drawing_support.text_field import create_text_field
     from .new_drawing_support.background_view import get_background_view_and_factory
     from pycatia.enumeration.enumeration_types import cat_text_anchor_position
-    from application.pycatia_scripts.settings import load_settings, iso_standards
+    from application.pycatia_scripts.settings import iso_standards
 
-    # First create the standard text field with labels and default values
+    # Create the complete text field with labels and values
     create_text_field(sheet, sheet_x, sheet_y, paper_size_key)
 
     # Get background view for adding custom text
     background_view, factory_2d, main_view = get_background_view_and_factory(sheet)
     texts = background_view.texts
-
-    # Get text field position (same as used in create_text_field)
-    sheet_dimensions = iso_standards['sheet_sizes'][paper_size_key][0]
-    sheet_x, sheet_y = sheet_dimensions
 
     # Calculate text field position
     if paper_size_key == 'A4-landscape':
@@ -166,7 +184,6 @@ def create_text_field_with_info(sheet: DrawingSheet, sheet_x: float, sheet_y: fl
 
     # Override Document Type if provided
     if document_type:
-        # Position matches add_text_field_values: text_field_x + 13, first_row_y
         doc_text = texts.add(document_type, text_field_x + 13, text_field_y + 21)
         doc_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
         from .new_drawing_support.text_properties import set_text_properties
@@ -174,7 +191,6 @@ def create_text_field_with_info(sheet: DrawingSheet, sheet_x: float, sheet_y: fl
 
     # Override Part Number if provided
     if part_number:
-        # Position matches add_text_field_values: text_field_x + 133, second_row_y
         number_text = texts.add(part_number, text_field_x + 133, text_field_y + 12)
         number_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
         from .new_drawing_support.text_properties import set_text_properties
@@ -182,7 +198,6 @@ def create_text_field_with_info(sheet: DrawingSheet, sheet_x: float, sheet_y: fl
 
     # Override Title if provided (using page_name as title)
     if page_name:
-        # Position matches add_text_field_values: text_field_x + 78, second_row_y
         title_text = texts.add(page_name, text_field_x + 78, text_field_y + 12)
         title_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
         from .new_drawing_support.text_properties import set_text_properties

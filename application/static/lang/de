@@ -14,7 +14,8 @@
       "notice": "Bitte stellen Sie sicher, dass Catia v5 bereits läuft, bevor Sie fortfahren."
     },
     "part": {
-      "new_part": "Neues Teil erstellen",
+      "new_part": "Neues Teil",
+      "edit_part": "Teil bearbeiten",
       "bounding_box": "Begrenzungsrahmen erstellen",
       "export_points": "Punkte exportieren",
       "import_points": "Punkte importieren",
@@ -34,7 +35,15 @@
       "product_tools": "Produktwerkzeuge",
       "reorder_desc": "Alphanumerische Sortierung von Produkten innerhalb eines Produkts",
       "renumber_desc": "Neunummerierung der untergeordneten Instanzen des aktuell geöffneten Produkts",
-      "edit_attributes_desc": "Attribute des Produkts bearbeiten"
+      "edit_attributes_desc": "Attribute des Produkts bearbeiten",
+      "new_product": "Neues Produkt",
+      "edit_product": "Bearbeite Produkt",
+      "reorder_product_tree": "Baumstruktur ordnen",
+      "renumber_instances": "Instanzen ordnen",
+      "edit_product_properties": "Produkteigenschaften",
+      "no_product_opened": "Kein Produkt in CATIA",
+      "please_choose_product": "Wähle ein Produkt",
+      "select_product": "Wähle Produkt"
     },
     "drawing": {
       "new": "Neue Zeichnung",
@@ -50,7 +59,7 @@
       "include_main_view": "Hauptansicht einschließen",
       "include_background_view": "Hintergrundansicht einschließen",
       "new_drawing": "Neue Zeichnung",
-      "select_template": "Wählen Sie eine Zeichnungsvorlagengröße:",
+      "select_template": "Wähle ein Papierformat:",
       "a4_portrait": "A4 Hochformat",
       "a4_landscape": "A4 Querformat",
       "a3": "A3",
@@ -85,7 +94,10 @@
       "part_number_placeholder": "Teilenummer eingeben",
       "append": "Anhängen",
       "update_pages": "Seiten aktualisieren",
-      "select_page": "Seite auswählen"
+      "select_page": "Seite auswählen",
+      "select_drawing": "Drawing wählen",
+      "choose_drawing": "Wähle Drawing",
+      "no_drawings": "Keine Drawings offen"
     },
     "settings": {
       "title": "Einstellungen",
@@ -110,7 +122,21 @@
       "no_logo_selected": "Kein Logo gewählt",
       "projection_method": "Projektionsmethode",
       "projection_method_eu": "Europäische Projektion",
-      "projection_method_us": "US-Projektion"
+      "projection_method_us": "US-Projektion",
+      "drawing_options": "Zeichnungsoptionen",
+      "text_field": "Schriftfeld",
+      "gdt_defaults": "GD&T Standards",
+      "gdt_general_abc": "Allgemeintoleranz: ABC",
+      "gdt_general_ab": "Allgemeintoleranz: AB",
+      "gdt_welded_structure": "Allgemeintoleranz für Schweißkonstruktion",
+      "gdt_of_rz_63": "OF Rz 64 (alle) ISO 21920",
+      "gdt_ofz_general": "OFZ allgemein fest",
+      "gdt_ofz_wxy": "OFZ w x y",
+      "gdt_ofz_main_specs": "OFZ Hauptsymbol mit Angabe",
+      "gdt_ofz_main_raw": "OFZ Hauptsymbol roh Klammer allgemein",
+      "gdt_ofz_main": "OFZ Hauptsymbol Klammer allgemein",
+      "gdt_edges_iso": "Kanten ISO 13715",
+      "gdt_thermally_cut": "Thermisch geschnitten"
     }
   },
   "common": {
@@ -126,7 +152,8 @@
     "author": "Autor",
     "manager": "Manager",
     "part_number": "Teilenummer",
-    "comments": "Kommentare"
+    "comments": "Kommentare",
+    "update": "Update"
   },
   "labels": {
     "scale": "Maßstab",

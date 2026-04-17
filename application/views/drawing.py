@@ -1,11 +1,9 @@
 from pathlib import Path
-
 from flask import render_template
-
 from application import app
 from application.views.view_wrappers import catia_v5_required
 from application.pycatia_scripts.settings import drawing_template
-
+from application.pycatia_scripts.drawing.add_page import check_open_drawings, get_sheets_for_drawing
 
 
 @app.route('/drawing')
@@ -15,11 +13,23 @@ def drawing():
         'drawing.html',
     )
 
+
 @app.route('/drawing/new_drawing')
 @catia_v5_required
 def drawing_new():
     from application.views.htmx.drawing_htmx import new_drawing
-    return render_template('drawing_new.html')
+    from application.pycatia_scripts.settings import load_settings
+
+    # Load settings for checkbox states
+    settings_data = load_settings()
+
+    # Debug output
+    # print("DEBUG: New Drawing - Settings loaded:")
+    # print(f"  text_field_enabled: {settings_data.get('text_field', 'NOT FOUND')}")
+    # print(f"  gdt_enabled: {settings_data.get('gdt', 'NOT FOUND')}")
+    # print(f"  Full settings keys: {list(settings_data.keys())}")
+
+    return render_template('drawing_new.html', settings=settings_data)
 
 
 @app.route('/drawing/edit_page')
@@ -27,30 +37,29 @@ def drawing_new():
 def drawing_edit_page():
     from application.pycatia_scripts.the_document import PTDrawingDocument
     from application.pycatia_scripts.com_objects import get_app_object
+    from application.pycatia_scripts.drawing.add_page import check_open_drawings, get_sheets_for_drawing
+    from application.pycatia_scripts.settings import load_settings
 
-    # Get CATIA application
-    application = get_app_object()
-    if not application:
-        return render_template('drawing_edit_page.html',
-                             error="CATIA application is not running")
+    # Get open drawings
+    open_drawings = check_open_drawings()
 
-    # Get drawing document details
-    try:
-        pt_drawing = PTDrawingDocument()
-        if not pt_drawing.is_drawing_document():
-            return render_template('drawing_edit_page.html',
-                                 error="No active drawing document")
+    # Get sheets for the first available drawing
+    sheets = []
+    selected_drawing = None
 
-        details = pt_drawing.details
-        sheets = list(details.get('sheets', {}).keys())
+    if open_drawings:
+        selected_drawing = open_drawings[0]
+        sheets = get_sheets_for_drawing(selected_drawing)
 
-        return render_template('drawing_edit_page.html',
-                             sheets=sheets,
-                             file_name=details.get('file_name', ''))
+    # Load settings for GD&T checkboxes
+    settings_data = load_settings()
 
-    except Exception as e:
-        return render_template('drawing_edit_page.html',
-                             error=f"Error getting drawing details: {str(e)}")
+    return render_template('drawing_edit_page.html',
+                         open_drawings=open_drawings,
+                         sheets=sheets,
+                         selected_drawing=selected_drawing,
+                         settings=settings_data)
+
 
 @app.route('/drawing/views')
 @catia_v5_required

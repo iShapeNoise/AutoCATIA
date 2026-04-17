@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {{ render_menu('product')|safe }}
+    <div class="container mt-3">
+        <h2>Edit Product</h2>
+
+        <!-- Product Selection Section -->
+        <div class="mb-4 mt-3">
+            <h4 class="text-white border-bottom border-white pb-1 mb-3">Product</h4>
+            <div class="row">
+                <div class="mb-3">
+                    <label for="product_select" class="form-label">Select Product</label>
+                    <select class="form-select" id="product_select" name="selected_product">
+                        {% if open_products %}
+                            {% if open_products|length == 1 %}
+                                {% for product in open_products %}
+                                    <option value="{{ product }}.CATProduct" selected>{{ product }}</option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="">Please choose a product</option>
+                                {% for product in open_products %}
+                                    <option value="{{ product }}.CATProduct">{{ product }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        {% else %}
+                            <option value="">No product opened in CATIA</option>
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Tools Section -->
+        <div class="mb-4 mt-3">
+            <!-- Reorder Tree Section -->
+            <div class="mb-4 mt-3">
+                <h4 class="text-white border-bottom border-white pb-1 mb-3">{{ lang_manager.t('pages.product.reorder_product_tree', 'Reorder Tree') }}</h4>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card border-dark">
+                            <div class="card-body">
+                                <p class="card-text">{{ lang_manager.t('pages.product.reorder_desc', 'Alphanumerically sorts Products within a Product') }}</p>
+                                <div id="reorder_tree">
+                                    {% include 'product_reorder.html' %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Renumber Instances Section -->
+            <div class="mb-4 mt-3">
+                <h4 class="text-white border-bottom border-white pb-1 mb-3">{{ lang_manager.t('pages.product.renumber_instances', 'Renumber Instances') }}</h4>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card border-dark">
+                            <div class="card-body">
+                                <p class="card-text">{{ lang_manager.t('pages.product.renumber_desc', 'Renumbers the child instances of the currently open product') }}</p>
+                                <div id="renumber_instances">
+                                    {% include 'product_renumber_instances.html' %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Product Properties Section -->
+            <div class="mb-4 mt-3">
+                <h4 class="text-white border-bottom border-white pb-1 mb-3">{{ lang_manager.t('pages.product.edit_product_properties', 'Product Properties') }}</h4>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card border-dark">
+                            <div class="card-body">
+                                <p class="card-text">{{ lang_manager.t('pages.product.edit_attributes_desc', 'Edit the Products attributes') }}</p>
+
+                                <form
+                                        hx-post="/htmx/product/properties"
+                                        hx-target="#product_properties_result"
+                                        hx-swap="innerHtml"
+                                        hx-indicator="#product_properties_result"
+                                >
+                                    <div id="product_properties_result">
+                                        {% include('partials/spinner.html') %}
+                                        {% include('partials/form_product_properties.html') %}
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Validate product selection before executing operations
+    function validateProductSelection() {
+        const selectedProduct = document.getElementById('product_select').value;
+
+        if (!selectedProduct || selectedProduct === "No product opened in CATIA") {
+            alert('Please select a product before performing this operation.');
+            return false;
+        }
+        return true;
+    }
+
+    // Add validation to all forms
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add validation to reorder tree form
+        const reorderForm = document.querySelector('#reorder_tree form');
+        if (reorderForm) {
+            reorderForm.addEventListener('submit', function(e) {
+                if (!validateProductSelection()) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        }
+
+        // Add validation to renumber instances form
+        const renumberForm = document.querySelector('#renumber_instances form');
+        if (renumberForm) {
+            renumberForm.addEventListener('submit', function(e) {
+                if (!validateProductSelection()) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        }
+
+        // Add validation to product properties form
+        const propertiesForm = document.querySelector('#product_properties form');
+        if (propertiesForm) {
+            propertiesForm.addEventListener('submit', function(e) {
+                if (!validateProductSelection()) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

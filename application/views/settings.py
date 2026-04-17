@@ -81,6 +81,43 @@ def settings():
             settings_data['notifications']['enabled'] = notifications_enabled
             settings_data['notifications']['visibility_seconds'] = visibility_seconds
 
+            # Handle drawing options checkboxes
+            text_field_enabled = request.form.get('text_field_enabled') == 'on'  
+            gdt_enabled = request.form.get('gdt_enabled') == 'on'
+
+            settings_data['text_field_enabled'] = text_field_enabled
+            settings_data['gdt_enabled'] = gdt_enabled
+
+            # Handle GD&T subsection checkboxes
+            gdt_options = [
+                'gdt_general_abc', 'gdt_general_ab', 'gdt_welded_structure',
+                'gdt_of_rz_63', 'gdt_ofz_general', 'gdt_ofz_wxy',
+                'gdt_ofz_main_specs', 'gdt_ofz_main_raw', 'gdt_ofz_main',
+                'gdt_edges_iso', 'gdt_thermally_cut'
+            ]
+
+            for option in gdt_options:
+                settings_data[option] = request.form.get(option) == 'on'
+
+            # Handle drawing options
+            text_field_enabled = request.form.get('text_field_enabled') == 'on'
+            gdt_defaults_enabled = request.form.get('gdt_defaults_enabled') == 'on'
+
+            settings_data['drawing_template']['text_field_enabled'] = text_field_enabled
+            settings_data['drawing_template']['gdt_defaults_enabled'] = gdt_defaults_enabled
+
+            # Handle GD&T defaults
+            gdt_fields = [
+                'gdt_general_abc', 'gdt_general_ab', 'gdt_welded_structure',
+                'gdt_of_rz_63', 'gdt_ofz_general', 'gdt_ofz_wxy',
+                'gdt_ofz_main_specs', 'gdt_ofz_main_raw', 'gdt_ofz_main',
+                'gdt_edges_iso', 'gdt_thermally_cut'
+            ]
+
+            for field in gdt_fields:
+                value = request.form.get(field) == 'on'
+                settings_data['drawing_template'][field] = value
+
             # Handle drawing template parameters
             if 'parameters' not in settings_data['drawing_template']:
                 settings_data['drawing_template']['parameters'] = {}

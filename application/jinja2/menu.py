@@ -13,13 +13,9 @@ with app.app_context():
                 'title': 'pages.part.new_part'
             },
             {
-                'url': url_for('part_points'),
-                'title': 'pages.part.points'
-            },
-            {
-                'url': url_for('part_bounding_box'),
-                'title': 'pages.part.bounding_box'
-            },
+                'url': url_for('part_edit'),
+                'title': 'pages.part.edit_part'
+            }
         ]
     }
 
@@ -33,16 +29,8 @@ with app.app_context():
                 'title': 'pages.product.new_product'
             },
             {
-                'url': url_for('product_reorder'),
-                'title': 'pages.product.reorder_product_tree'
-            },
-            {
-                'url': url_for('product_renumber_instances'),
-                'title': 'pages.product.renumber_instances'
-            },
-            {
-                'url': url_for('product_properties'),
-                'title': 'pages.product.edit_product_properties'
+                'url': url_for('product_edit'),
+                'title': 'pages.product.edit_product'
             },
         ]
     }

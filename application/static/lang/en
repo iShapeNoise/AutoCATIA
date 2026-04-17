@@ -14,7 +14,8 @@
       "notice": "Please make sure Catia v5 is already running, before continue."
     },
     "part": {
-      "new_part": "Create New Part",
+      "new_part": "New Part",
+      "edit_part": "Edit Part",
       "bounding_box": "Create Bounding Box",
       "points": "Points",
       "export_points": "Export Points",
@@ -34,7 +35,15 @@
       "product_tools": "Product Tools",
       "reorder_desc": "Alphanumerically sorts Products within a Product",
       "renumber_desc": "Renumbers the child instances of the currently open product",
-      "edit_attributes_desc": "Edit the Products attributes"
+      "edit_attributes_desc": "Edit the Products attributes",
+      "new_product": "New Product",
+      "edit_product": "Edit Product",
+      "reorder_product_tree": "Reorder Tree",
+      "renumber_instances": "Renumber Instances",
+      "edit_product_properties": "Edit Product Properties",
+      "no_product_opened": "No product opened in CATIA",
+      "please_choose_product": "Please choose a product",
+      "select_product": "Select Product"
     },
     "drawing": {
       "new": "New Drawing",
@@ -50,7 +59,7 @@
       "include_main_view": "include Main View",
       "include_background_view": "include Background View",
       "new_drawing": "New Drawing",
-      "select_template": "Select a drawing template size:",
+      "select_template": "Select the sheet size format:",
       "a4_portrait": "A4 Portrait",
       "a4_landscape": "A4 Landscape",
       "a3": "A3",
@@ -85,7 +94,10 @@
       "part_number_placeholder": "Enter part number",
       "append": "Append",
       "update_pages": "Update Pages",
-      "select_page": "Select Page"
+      "select_page": "Select Page",
+      "select_drawing": "Select Drawing",
+      "choose_drawing": "Choose Drawing",
+      "no_drawings": "No drawings found"
     },
     "settings": {
       "title": "Settings",
@@ -110,7 +122,21 @@
       "no_logo_selected": "No logo selected",
       "projection_method": "Projection Method",
       "projection_method_eu": "European Projection",
-      "projection_method_us": "US Projection"
+      "projection_method_us": "US Projection",
+      "drawing_options": "Drawing Options",
+      "text_field": "Text Field",
+      "gdt_defaults": "GD&T Defaults",
+      "gdt_general_abc": "General Tolerances: ABC",
+      "gdt_general_ab": "General Tolerances: AB",
+      "gdt_welded_structure": "General Tolerances for welded structure",
+      "gdt_of_rz_63": "OF Rz 63 (all) ISO 21920",
+      "gdt_ofz_general": "OFZ General",
+      "gdt_ofz_wxy": "OFZ w x y",
+      "gdt_ofz_main_specs": "OFZ Main with specs",
+      "gdt_ofz_main_raw": "OFZ Main raw ()",
+      "gdt_ofz_main": "OFZ Main ()",
+      "gdt_edges_iso": "Edges ISO 13715",
+      "gdt_thermally_cut": "Thermally cut"
     }
   },
   "common": {
@@ -126,7 +152,8 @@
     "author": "Author",
     "manager": "Manager",
     "part_number": "Part Number",
-    "comments": "Comments"
+    "comments": "Comments",
+    "update": "Update"
   },
   "labels": {
     "scale": "Scale",

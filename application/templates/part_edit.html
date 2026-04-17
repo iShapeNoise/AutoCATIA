@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {{ render_menu('part')|safe }}
+    <div class="container mt-3">
+        <h2>Edit Part</h2>
+
+        <!-- Part Selection Section -->
+        <div class="mb-4 mt-3">
+            <h4 class="text-white border-bottom border-white pb-1 mb-3">Part</h4>
+            <div class="row">
+                <div class="mb-3">
+                    <label for="part_select" class="form-label">Select Part</label>
+                    <select class="form-select" id="part_select" name="selected_part">
+                        {% if open_parts %}
+                            {% if open_parts|length == 1 %}
+                                {% for part in open_parts %}
+                                    <option value="{{ part }}.CATPart" selected>{{ part }}</option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="">Please choose a part</option>
+                                {% for part in open_parts %}
+                                    <option value="{{ part }}.CATPart">{{ part }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        {% else %}
+                            <option value="">No parts opened in CATIA</option>
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Points Section -->
+        <div class="mb-4 mt-3">
+            <h4 class="text-white border-bottom border-white pb-1 mb-3">Points</h4>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card border-dark">
+                        <div class="card-body">
+                            {% include 'part_points.html' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bounding Box Section -->
+        <div class="mb-4 mt-3">
+            <h4 class="text-white border-bottom border-white pb-1 mb-3">Creating Bounding Box</h4>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card border-dark">
+                        <div class="card-body">
+                            {% include 'part_bounding_box.html' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validate part selection before operations
+    function validatePartSelection() {
+        const partSelect = document.getElementById('part_select');
+        if (!partSelect.value) {
+            alert('Please select a part first.');
+            return false;
+        }
+        return true;
+    }
+
+    // Add validation to forms if needed
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        if (form.getAttribute('hx-post')) {
+            form.addEventListener('submit', function(e) {
+                if (!validatePartSelection()) {
+                    e.preventDefault();
+                }
+            });
+        }
+    });
+});
+</script>

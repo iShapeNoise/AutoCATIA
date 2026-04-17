@@ -8,22 +8,51 @@
         <div class="alert alert-warning" id="multiple-drawings-warning" style="display: none;">
             {{ lang_manager.t('pages.drawing.multiple_drawings_warning', 'There are more than one Drawing opened, please close the ones not needed, before adding a new page') }}
         </div>
+        <!-- Drawing and Pages Selection Row -->
+        <div class="row">
+            <!-- Drawing Selection Column -->
+            <div class="col-md-6 mb-4">
+                <h4 class="text-white border-bottom border-white pb-1 mb-3">Select Drawing</h4>
+                <div class="mb-3">
+                    <label for="drawing_select" class="form-label">Select Drawing</label>
+                    <select class="form-select" id="drawing_select" name="selected_drawing">
+                        {% if open_drawings %}
+                            {% if open_drawings|length == 1 %}
+                                {% for drawing in open_drawings %}
+                                    <option value="{{ drawing }}" selected>{{ drawing }}</option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="">Please select a drawing...</option>
+                                {% for drawing in open_drawings %}
+                                    <option value="{{ drawing }}">{{ drawing }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        {% else %}
+                            <option value="">No drawings found</option>
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
 
-        <!-- Update Pages Section -->
-        <div class="mb-4 mt-5">
-            <h4 class="text-white border-bottom border-white pb-1 mb-3">{{ lang_manager.t('pages.drawing.update_pages', 'Update Pages') }}</h4>
-            <div class="row">
-              <div class="mb-3">
-                  <label for="page_select" class="form-label">Select Page</label>
-                  <select class="form-select" id="page_select" name="selected_page">
-                      {% if sheets %}
-                          {% for sheet in sheets %}
-                              <option value="{{ sheet }}">{{ sheet }}</option>
-                          {% endfor %}
-                      {% else %}
-                          <option value="">No pages found</option>
-                      {% endif %}
-                  </select>
+            <!-- Update Pages Column -->
+            <div class="col-md-6 mb-4">
+                <h4 class="text-white border-bottom border-white pb-1 mb-3">{{ lang_manager.t('pages.drawing.update_pages', 'Update Pages') }}</h4>
+                <div class="mb-3">
+                    <label for="page_select" class="form-label">Select Page</label>
+                    <select class="form-select" id="page_select" name="selected_page">
+                        {% if sheets %}
+                            {% for sheet in sheets %}
+                                <option value="{{ sheet }}">{{ sheet }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="">No pages found</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="text-center">
+                    <button type="button" class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1" onclick="updateSelectedPage()">
+                        Update Page
+                    </button>
                 </div>
             </div>
         </div>
@@ -32,112 +61,232 @@
 
         <div class="mb-4 mt-1">
             <h4 class="text-white border-bottom border-white pb-1 mb-3">{{ lang_manager.t('pages.drawing.add_page', 'Add Page') }}</h4>
-            <div class="row g-3">
-                <!-- A4 Portrait -->
-                <div class="col-6 col-lg-3">
-                    <button type="button"
-                            class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#pageInfoModal"
-                            data-format="a4_portrait">
-                        <div class="card h-100 border-dark">
-                            <div class="card-img-container">
-                                <img src="{{ url_for('static', filename='images/A4_Portrait_thumb.png') }}"
-                                     class="card-img-top thumbnail-img"
-                                     alt="A4 Portrait">
-                            </div>
-                            <div class="card-body text-center p-2">
-                                <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a4_portrait', 'A4 Portrait') }}</h6>
-                            </div>
-                        </div>
-                    </button>
-                </div>
 
-                <!-- A4 Landscape -->
-                <div class="col-6 col-lg-3">
-                    <button type="button"
-                            class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#pageInfoModal"
-                            data-format="a4_landscape">
-                        <div class="card h-100 border-dark">
-                            <div class="card-img-container">
-                                <img src="{{ url_for('static', filename='images/A4_Landscape_thumb.png') }}"
-                                     class="card-img-top thumbnail-img"
-                                     alt="A4 Landscape">
-                            </div>
-                            <div class="card-body text-center p-2">
-                                <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a4_landscape', 'A4 Landscape') }}</h6>
-                            </div>
-                        </div>
-                    </button>
-                </div>
+            <!-- Add Page Section with Options -->
+            <div class="mb-4 mt-4">
+                <h4 class="h5 text-white border-bottom border-white pb-1 mb-3">Draw Options</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                          <div class="form-check">
+                              <input class="form-check-input" type="checkbox" name="text_field_enabled" id="text_field_enabled"
+                                     {% if settings.get('text_field_enabled', false) %}checked{% endif %}>
+                              <label class="form-check-label" for="text_field_enabled">Text Field</label>
+                          </div>
 
-                <!-- A3 -->
-                <div class="col-6 col-lg-3">
-                    <button type="button"
-                            class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#pageInfoModal"
-                            data-format="a3">
-                        <div class="card h-100 border-dark">
-                            <div class="card-img-container">
-                                <img src="{{ url_for('static', filename='images/A3_Landscape_thumb.png') }}"
-                                     class="card-img-top thumbnail-img"
-                                     alt="A3">
-                            </div>
-                            <div class="card-body text-center p-2">
-                                <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a3', 'A3') }}</h6>
-                            </div>
+                          <div class="form-check">
+                              <input class="form-check-input" type="checkbox" name="gdt_enabled" id="gdt_enabled"
+                                     {% if settings.get('gdt_enabled', false) %}checked{% endif %}>
+                              <label class="form-check-label" for="gdt_enabled">GD&T Defaults</label>
+                          </div>
                         </div>
-                    </button>
+                    </div>
                 </div>
-
-                <!-- A2 -->
-                <div class="col-6 col-lg-3">
-                    <button type="button"
-                            class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#pageInfoModal"
-                            data-format="a2">
-                        <div class="card h-100 border-dark">
-                            <div class="card-img-container">
-                                <img src="{{ url_for('static', filename='images/A2_Landscape_thumb.png') }}"
-                                     class="card-img-top thumbnail-img"
-                                     alt="A2">
+                <!-- GD&T Options Section -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h5 class="h5 text-white border-bottom border-white pb-1 mb-3">GD&T Defaults</h5>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="gdt_general_abc" id="gdt_general_abc"
+                                           {% if settings.gdt_general_abc %}checked{% endif %}>
+                                    <label class="form-check-label text-white" for="gdt_general_abc">
+                                        General Tolerances: ABC
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="gdt_general_ab" id="gdt_general_ab"
+                                           {% if settings.gdt_general_ab %}checked{% endif %}>
+                                    <label class="form-check-label text-white" for="gdt_general_ab">
+                                        General Tolerances: AB
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="gdt_welded_structure" id="gdt_welded_structure"
+                                           {% if settings.gdt_welded_structure %}checked{% endif %}>
+                                    <label class="form-check-label text-white" for="gdt_welded_structure">
+                                        General Tolerances for welded structure
+                                    </label>
+                                </div>
                             </div>
-                            <div class="card-body text-center p-2">
-                                <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a2', 'A2') }}</h6>
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="gdt_of_rz_63" id="gdt_of_rz_63"
+                                           {% if settings.gdt_of_rz_63 %}checked{% endif %}>
+                                    <label class="form-check-label text-white" for="gdt_of_rz_63">
+                                        OF Rz 63 (all) ISO 21920
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="gdt_ofz_general" id="gdt_ofz_general"
+                                           {% if settings.gdt_ofz_general %}checked{% endif %}>
+                                    <label class="form-check-label text-white" for="gdt_ofz_general">
+                                        OFZ General
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="gdt_ofz_wxy" id="gdt_ofz_wxy"
+                                           {% if settings.gdt_ofz_wxy %}checked{% endif %}>
+                                    <label class="form-check-label text-white" for="gdt_ofz_wxy">
+                                        OFZ w x y
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="gdt_ofz_main_specs" id="gdt_ofz_main_specs"
+                                           {% if settings.gdt_ofz_main_specs %}checked{% endif %}>
+                                    <label class="form-check-label text-white" for="gdt_ofz_main_specs">
+                                        OFZ Main with specs
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="gdt_ofz_main_raw" id="gdt_ofz_main_raw"
+                                           {% if settings.gdt_ofz_main_raw %}checked{% endif %}>
+                                    <label class="form-check-label text-white" for="gdt_ofz_main_raw">
+                                        OFZ Main raw ()
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="gdt_ofz_main" id="gdt_ofz_main"
+                                           {% if settings.gdt_ofz_main %}checked{% endif %}>
+                                    <label class="form-check-label text-white" for="gdt_ofz_main">
+                                        OFZ Main ()
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="gdt_edges_iso" id="gdt_edges_iso"
+                                           {% if settings.gdt_edges_iso %}checked{% endif %}>
+                                    <label class="form-check-label text-white" for="gdt_edges_iso">
+                                        Edges ISO 13715
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="gdt_thermally_cut" id="gdt_thermally_cut"
+                                           {% if settings.gdt_thermally_cut %}checked{% endif %}>
+                                    <label class="form-check-label text-white" for="gdt_thermally_cut">
+                                        Thermally cut
+                                    </label>
+                                </div>
                             </div>
                         </div>
-                    </button>
-                </div>
-
-                <!-- A1 -->
-                <div class="col-6 col-lg-3">
-                    <button type="button"
-                            class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#pageInfoModal"
-                            data-format="a1">
-                        <div class="card h-100 border-dark">
-                            <div class="card-img-container">
-                                <img src="{{ url_for('static', filename='images/A1_Landscape_thumb.png') }}"
-                                     class="card-img-top thumbnail-img"
-                                     alt="A1">
-                            </div>
-                            <div class="card-body text-center p-2">
-                                <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a1', 'A1') }}</h6>
-                            </div>
-                        </div>
-                    </button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div id="drawing_result" class="mt-3">
-            {% include('partials/spinner.html') %}
+            <!-- Existing thumbnails section -->
+            <div class="row g-3">
+                <!-- A4 Portrait, A4 Landscape, A3, A2, A1 thumbnails remain the same -->
+            </div>
         </div>
+        <div class="row g-3">
+            <!-- A4 Portrait -->
+            <div class="col-6 col-lg-3">
+                <button type="button"
+                        class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
+                        data-bs-toggle="modal"
+                        data-bs-target="#pageInfoModal"
+                        data-format="a4_portrait">
+                    <div class="card h-100 border-dark">
+                        <div class="card-img-container">
+                            <img src="{{ url_for('static', filename='images/A4_Portrait_thumb.png') }}"
+                                 class="card-img-top thumbnail-img"
+                                 alt="A4 Portrait">
+                        </div>
+                        <div class="card-body text-center p-2">
+                            <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a4_portrait', 'A4 Portrait') }}</h6>
+                        </div>
+                    </div>
+                </button>
+            </div>
+
+            <!-- A4 Landscape -->
+            <div class="col-6 col-lg-3">
+                <button type="button"
+                        class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
+                        data-bs-toggle="modal"
+                        data-bs-target="#pageInfoModal"
+                        data-format="a4_landscape">
+                    <div class="card h-100 border-dark">
+                        <div class="card-img-container">
+                            <img src="{{ url_for('static', filename='images/A4_Landscape_thumb.png') }}"
+                                 class="card-img-top thumbnail-img"
+                                 alt="A4 Landscape">
+                        </div>
+                        <div class="card-body text-center p-2">
+                            <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a4_landscape', 'A4 Landscape') }}</h6>
+                        </div>
+                    </div>
+                </button>
+            </div>
+
+            <!-- A3 -->
+            <div class="col-6 col-lg-3">
+                <button type="button"
+                        class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
+                        data-bs-toggle="modal"
+                        data-bs-target="#pageInfoModal"
+                        data-format="a3">
+                    <div class="card h-100 border-dark">
+                        <div class="card-img-container">
+                            <img src="{{ url_for('static', filename='images/A3_Landscape_thumb.png') }}"
+                                 class="card-img-top thumbnail-img"
+                                 alt="A3">
+                        </div>
+                        <div class="card-body text-center p-2">
+                            <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a3', 'A3') }}</h6>
+                        </div>
+                    </div>
+                </button>
+            </div>
+
+            <!-- A2 -->
+            <div class="col-6 col-lg-3">
+                <button type="button"
+                        class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
+                        data-bs-toggle="modal"
+                        data-bs-target="#pageInfoModal"
+                        data-format="a2">
+                    <div class="card h-100 border-dark">
+                        <div class="card-img-container">
+                            <img src="{{ url_for('static', filename='images/A2_Landscape_thumb.png') }}"
+                                 class="card-img-top thumbnail-img"
+                                 alt="A2">
+                        </div>
+                        <div class="card-body text-center p-2">
+                            <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a2', 'A2') }}</h6>
+                        </div>
+                    </div>
+                </button>
+            </div>
+
+            <!-- A1 -->
+            <div class="col-6 col-lg-3">
+                <button type="button"
+                        class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
+                        data-bs-toggle="modal"
+                        data-bs-target="#pageInfoModal"
+                        data-format="a1">
+                    <div class="card h-100 border-dark">
+                        <div class="card-img-container">
+                            <img src="{{ url_for('static', filename='images/A1_Landscape_thumb.png') }}"
+                                 class="card-img-top thumbnail-img"
+                                 alt="A1">
+                        </div>
+                        <div class="card-body text-center p-2">
+                            <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a1', 'A1') }}</h6>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="drawing_result" class="mt-3">
+        {% include('partials/spinner.html') %}
     </div>
 
     <!-- Page Information Modal -->
@@ -203,10 +352,28 @@
             debugLog('Modal shown with format', format);
         });
 
-        // Check for multiple drawings on page load
+        // Handle GD&T Defaults checkbox state
         document.addEventListener('DOMContentLoaded', function() {
-            debugLog('Page loaded');
-            // You can add AJAX call here to check for multiple drawings if needed
+            const gdtMainCheckbox = document.getElementById('gdt_enabled');
+            const gdtSubCheckboxes = document.querySelectorAll('[id^="gdt_"]:not(#gdt_enabled)');
+
+            function updateGdtSubCheckboxes() {
+                const isEnabled = gdtMainCheckbox.checked;
+                gdtSubCheckboxes.forEach(checkbox => {
+                    checkbox.disabled = !isEnabled;
+                    if (isEnabled) {
+                        checkbox.parentElement.classList.remove('opacity-50');
+                    } else {
+                        checkbox.parentElement.classList.add('opacity-50');
+                    }
+                });
+            }
+
+            // Set initial state
+            updateGdtSubCheckboxes();
+
+            // Update on change
+            gdtMainCheckbox.addEventListener('change', updateGdtSubCheckboxes);
         });
     </script>
 {% endblock %}
