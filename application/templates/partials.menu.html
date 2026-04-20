@@ -3,8 +3,12 @@
 
 <div class="text-center">
     {%- for item in m_dict['menu_items'] -%}
-        <a class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1" href="{{ item['url'] }}">
-            {{ lang_manager.t('pages.part.' + item['title'].lower().replace(' ', '_'), item['title']) }}
+        {% set cls_active = '' %}
+        {% if item['active'] %}
+        {% set cls_active = 'active' %}
+        {% endif %}
+        <a class="btn btn-dark border-white btn-sm btn-fixed-width p-1 m-1 rounded-1 {{ cls_active }}" href="{{ item['url'] }}">
+            {{ lang_manager.t('pages.' + m_dict['title'].lower() + '.' + item['title'].lower().replace(' ', '_'), item['title']) }}
         </a>
     {%- endfor -%}
 </div>

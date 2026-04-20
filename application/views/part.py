@@ -1,7 +1,6 @@
 from flask import render_template
-
-from application import app
 from application.support.properties import get_properties
+from application import app
 from application.views.view_wrappers import catia_v5_required
 
 
@@ -16,14 +15,7 @@ def part():
 @app.route('/part/new')
 @catia_v5_required
 def part_new():
-    default_properties = get_properties(None, 'default')
-    user_defined_properties = get_properties(None, 'user')
-
-    return render_template(
-        'part_new.html',
-        default_properties=default_properties,
-        user_defined_properties=user_defined_properties
-    )
+    return render_template('part_new.html')
 
 
 @app.route('/part/edit')

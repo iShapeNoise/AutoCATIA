@@ -64,7 +64,7 @@ def create_default_settings(userdata_path: Path):
                 'CHECKED BY': '',
                 'DATE APPROVED': '',
                 'REVISION': 'A'
-            }
+            },
         },
         'drawing': {
             'pdf': {'exclude_sheets': ['Details', 'DXF']},
@@ -87,7 +87,39 @@ def create_default_settings(userdata_path: Path):
         'gdt_ofz_main_raw': False,
         'gdt_ofz_main': False,
         'gdt_edges_iso': False,
-        'gdt_thermally_cut': False
+        'gdt_thermally_cut': False,
+        'bom': {
+            'columns': {
+                'title': True,
+                'created_by': True,
+                'subject': False,
+                'description': True,
+                'keywords': False,
+                'category': False,
+                'status': False,
+                'material': True,
+                'mass': True,
+                'part_number': True,
+                'rev': True,
+                'project': False,
+                'custom': False,
+                'date': True,
+                'last_saved_by': False,
+                'last_modified_time': False,
+                'checked_by': True,
+                'manager': False,
+                'company': False,
+                'hyperlink_base': False,
+                'pos': True,
+                'part_number_2': False,
+                'quantity': True,
+                'object_quantity': False,
+                'base_unit': False,
+                'base_quantity': False,
+                'bom_structure': False,
+                'comment': True
+            },
+        },
     }
 
     settings_file = Path(userdata_path, 'settings')

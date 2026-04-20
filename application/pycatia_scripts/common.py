@@ -72,14 +72,37 @@ def get_documents(sort_key: str = None, reverse: bool = False) -> tuple[list, di
     return d_list, counter
 
 
-def save_documents(form: FormDocumentSave):
+def save_documents(form: FormDocumentSave, save_all: bool = False):
+    """Save documents - either selected or all"""
     form_documents = form.documents
+    application = get_app_object()
+    documents = application.documents
+
     for form_document in form_documents:
-        if form_document.save.data:
-            application = get_app_object()
-            documents = application.documents
+        # Save if checkbox is checked OR if save_all is True
+        if form_document.save.data or save_all:
+            try:
+                document = documents.item(form_document.filename.data)
+                if not document.is_saved:
+                    document.save()
+            except:
+                # Handle case where document might not exist anymore
+                continue
 
-            document = documents.item(form_document.filename.data)
 
+def save_all_documents(documents_list):
+    """Save all documents in the list"""
+    application = get_app_object()
+    if not application:
+        return
+
+    catia_documents = application.documents
+
+    for doc_info in documents_list:
+        try:
+            document = catia_documents.item(doc_info['filename'])
             if not document.is_saved:
                 document.save()
+        except:
+            # Handle case where document might have been closed
+            continue

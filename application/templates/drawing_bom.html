@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+    {{ render_menu('drawing')|safe }}
+
+    <h2 class="mt-3">{{ lang_manager.t('pages.drawing.bom', 'B.O.M. Management') }}</h2>
+    <p class="alert alert-info">
+        {{ lang_manager.t('pages.drawing.bom_desc', 'Manage Bill of Materials for CATIA drawings') }}
+    </p>
+
+    <!-- Drawing Selection with Button -->
+    <div class="mb-3">
+        <div class="row g-2">
+            <div class="col-md-8">
+                <select class="form-select"
+                        id="drawingSelect"
+                        name="drawing">
+                    <option value="">Loading drawings...</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-dark btn-sm w-100 border-white p-1 m-1 rounded-1"
+                        id="checkBomBtn"
+                        hx-get="/htmx/drawing/bom/check"
+                        hx-target="#bomContent"
+                        hx-include="#drawingSelect">
+                    {{ lang_manager.t('pages.drawing.check_bom', 'Check B.O.M.') }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load drawings on page load -->
+    <div hx-get="/htmx/drawing/bom/drawings"
+         hx-target="#drawingSelect"
+         hx-trigger="load"
+         hx-swap="innerHTML"></div>
+
+    <!-- B.O.M. Content Area -->
+    <div id="bomContent">
+        <!-- Content will be loaded here via HTMX -->
+    </div>
+
+{% endblock %}

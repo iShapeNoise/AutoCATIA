@@ -1,12 +1,11 @@
 from pycatia.mec_mod_interfaces.part_document import PartDocument
 from pycatia.product_structure_interfaces.product_document import ProductDocument
 from werkzeug.datastructures import ImmutableMultiDict
-
+from application.support.properties import update_properties
 from application.pycatia_scripts.common import check_part_number_exists
 from application.pycatia_scripts.common import get_output
 from application.pycatia_scripts.com_objects import get_app_object
 from application.pycatia_scripts.settings import part_template
-from application.support.properties import update_properties
 
 
 def create_new_part(form: ImmutableMultiDict):

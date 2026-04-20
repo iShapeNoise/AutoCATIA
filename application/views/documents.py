@@ -18,7 +18,10 @@ def documents():
     form = FormDocumentSave(documents=documents)
 
     if form.validate_on_submit():
-        save_documents(form)
+        if form.save_all.data:  # Check if Save All was clicked
+            save_all_documents(documents)
+        else:
+            save_documents(form)
         return redirect(url_for('documents'))
 
     return render_template('documents.html', documents=documents, form=form, counter=counter)

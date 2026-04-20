@@ -10,6 +10,8 @@ default_property_list = [
     'revision',
     'nomenclature',
     'definition',
+    'source',
+    'description'
 ]
 
 user_defined_property_list = [key for key in product_template['user_ref_properties']]
@@ -17,7 +19,6 @@ user_defined_property_list = [key for key in product_template['user_ref_properti
 
 def get_properties(product: Product | None, type_: str):
     """
-
     :param product:
     :param type_: Must be either default or user
     :return:
@@ -30,26 +31,23 @@ def get_properties(product: Product | None, type_: str):
 
     properties = {}
 
+    # Always include all properties in the list, even if product is None
     for property in property_list:
-        try:
-            properties[property] = ''
-            if product:
-                properties[property] = getattr(product, property)
-        except AttributeError:
-            properties[property] = ''
-            if type_ == 'user':
-                # get the value from the product itself, if set, otherwise use template default.
-                user_ref_properties = None
-                if product:
+        properties[property] = ''  # Default to empty string
+
+        if product:
+            try:
+                if type_ == 'default':
+                    properties[property] = getattr(product, property)
+                elif type_ == 'user':
                     user_ref_properties = product.user_ref_properties
-                try:
                     if user_ref_properties:
                         cad_property = user_ref_properties.item(property)
                         properties[property] = cad_property.value
-                    else:
-                        properties[property] = ''
-                except CATIAApplicationException:
-                    properties[property] = product_template['user_ref_properties'][property]
+            except (AttributeError, CATIAApplicationException):
+                properties[property] = ''
+                if type_ == 'user':
+                    properties[property] = product_template['user_ref_properties'].get(property, '')
 
     return properties
 
@@ -74,7 +72,3 @@ def update_properties(product: Product, form: ImmutableMultiDict):
                 user_ref_properties.create_string(key, form.get(key))
             except com_error:
                 user_ref_properties.create_string(key, form.get(key))
-
-
-
-

@@ -63,6 +63,7 @@ def product_edit():
         user_defined_properties=user_defined_properties
     )
 
+
 @app.route('/product/reorder')
 @catia_v5_required
 def product_reorder():
@@ -82,6 +83,8 @@ def product_renumber_instances():
 @app.route('/product/properties')
 @catia_v5_required
 def product_properties():
+    from application.support.documents import get_product_document
+
     pt_product_document, errors = get_product_document(product_only=False)
 
     if errors:

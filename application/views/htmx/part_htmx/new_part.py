@@ -3,8 +3,8 @@ from flask import request, render_template
 from application import app
 from application.pycatia_scripts.part.new_part import create_new_part
 from application.support.documents import get_product_document
-from application.support.properties import get_properties
 from application.views.url_prefixes import htmx
+from application.support.properties import get_properties
 
 
 @app.route(f'{htmx}/part/create_new', methods=['POST'])

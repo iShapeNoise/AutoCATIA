@@ -81,8 +81,27 @@ def settings():
             settings_data['notifications']['enabled'] = notifications_enabled
             settings_data['notifications']['visibility_seconds'] = visibility_seconds
 
+            # Handle B.O.M. settings
+            bom_columns = request.form.getlist('bom_columns')
+            if 'bom' not in settings_data:
+                settings_data['bom'] = {}
+
+            settings_data['bom']['columns'] = {}
+            all_bom_columns = [
+                'title', 'created_by', 'subject', 'description',
+                'keywords', 'category', 'status', 'material',  
+                'mass', 'part_number', 'rev', 'project',
+                'custom', 'date', 'last_saved_by', 'last_modified_time',
+                'checked_by', 'manager', 'company', 'hyperlink_base',
+                'pos', 'part_number_2', 'quantity', 'object_quantity',
+                'base_unit', 'base_quantity', 'bom_structure', 'comment'
+            ]
+
+            for column in all_bom_columns:
+                settings_data['bom']['columns'][column] = column in bom_columns
+
             # Handle drawing options checkboxes
-            text_field_enabled = request.form.get('text_field_enabled') == 'on'  
+            text_field_enabled = request.form.get('text_field_enabled') == 'on'
             gdt_enabled = request.form.get('gdt_enabled') == 'on'
 
             settings_data['text_field_enabled'] = text_field_enabled

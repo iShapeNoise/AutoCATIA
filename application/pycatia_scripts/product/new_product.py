@@ -4,7 +4,6 @@ from werkzeug.datastructures import ImmutableMultiDict
 from application.pycatia_scripts.common import get_output
 from application.pycatia_scripts.common import check_part_number_exists
 from application.pycatia_scripts.com_objects import get_app_object
-from application.support.properties import update_properties
 
 
 def create_new_product(form: ImmutableMultiDict) -> bool:

@@ -5,7 +5,7 @@
             {% if item['title'].lower() in request.url %}
             {% set cls_active = 'active' %}
             {% endif %}
-            <a class="btn btn-dark btn-sm border-white btn-fixed-width p-1 m-1 rounded-1 {{ cls_active }}" href={{ item['url'] }}>
+            <a class="btn btn-dark border-white btn-sm btn-fixed-width p-1 m-1 rounded-1 {{ cls_active }}" href={{ item['url'] }}>
                 {{ lang_manager.t('menu.' + item['title'].lower(), item['title']) }}
             </a>
         {% endfor %}
@@ -15,7 +15,7 @@
         {% if 'settings' in request.url %}
         {% set cls_active = 'active' %}
         {% endif %}
-        <a class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1 {{ cls_active }}" href="{{ url_for('settings') }}">
+        <a class="btn btn-dark border-white btm-sm btn-fixed-width p-1 m-1 rounded-1 {{ cls_active }}" href="{{ url_for('settings') }}">
             ⚙️ {{ lang_manager.t('menu.settings', 'Settings') }}
         </a>
     </div>

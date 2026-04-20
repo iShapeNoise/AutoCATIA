@@ -35,6 +35,12 @@ class _FormDocumentSave(Form):
             'class': 'form-check-input',
         }
     )
+    save_all = SubmitField(  # <-- Add this field
+        'Save All',
+        render_kw={
+            'class': 'btn btn-dark btn-sm border-white p-1 m-1 rounded-1'
+        },
+    )
 
 
 class FormDocumentSave(FlaskForm):
@@ -45,6 +51,12 @@ class FormDocumentSave(FlaskForm):
     save = SubmitField(
         'Save',
         render_kw={
-            'class': 'btn btn-primary btn-sm rounded-0'
+            'class': 'btn btn-dark btn-sm border-white p-1 m-1 rounded-1'
+        },
+    )
+    save_all = SubmitField(  # <-- Add this field
+        'Save All',
+        render_kw={
+            'class': 'btn btn-dark btn-sm border-white p-1 m-1 rounded-1'
         },
     )

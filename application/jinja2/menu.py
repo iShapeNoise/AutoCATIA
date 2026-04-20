@@ -31,7 +31,7 @@ with app.app_context():
             {
                 'url': url_for('product_edit'),
                 'title': 'pages.product.edit_product'
-            },
+            }
         ]
     }
 
@@ -51,6 +51,10 @@ with app.app_context():
             {
                 'url': url_for('drawing_views'),
                 'title': 'pages.drawing.views'
+            },
+            {
+                'url': url_for('drawing_bom'),
+                'title': 'pages.drawing.bom'
             },
             {
                 'url': url_for('drawing_save_as'),
@@ -100,13 +104,19 @@ def render_menu_header():
     return render_template('partials.menu_header.html', m_list=translated_m_list)
 
 
-def render_menu(option: str):
+def render_menu(option: str, current_route: str = None):
     from application.pycatia_scripts.language import lang_manager
+    from flask import request
 
-    m_dict = None
+    if current_route is None:
+        current_route = request.endpoint
 
+    # For main menu, use existing logic
     if option == 'menu':
-        m_dict = m_dict_menu
+        return render_menu_header()
+
+    # For submenus, use URL-based matching
+    m_dict = None
     if option == 'part':
         m_dict = m_dict_part
     if option == 'product':
@@ -115,7 +125,7 @@ def render_menu(option: str):
         m_dict = m_dict_drawing
 
     if m_dict:
-        # Apply translations to the entire menu structure
+        # Apply translations
         translated_menu = {
             'title': lang_manager.t(m_dict['title'], m_dict['title']),
             'url': m_dict['url'],
@@ -125,7 +135,9 @@ def render_menu(option: str):
         for item in m_dict['menu_items']:
             translated_item = {
                 'url': item['url'],
-                'title': lang_manager.t(item['title'], item['title'])
+                'title': lang_manager.t(item['title'], item['title']),
+                # Use URL-based matching instead of endpoint matching
+                'active': item['url'] in request.url
             }
             translated_menu['menu_items'].append(translated_item)
 

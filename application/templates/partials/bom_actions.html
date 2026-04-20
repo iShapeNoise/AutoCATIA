@@ -1,0 +1,57 @@
+<div class="mt-3">
+    <h4 class="text-white border-bottom border-white pb-1 mb-3">{{ lang_manager.t('pages.drawing.add_edit_bom', 'Add/Edit B.O.M.') }}</h4>
+
+    <p class="alert {% if has_bom %}alert-success{% else %}alert-warning{% endif %}">
+        {% if has_bom %}
+            {{ lang_manager.t('pages.drawing.bom_exists', 'B.O.M. exists for this product') }}
+        {% else %}
+            {{ lang_manager.t('pages.drawing.bom_not_exists', 'No B.O.M. exists for this product') }}
+        {% endif %}
+    </p>
+
+    <button class="btn btn-dark border-white p-1 m-1 rounded-1"
+            hx-post="/htmx/product/bom/{% if has_bom %}edit{% else %}create{% endif %}"
+            hx-target="#bomTable"
+            hx-include="#productSelect,[name='columns']">
+        {% if has_bom %}
+            {{ lang_manager.t('pages.drawing.edit_bom', 'Edit B.O.M.') }}
+        {% else %}
+            {{ lang_manager.t('pages.drawing.add_bom', 'Add B.O.M.') }}
+        {% endif %}
+    </button>
+
+    <!-- Column Selection Section -->
+    <div class="mt-3">
+        <h6>{{ lang_manager.t('pages.drawing.select_columns', 'Select Columns') }}</h6>
+        <div class="row">
+            {% set bom_columns = [
+                'title', 'created_by', 'subject', 'description',
+                'keywords', 'category', 'status', 'material',
+                'mass', 'part_number', 'rev', 'project',
+                'custom', 'date', 'last_saved_by', 'last_modified_time',
+                'checked_by', 'manager', 'company', 'hyperlink_base',
+                'pos', 'part_number_2', 'quantity', 'object_quantity',
+                'base_unit', 'base_quantity', 'bom_structure', 'comment'
+            ] %}
+
+            {% for column in bom_columns %}
+                <div class="col-md-3 mb-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                               name="columns"
+                               value="{{ column }}"
+                               id="col_{{ column }}"
+                               {% if settings.bom and settings.bom.get('columns', {}).get(column, false) %}checked{% endif %}>
+                        <label class="form-check-label" for="col_{{ column }}">
+                            {{ lang_manager.t('pages.settings.bom_columns.' + column, column|replace('_', ' ')|title) }}
+                        </label>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div id="bomTable" class="mt-3">
+    <!-- B.O.M. table will be loaded here -->
+</div>
