@@ -8,17 +8,18 @@
             {{ lang_manager.t('pages.drawing.bom_not_exists', 'No B.O.M. exists for this product') }}
         {% endif %}
     </p>
-
-    <button class="btn btn-dark border-white p-1 m-1 rounded-1"
-            hx-post="/htmx/product/bom/{% if has_bom %}edit{% else %}create{% endif %}"
-            hx-target="#bomTable"
-            hx-include="#productSelect,[name='columns']">
-        {% if has_bom %}
-            {{ lang_manager.t('pages.drawing.edit_bom', 'Edit B.O.M.') }}
-        {% else %}
-            {{ lang_manager.t('pages.drawing.add_bom', 'Add B.O.M.') }}
-        {% endif %}
-    </button>
+    <div class="text-center">
+        <button class="btn btn-dark border-white p-1 m-1 rounded-1"
+                hx-post="/htmx/product/bom/{% if has_bom %}edit{% else %}create{% endif %}"
+                hx-target="#bomTable"
+                hx-include="#productSelect,[name='columns']">
+            {% if has_bom %}
+                {{ lang_manager.t('pages.drawing.edit_bom', 'Edit B.O.M.') }}
+            {% else %}
+                {{ lang_manager.t('pages.drawing.add_bom', 'Add B.O.M.') }}
+            {% endif %}
+        </button>
+    </div>
 
     <!-- Column Selection Section -->
     <div class="mt-3">

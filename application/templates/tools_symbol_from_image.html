@@ -112,4 +112,23 @@
             });
         });
     </script>
+    <script>
+    document.getElementById('generateScriptForm').addEventListener('submit', function(e) {
+        console.log('=== Form Submit Debug ===');
+        console.log('Form action:', this.action);
+        console.log('Form method:', this.method);
+        console.log('HTMX attributes:', {
+            'post': this.getAttribute('hx-post'),
+            'target': this.getAttribute('hx-target'),
+            'swap': this.getAttribute('hx-swap')  
+        });
+
+        // Log form data
+        const formData = new FormData(this);
+        console.log('Form data:');
+        for (let [key, value] of formData.entries()) {
+            console.log(`  ${key}:`, value);
+        }
+    });
+    </script>
 {% endblock %}
