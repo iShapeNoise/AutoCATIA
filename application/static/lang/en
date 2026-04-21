@@ -82,7 +82,7 @@
       "date_help": "Auto-filled but editable",
       "format_help": "Auto-filled from drawing size",
       "page_help": "Auto-filled from sheet count",
-      "update_pages": "Update Pages",
+      "update_page": "Update Page",
       "select_page": "Select Page",
       "add_page": "Add Page",
       "page_info": "Page Information",

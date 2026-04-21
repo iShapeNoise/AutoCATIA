@@ -1,5 +1,27 @@
 <!-- {{ self._TemplateReference__context.name }} -->
-<p class="text-center">
-    <a class="m-1 btn btn-lg btn-primary btn-outline-light p-1 rounded-0" href="{{ url_for('drawing_save_as_pdf') }}">PDF</a>
-    <a class="m-1 btn btn-lg btn-primary btn-outline-light p-1 rounded-0" href="{{ url_for('drawing_save_as_dxf') }}">DXF</a>
-</p>
+<div>
+    <h2>{{ lang_manager.t('pages.drawing.save_as', 'Save As') }}</h2>
+    <div class="text-center">
+      <a class="m-1 btn btn-dark btn-sm border-white p-1 m-1 rounded-1" href="{{ url_for('drawing_save_as_pdf') }}">PDF</a>
+      <a class="m-1 btn btn-dark btn-sm border-white p-1 m-1 rounded-1" href="{{ url_for('drawing_save_as_dxf') }}">DXF</a>
+    </div>
+    <div class="mb-3">
+        <label for="drawing_select" class="form-label">Select Drawing</label>
+        <select class="form-select" id="drawing_select" name="selected_drawing">
+            {% if open_drawings %}
+                {% if open_drawings|length == 1 %}
+                    {% for drawing in open_drawings %}
+                        <option value="{{ drawing }}" selected>{{ drawing }}</option>
+                    {% endfor %}
+                {% else %}
+                    <option value="">Please select a drawing...</option>
+                    {% for drawing in open_drawings %}
+                        <option value="{{ drawing }}">{{ drawing }}</option>
+                    {% endfor %}
+                {% endif %}
+            {% else %}
+                <option value="">No drawings found</option>
+            {% endif %}
+        </select>
+    </div>
+</div>

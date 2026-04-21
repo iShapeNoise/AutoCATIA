@@ -8,9 +8,9 @@
     <p class="alert alert-info p-1">
         {{ lang_manager.t('pages.part.new_part_desc', 'Creates a new Part using the attributes submitted in the Form below.') }}
     </p>
-    
+
     <form hx-post="/htmx/part/create_new" hx-target="#create_new" hx-swap="innerHtml" hx-indicator="#create_new">
-        <div class="mt-2" id="create_new">
+        <div class="mt-2 border border-secondary rounded p-3 mb-3 bg-dark bg-opacity-50" id="create_new">
             {% include('partials/spinner.html') %}
             {% include('partials/form_product_properties.html') %}
         </div>

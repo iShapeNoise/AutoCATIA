@@ -82,7 +82,7 @@
       "date_help": "Automatisch ausgefüllt, aber bearbeitbar",
       "format_help": "Automatisch aus Zeichnungsgröße ausgefüllt",
       "page_help": "Automatisch aus Blattanzahl ausgefüllt",
-      "update_pages": "Update Blatt",
+      "update_page": "Update Blatt",
       "select_page": "Wähle ein Blatt",
       "add_page": "Addiere Blatt",
       "page_info": "Seiteninformationen",

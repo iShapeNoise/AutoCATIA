@@ -4,7 +4,7 @@ from application import app
 from application.views.view_wrappers import catia_v5_required
 from application.pycatia_scripts.settings import drawing_template
 from application.pycatia_scripts.drawing.add_page import check_open_drawings, get_sheets_for_drawing
-from application.pycatia_scripts.settings import settings_data
+from application.pycatia_scripts.settings import drawing_template, settings_data
 
 
 @app.route('/drawing')
@@ -81,6 +81,7 @@ def drawing_save_as():
     )
 
 
+@app.route('/drawing/save_as/pdf')
 @catia_v5_required
 def drawing_save_as_pdf():
     from application.views.htmx.drawing_htmx import save_as
@@ -89,6 +90,7 @@ def drawing_save_as_pdf():
         'drawing_save_as_pdf.html',
         exclude_sheets=exclude_sheets,
     )
+
 
 @app.route('/drawing/save_as/dxf')
 @catia_v5_required

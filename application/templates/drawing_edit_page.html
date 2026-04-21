@@ -9,12 +9,12 @@
             {{ lang_manager.t('pages.drawing.multiple_drawings_warning', 'There are more than one Drawing opened, please close the ones not needed, before adding a new page') }}
         </div>
         <!-- Drawing and Pages Selection Row -->
-        <div class="row">
+        <div class="row mb-4 mt-4 border border-secondary rounded p-3 mb-3 bg-dark bg-opacity-50">
+            <h4 class="text-white border-bottom border-white pb-1 mb-3">{{ lang_manager.t('pages.drawing.update_pages', 'Update Page') }}</h4>
             <!-- Drawing Selection Column -->
             <div class="col-md-6 mb-4">
-                <h4 class="text-white border-bottom border-white pb-1 mb-3">Select Drawing</h4>
                 <div class="mb-3">
-                    <label for="drawing_select" class="form-label">Select Drawing</label>
+                    <label for="drawing_select" class="form-label">1. Select Drawing</label>
                     <select class="form-select" id="drawing_select" name="selected_drawing">
                         {% if open_drawings %}
                             {% if open_drawings|length == 1 %}
@@ -36,9 +36,8 @@
 
             <!-- Update Pages Column -->
             <div class="col-md-6 mb-4">
-                <h4 class="text-white border-bottom border-white pb-1 mb-3">{{ lang_manager.t('pages.drawing.update_pages', 'Update Pages') }}</h4>
                 <div class="mb-3">
-                    <label for="page_select" class="form-label">Select Page</label>
+                    <label for="page_select" class="form-label">2. Select Page</label>
                     <select class="form-select" id="page_select" name="selected_page">
                         {% if sheets %}
                             {% for sheet in sheets %}
@@ -49,17 +48,17 @@
                         {% endif %}
                     </select>
                 </div>
-                <div class="text-center">
-                    <button type="button" class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1" onclick="updateSelectedPage()">
-                        Update Page
-                    </button>
-                </div>
+            </div>
+            <div class="text-center">
+                <button type="button" class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1" onclick="updateSelectedPage()">
+                    Update Page
+                </button>
             </div>
         </div>
 
         <div id="result"></div>
 
-        <div class="mb-4 mt-1">
+        <div class="row mb-4 mt-1 border border-secondary rounded p-3 mb-3 bg-dark bg-opacity-50">
             <h4 class="text-white border-bottom border-white pb-1 mb-3">{{ lang_manager.t('pages.drawing.add_page', 'Add Page') }}</h4>
 
             <!-- Add Page Section with Options -->
@@ -176,111 +175,107 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Existing thumbnails section -->
+            <!-- A4 Portrait, A4 Landscape, A3, A2, A1 thumbnails remain the same -->
             <div class="row g-3">
-                <!-- A4 Portrait, A4 Landscape, A3, A2, A1 thumbnails remain the same -->
-            </div>
-        </div>
-        <div class="row g-3">
-            <!-- A4 Portrait -->
-            <div class="col-6 col-lg-3">
-                <button type="button"
-                        class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
-                        data-bs-toggle="modal"
-                        data-bs-target="#pageInfoModal"
-                        data-format="a4_portrait">
-                    <div class="card h-100 border-dark">
-                        <div class="card-img-container">
-                            <img src="{{ url_for('static', filename='images/A4_Portrait_thumb.png') }}"
-                                 class="card-img-top thumbnail-img"
-                                 alt="A4 Portrait">
+                <!-- A4 Portrait -->
+                <div class="col-6 col-lg-3">
+                    <button type="button"
+                            class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
+                            data-bs-toggle="modal"
+                            data-bs-target="#pageInfoModal"
+                            data-format="a4_portrait">
+                        <div class="card h-100 border-dark">
+                            <div class="card-img-container">
+                                <img src="{{ url_for('static', filename='images/A4_Portrait_thumb.png') }}"
+                                     class="card-img-top thumbnail-img"
+                                     alt="A4 Portrait">
+                            </div>
+                            <div class="card-body text-center p-2">
+                                <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a4_portrait', 'A4 Portrait') }}</h6>
+                            </div>
                         </div>
-                        <div class="card-body text-center p-2">
-                            <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a4_portrait', 'A4 Portrait') }}</h6>
-                        </div>
-                    </div>
-                </button>
-            </div>
+                    </button>
+                </div>
 
-            <!-- A4 Landscape -->
-            <div class="col-6 col-lg-3">
-                <button type="button"
-                        class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
-                        data-bs-toggle="modal"
-                        data-bs-target="#pageInfoModal"
-                        data-format="a4_landscape">
-                    <div class="card h-100 border-dark">
-                        <div class="card-img-container">
-                            <img src="{{ url_for('static', filename='images/A4_Landscape_thumb.png') }}"
-                                 class="card-img-top thumbnail-img"
-                                 alt="A4 Landscape">
+                <!-- A4 Landscape -->
+                <div class="col-6 col-lg-3">
+                    <button type="button"
+                            class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
+                            data-bs-toggle="modal"
+                            data-bs-target="#pageInfoModal"
+                            data-format="a4_landscape">
+                        <div class="card h-100 border-dark">
+                            <div class="card-img-container">
+                                <img src="{{ url_for('static', filename='images/A4_Landscape_thumb.png') }}"
+                                     class="card-img-top thumbnail-img"
+                                     alt="A4 Landscape">
+                            </div>
+                            <div class="card-body text-center p-2">
+                                <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a4_landscape', 'A4 Landscape') }}</h6>
+                            </div>
                         </div>
-                        <div class="card-body text-center p-2">
-                            <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a4_landscape', 'A4 Landscape') }}</h6>
-                        </div>
-                    </div>
-                </button>
-            </div>
+                    </button>
+                </div>
 
-            <!-- A3 -->
-            <div class="col-6 col-lg-3">
-                <button type="button"
-                        class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
-                        data-bs-toggle="modal"
-                        data-bs-target="#pageInfoModal"
-                        data-format="a3">
-                    <div class="card h-100 border-dark">
-                        <div class="card-img-container">
-                            <img src="{{ url_for('static', filename='images/A3_Landscape_thumb.png') }}"
-                                 class="card-img-top thumbnail-img"
-                                 alt="A3">
+                <!-- A3 -->
+                <div class="col-6 col-lg-3">
+                    <button type="button"
+                            class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
+                            data-bs-toggle="modal"
+                            data-bs-target="#pageInfoModal"
+                            data-format="a3">
+                        <div class="card h-100 border-dark">
+                            <div class="card-img-container">
+                                <img src="{{ url_for('static', filename='images/A3_Landscape_thumb.png') }}"
+                                     class="card-img-top thumbnail-img"
+                                     alt="A3">
+                            </div>
+                            <div class="card-body text-center p-2">
+                                <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a3', 'A3') }}</h6>
+                            </div>
                         </div>
-                        <div class="card-body text-center p-2">
-                            <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a3', 'A3') }}</h6>
-                        </div>
-                    </div>
-                </button>
-            </div>
+                    </button>
+                </div>
 
-            <!-- A2 -->
-            <div class="col-6 col-lg-3">
-                <button type="button"
-                        class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
-                        data-bs-toggle="modal"
-                        data-bs-target="#pageInfoModal"
-                        data-format="a2">
-                    <div class="card h-100 border-dark">
-                        <div class="card-img-container">
-                            <img src="{{ url_for('static', filename='images/A2_Landscape_thumb.png') }}"
-                                 class="card-img-top thumbnail-img"
-                                 alt="A2">
+                <!-- A2 -->
+                <div class="col-6 col-lg-3">
+                    <button type="button"
+                            class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
+                            data-bs-toggle="modal"
+                            data-bs-target="#pageInfoModal"
+                            data-format="a2">
+                        <div class="card h-100 border-dark">
+                            <div class="card-img-container">
+                                <img src="{{ url_for('static', filename='images/A2_Landscape_thumb.png') }}"
+                                     class="card-img-top thumbnail-img"
+                                     alt="A2">
+                            </div>
+                            <div class="card-body text-center p-2">
+                                <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a2', 'A2') }}</h6>
+                            </div>
                         </div>
-                        <div class="card-body text-center p-2">
-                            <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a2', 'A2') }}</h6>
-                        </div>
-                    </div>
-                </button>
-            </div>
+                    </button>
+                </div>
 
-            <!-- A1 -->
-            <div class="col-6 col-lg-3">
-                <button type="button"
-                        class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
-                        data-bs-toggle="modal"
-                        data-bs-target="#pageInfoModal"
-                        data-format="a1">
-                    <div class="card h-100 border-dark">
-                        <div class="card-img-container">
-                            <img src="{{ url_for('static', filename='images/A1_Landscape_thumb.png') }}"
-                                 class="card-img-top thumbnail-img"
-                                 alt="A1">
+                <!-- A1 -->
+                <div class="col-6 col-lg-3">
+                    <button type="button"
+                            class="btn btn-outline-secondary thumbnail-btn p-0 w-100 h-100"
+                            data-bs-toggle="modal"
+                            data-bs-target="#pageInfoModal"
+                            data-format="a1">
+                        <div class="card h-100 border-dark">
+                            <div class="card-img-container">
+                                <img src="{{ url_for('static', filename='images/A1_Landscape_thumb.png') }}"
+                                     class="card-img-top thumbnail-img"
+                                     alt="A1">
+                            </div>
+                            <div class="card-body text-center p-2">
+                                <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a1', 'A1') }}</h6>
+                            </div>
                         </div>
-                        <div class="card-body text-center p-2">
-                            <h6 class="card-title mb-0">{{ lang_manager.t('pages.drawing.a1', 'A1') }}</h6>
-                        </div>
-                    </div>
-                </button>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
