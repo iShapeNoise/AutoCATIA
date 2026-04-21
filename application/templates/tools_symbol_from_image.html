@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {{ render_menu('tools')|safe }}
+
+    <div class="container mt-3">
+        <h2>{{ lang_manager.t('pages.tools.symbol_from_image', 'Symbol script from Image') }}</h2>
+
+        <!-- Generate Script Section -->
+        <div class="mt-3 border border-secondary rounded p-3 mb-3 bg-dark bg-opacity-50">
+            <div class="row">
+                <h4 class="text-white border-bottom border-white pb-1 mb-3">{{ lang_manager.t('pages.tools.generate_script', 'Generate PyCatia Script') }}</h4>
+            </div>
+            <div class="row">
+                <form id="generateScriptForm"
+                      hx-post="/htmx/tools/generate_symbol_script"
+                      hx-target="#generateResult"
+                      hx-swap="innerHTML">
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="drawingSelect" class="form-label">
+                                {{ lang_manager.t('pages.tools.select_drawing', 'Select Test Drawing') }}
+                            </label>
+                            <select class="form-select" id="drawingSelect" name="drawing_name">
+                                <option value="">None (Generate Only)</option>
+                                {% for drawing in drawings %}
+                                    <option value="{{ drawing }}">{{ drawing }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="imageFile" class="form-label">
+                                {{ lang_manager.t('pages.tools.choose_image', 'Choose Image') }}
+                            </label>
+                            <input type="file" class="form-control" id="imageFile"
+                                   name="image_file" accept="image/*" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="scriptName" class="form-label">
+                                {{ lang_manager.t('pages.tools.script_name', 'Script Name') }}
+                            </label>
+                            <input type="text" class="form-control" id="scriptName"
+                                   name="script_name" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="associatedName" class="form-label">
+                                {{ lang_manager.t('pages.tools.associated_name', 'Associated Name') }}
+                            </label>
+                            <input type="text" class="form-control" id="associatedName"
+                                   name="associated_name" placeholder="e.g., GD&T Symbol">
+                        </div>
+
+                        <div class="col-12 text-center">
+                            <button type="submit" class="btn btn-dark btn-sm w-80 border-white p-1 m-1 rounded-1">
+                                {{ lang_manager.t('pages.tools.generate_script', 'Generate PyCatia Script') }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div id="generateResult" class="mt-3"></div>
+            </div>
+        </div>
+
+        <!-- Update Script Section -->
+        <div class="mt-3 border border-secondary rounded p-3 mb-3 bg-dark bg-opacity-50">
+            <div class="row">
+                <h4 class="text-white border-bottom border-white pb-1 mb-3">{{ lang_manager.t('pages.tools.update_script', 'Update Script') }}</h4>
+            </div>
+            <div class="row">
+                <div class="row g-3">
+                    <label for="scriptSelect" class="form-label">Select Script</label>
+                    <div class="col-md-10">
+
+                        <select class="form-select" id="scriptSelect">
+                            {% for symbol in symbols %}
+                                <option value="{{ symbol }}">{{ symbol }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-dark btn-sm w-80 border-white p-1 m-1 rounded-1"
+                                id="loadScriptBtn">
+                            {{ lang_manager.t('pages.tools.load_script', 'Load') }}
+                        </button>
+                    </div>
+                </div>
+
+                <div id="scriptEditor" class="mt-3" style="display: none;">
+                    <!-- Script editor will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loadScriptBtn').addEventListener('click', function() {
+            const scriptName = document.getElementById('scriptSelect').value;
+
+            htmx.ajax('POST', '/htmx/tools/load_symbol_script', {
+                target: '#scriptEditor',
+                swap: 'innerHTML',
+                values: {
+                    'script_name': scriptName
+                }
+            }).then(function() {
+                document.getElementById('scriptEditor').style.display = 'block';
+            });
+        });
+    </script>
+{% endblock %}

@@ -5,6 +5,7 @@
     "part": "Teil",
     "product": "Produkt",
     "drawing": "Zeichnung",
+    "tools": "Werkzeuge",
     "settings": "Einstellungen"
   },
   "pages": {
@@ -110,6 +111,17 @@
       "add_edit_bom": "Stückliste hinzufügen/bearbeiten",
       "bom_created": "Stückliste erfolgreich erstellt",
       "bom_create_error": "Stückliste konnte nicht erstellt werden"
+    },
+      "tools": {
+      "symbol_from_image": "Symbolskript vom Bild",
+      "generate_script": "Generate PyCatia Script",
+      "update_script": "Update Skript",
+      "select_drawing": "Selektiere Testzeichnung",
+      "choose_image": "Wähle Bild",  
+      "script_name": "Skript Name",
+      "associated_name": "Assoziative (z.B. GD&T Name)",
+      "load_script": "Lade",
+      "update": "Update"
     },
     "settings": {
       "title": "Einstellungen",

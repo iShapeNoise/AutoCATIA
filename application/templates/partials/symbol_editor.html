@@ -1,0 +1,54 @@
+<div class="border rounded p-3">
+    <h5>Editing: {{ script_data.script_name }}</h5>
+
+    <!-- Lines Editor -->
+    <div class="mb-3">
+        <h6>Lines</h6>
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>X1</th><th>Y1</th><th>X2</th><th>Y2</th><th>Thickness</th>
+                    </tr>
+                </thead>
+                <tbody id="linesTable">
+                    {% for line in script_data.lines %}
+                    <tr>
+                        <td><input type="number" value="{{ line.x1 }}" step="0.1"></td>
+                        <td><input type="number" value="{{ line.y1 }}" step="0.1"></td>
+                        <td><input type="number" value="{{ line.x2 }}" step="0.1"></td>
+                        <td><input type="number" value="{{ line.y2 }}" step="0.1"></td>
+                        <td>
+                            <select>
+                                <option value="thin" {% if line.thickness == 'thin' %}selected{% endif %}>Thin</option>
+                                <option value="normal" {% if line.thickness == 'normal' %}selected{% endif %}>Normal</option>
+                                <option value="thick" {% if line.thickness == 'thick' %}selected{% endif %}>Thick</option>
+                            </select>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Text Editor -->
+    <div class="mb-3">
+        <h6>Text Elements</h6>
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Text</th><th>X</th><th>Y</th><th>Font Size</th>
+                    </tr>
+                </thead>
+                <tbody id="textsTable">
+                    {% for text in script_data.texts %}
+                    <tr>
+                        <td><input type="text" value="{{ text.text }}"></td>
+                        <td><input type="number" value="{{ text.x }}" step="0.1"></td>
+                        <td><input type="number" value="{{ text.y }}" step="0.1"></td>
+                        <td>
+                            <select>
+                                <option value="small" {% if text.font_size == 'small' %}selected
+  

@@ -1,9 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1 class="text-center">{{ lang_manager.t('pages.home.title', 'AutoCATIA') }}</h1>
-    <p class="text-center">{{ lang_manager.t('pages.home.subtitle', 'Automating your workflow in Catia v5') }}</p>
-    <p class="text-center">
+    <h1 class="text-center mt-2">{{ lang_manager.t('pages.home.title', 'AutoCATIA') }}</h1>
+    <p class="text-center mt-4">{{ lang_manager.t('pages.home.subtitle', 'Automating your workflow in Catia v5') }}</p>
+    <div class="text-center mt-5">
+      <img src="../static/images/CatiaV5_Icon.png" class="img-fluid" style="width: 30%;" alt="Centered Image">
+    </div>
+    <p class="text-center mt-5">
         {{ lang_manager.t('pages.home.notice', 'Please make sure Catia v5 is already running, before continue.') }}
     </p>
 {% endblock %}

@@ -27,6 +27,31 @@ def drawing_new():
     return render_template('drawing_new.html', settings=settings_data)
 
 
+@app.route('/drawing/add_page')
+@catia_v5_required
+def drawing_add_page():
+    from application.pycatia_scripts.the_document import PTDrawingDocument
+    from application.pycatia_scripts.com_objects import get_app_object
+    from application.pycatia_scripts.drawing.add_page import check_open_drawings, get_sheets_for_drawing
+    from application.pycatia_scripts.settings import load_settings
+
+    # Get open drawings
+    open_drawings = check_open_drawings()
+
+    if open_drawings:
+        selected_drawing = open_drawings[0]
+        sheets = get_sheets_for_drawing(selected_drawing)
+
+    # Load settings for GD&T checkboxes
+    settings_data = load_settings()
+
+    return render_template('drawing_add_page.html',
+                         open_drawings=open_drawings,
+                         sheets=sheets,
+                         selected_drawing=selected_drawing,
+                         settings=settings_data)
+
+
 @app.route('/drawing/edit_page')
 @catia_v5_required
 def drawing_edit_page():

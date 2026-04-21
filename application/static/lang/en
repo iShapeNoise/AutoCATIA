@@ -5,6 +5,7 @@
     "part": "Part",
     "product": "Product",
     "drawing": "Drawing",
+    "tools": "Tools",
     "settings": "Settings"
   },
   "pages": {
@@ -110,6 +111,17 @@
       "add_edit_bom": "Add/Edit B.O.M.",
       "bom_created": "B.O.M. created successfully",
       "bom_create_error": "Failed to create B.O.M."
+    },
+    "tools": {
+      "symbol_from_image": "Symbol script from Image",
+      "generate_script": "Generate PyCatia Script",
+      "update_script": "Update Script",
+      "select_drawing": "Select Test Drawing",
+      "choose_image": "Choose Image",
+      "script_name": "Script Name",
+      "associated_name": "Associated Name (e.g., GD&T)",
+      "load_script": "Load",
+      "update": "Update"
     },
     "settings": {
       "title": "Settings",

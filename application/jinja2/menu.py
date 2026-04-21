@@ -3,6 +3,17 @@ from application import app
 from application.pycatia_scripts.language import lang_manager
 
 with app.app_context():
+    # Home menu
+    m_dict_home = {
+        'title': 'menu.home',
+        'url': url_for('home'),
+    }
+
+    # Documents menu
+    m_dict_documents = {
+        'title': 'menu.documents',
+        'url': url_for('documents'),
+    }
     # Part menu
     m_dict_part = {
         'title': 'menu.part',
@@ -45,6 +56,10 @@ with app.app_context():
                 'title': 'pages.drawing.new_drawing'
             },
             {
+                'url': url_for('drawing_add_page'),
+                'title': 'pages.drawing.add_page'
+            },
+            {
                 'url': url_for('drawing_edit_page'),
                 'title': 'pages.drawing.edit_page'
             },
@@ -63,16 +78,16 @@ with app.app_context():
         ]
     }
 
-    # Home menu
-    m_dict_home = {
-        'title': 'menu.home',
-        'url': url_for('home'),
-    }
-
-    # Documents menu
-    m_dict_documents = {
-        'title': 'menu.documents',
-        'url': url_for('documents'),
+    # Tools menu
+    m_dict_tools = {
+        'title': 'menu.tools',
+        'url': url_for('tools'),
+        'menu_items': [
+            {
+                'url': url_for('tools_symbol_from_image'),
+                'title': 'pages.tools.symbol_from_image'
+            },
+        ]
     }
 
     # Settings menu
@@ -81,12 +96,14 @@ with app.app_context():
         'url': url_for('settings'),
     }
 
+
     m_list = [
         m_dict_home,
         m_dict_documents,
         m_dict_part,
         m_dict_product,
         m_dict_drawing,
+        m_dict_tools,
     ]
 
 
@@ -123,6 +140,8 @@ def render_menu(option: str, current_route: str = None):
         m_dict = m_dict_product
     if option == 'drawing':
         m_dict = m_dict_drawing
+    if option == 'tools':
+        m_dict = m_dict_tools
 
     if m_dict:
         # Apply translations

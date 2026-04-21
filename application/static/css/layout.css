@@ -101,3 +101,7 @@ body {
     min-width: 60px;
     max-width: 60px;
 }
+
+.btn-min-width {
+  min-width: 100px;
+}
