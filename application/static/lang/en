@@ -49,7 +49,7 @@
     "drawing": {
       "new": "New Drawing",
       "edit_page": "Edit Page",
-      "views": "Edit Views",
+      "views": "Views",
       "save_as": "Save As",
       "view_locks": "View Locks",
       "view_frames": "View Frames",
@@ -83,6 +83,7 @@
       "date_help": "Auto-filled but editable",
       "format_help": "Auto-filled from drawing size",
       "page_help": "Auto-filled from sheet count",
+      "pages": "Pages",
       "update_page": "Update Page",
       "select_page": "Select Page",
       "add_page": "Add Page",

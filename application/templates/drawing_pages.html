@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {{ render_menu('drawing')|safe }}
+    <div class="container mt-3">
+        <!-- Sub-menu navigation -->
+        <div class="btn-group mb-3" role="group">
+            <a href="{{ url_for('drawing_add_page') }}" class="btn btn-dark btn-sm w-80 border-white p-1 m-1 rounded-1">
+                {{ lang_manager.t('pages.drawing.add_page', 'Add Page') }}
+            </a>
+            <a href="{{ url_for('drawing_edit_page') }}" class="btn btn-dark btn-sm w-80 border-white p-1 m-1 rounded-1">
+                {{ lang_manager.t('pages.drawing.edit_page', 'Edit Page') }}
+            </a>
+        </div>
+
+        <!-- Content will be loaded here based on active submenu -->
+
+    </div>
+{% endblock %}

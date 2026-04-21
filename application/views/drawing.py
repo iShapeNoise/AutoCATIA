@@ -27,6 +27,12 @@ def drawing_new():
     return render_template('drawing_new.html', settings=settings_data)
 
 
+@app.route('/drawing/pages')
+@catia_v5_required
+def drawing_pages():
+    return render_template('drawing_pages.html')
+
+
 @app.route('/drawing/add_page')
 @catia_v5_required
 def drawing_add_page():
@@ -87,6 +93,18 @@ def drawing_views():
     return render_template(
         'drawing_views.html',
     )
+
+
+@app.route('/drawing/add_views')
+@catia_v5_required
+def drawing_add_views():
+    return render_template('drawing_add_views.html')
+
+
+@app.route('/drawing/edit_views')
+@catia_v5_required
+def drawing_edit_views():
+    return render_template('drawing_edit_views.html')  
 
 
 @app.route('/drawing/bom')

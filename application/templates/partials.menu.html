@@ -1,7 +1,7 @@
 <!-- {{ self._TemplateReference__context.name }} -->
-<h1 class="">{{ lang_manager.t('menu.' + m_dict['title'].lower(), m_dict['title']) }}</h1>
+<h1 class="mt-3">{{ lang_manager.t('menu.' + m_dict['title'].lower(), m_dict['title']) }}</h1>
 
-<div class="text-center">
+<div class="text-start mt-3">
     {%- for item in m_dict['menu_items'] -%}
         {% set cls_active = '' %}
         {% if item['active'] %}

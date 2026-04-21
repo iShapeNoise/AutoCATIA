@@ -5,14 +5,11 @@
 
     {{ render_menu('drawing')|safe }}
 
-
-
+    {% include('partials.menu_drawing_save_as.html') %}
     <div class="mt-3 border border-secondary rounded p-3 mb-3 bg-dark bg-opacity-50">
-        {% include('partials.menu_drawing_save_as.html') %}
-        <h4 class="mt-4 text-white border-bottom border-white pb-1 mb-3">Save As DXF</h4>
-        <p class="alert alert-info p-1">
-            Saves the active drawing into DXFs.
-        </p>
+
+        <h4 class="mt-4 text-white border-bottom border-white pb-1 mb-3">DXF</h4>
+
         <ul class="alert alert-info">
             <li>
                 Include Sheet Names Containing shall be a comma delimited list.
@@ -22,9 +19,25 @@
             <li>If target directory is not provided the DXFs will be placed on your desktop.</li>
         </ul>
 
-        <ul class="alert alert-danger">
-            <li>If DXF already exists it will be overwritten.</li>
-        </ul>
+        <div class="mb-3">
+            <label for="drawing_select" class="form-label">Select Drawing</label>
+            <select class="form-select" id="drawing_select" name="selected_drawing">
+                {% if open_drawings %}
+                    {% if open_drawings|length == 1 %}
+                        {% for drawing in open_drawings %}
+                            <option value="{{ drawing }}" selected>{{ drawing }}</option>
+                        {% endfor %}
+                    {% else %}
+                        <option value="">Please select a drawing...</option>
+                        {% for drawing in open_drawings %}
+                            <option value="{{ drawing }}">{{ drawing }}</option>
+                        {% endfor %}
+                    {% endif %}
+                {% else %}
+                    <option value="">No drawings found</option>
+                {% endif %}
+            </select>
+        </div>
 
         <form
                 class="row align-items-center"
@@ -47,7 +60,11 @@
                 </div>
             </div>
         </form>
+        <ul class="mt-4 alert alert-danger text-center">
+            If DXF already exists it will be overwritten.
+        </ul>
         <div class="text-center mt-2">
+
             <button name="save_as" class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1" value="save_as" script="on click remove #save_as">
                 Save As
             </button>

@@ -56,16 +56,32 @@ with app.app_context():
                 'title': 'pages.drawing.new_drawing'
             },
             {
-                'url': url_for('drawing_add_page'),
-                'title': 'pages.drawing.add_page'
+                'url': url_for('drawing_pages'),
+                'title': 'pages.drawing.pages',
+                'menu_items': [
+                    {
+                        'url': url_for('drawing_add_page'),
+                        'title': 'pages.drawing.add_page'
+                    },
+                    {
+                        'url': url_for('drawing_edit_page'),
+                        'title': 'pages.drawing.edit_page'
+                    }
+                ]
             },
-            {
-                'url': url_for('drawing_edit_page'),
-                'title': 'pages.drawing.edit_page'
-            },
-            {
+            {  
                 'url': url_for('drawing_views'),
-                'title': 'pages.drawing.views'
+                'title': 'pages.drawing.views',
+                'menu_items': [
+                    {
+                        'url': url_for('drawing_add_views'),
+                        'title': 'pages.drawing.add_views'
+                    },
+                    {
+                        'url': 'drawing_edit_views',
+                        'title': 'pages.drawing.edit_views'
+                    }
+                ]
             },
             {
                 'url': url_for('drawing_bom'),

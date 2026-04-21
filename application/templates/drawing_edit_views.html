@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {{ render_menu('drawing')|safe }}
+    <div class="container mt-3">
+
+        <!-- Sub-menu navigation -->
+        <div class="btn-group mb-3" role="group">
+            <a href="{{ url_for('drawing_add_views') }}" class="btn btn-dark btn-sm w-80 border-white p-1 m-1 rounded-1">
+                {{ lang_manager.t('pages.drawing.add_views', 'Add Views') }}
+            </a>
+            <a href="{{ url_for('drawing_edit_views') }}" class="btn btn-dark btn-sm w-80 border-white p-1 m-1 rounded-1">
+                {{ lang_manager.t('pages.drawing.edit_views', 'Edit Views') }}
+            </a>
+        </div>
+
+        <!-- View Frames Content (from original drawing_views.html) -->
+        <div class="container mt-3">
+            <div class="row mb-4 mt-4 border border-secondary rounded p-3 mb-3 bg-dark bg-opacity-50">
+                <div class="col-6">
+                    <h4 class="mt-3">{{ lang_manager.t('pages.drawing.view_locks', 'View Locks') }}</h4>
+                    <p>
+                        {{ lang_manager.t('pages.drawing.locks_desc', 'Lock or Unlock all views in all sheets. "Main View" and "Background View" are ignored unless explicitly selected.') }}
+                    </p>
+                    <form class="row row-cols-lg-auto align-items-center" hx-post="/htmx/drawing/locking" hx-target="#locking" hx-swap="innerHtml" hx-indicator="#locking">
+                        <div class="input-group">
+                            <button name="locker" class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1" value="lock" script="on click remove #output">{{ lang_manager.t('pages.drawing.lock_views', 'Lock Views') }}</button>
+                            <button name="locker" class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1" value="unlock" script="on click remove #output">{{ lang_manager.t('pages.drawing.unlock_views', 'Unlock Views') }}</button>
+                        </div>
+                        <div class="form-check mt-3 ms-3">
+                            <input name="includeMainViewLock" value="True" class="form-check-input rounded-0" type="checkbox" value="" id="includeMainViewLock">
+                            <label class="form-check-label" for="includeMainViewLock">
+                                {{ lang_manager.t('pages.drawing.include_main_view', 'include Main View') }}
+                            </label>
+                        </div>
+                        <div class="form-check mt-3 ms-3">
+                            <input name="includeBackgroundViewLock" value="True" class="form-check-input rounded-0" type="checkbox" value="" id="includeBackgroundViewLock">
+                            <label class="form-check-label" for="includeBackgroundViewLock">
+                                {{ lang_manager.t('pages.drawing.include_background_view', 'include Background View') }}
+                            </label>
+                        </div>
+                    </form>
+                    <div id="locking">
+                        {% include('partials/spinner.html') %}
+                    </div>
+                </div>
+                <div class="col-6">
+                    <h4 class="mt-3">{{ lang_manager.t('pages.drawing.view_frames', 'View Frames') }}</h4>
+                    <p>
+                        {{ lang_manager.t('pages.drawing.frames_desc', 'Turn off or on View Frames. Only Views that are unlocked will be processed.') }}
+                    </p>
+                    <form class="row row-cols-lg-auto align-items-center" hx-post="/htmx/drawing/frames" hx-target="#frames" hx-swap="innerHtml" hx-indicator="#frames">
+                        <div class="input-group">
+                            <button name="framer" class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1" value="on" script="on click remove #output">{{ lang_manager.t('pages.drawing.frame_on', 'Frame On') }}</button>
+                            <button name="framer" class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1" value="off" script="on click remove #output">{{ lang_manager.t('pages.drawing.frame_off', 'Frame Off') }}</button>
+                        </div>
+                    </form>
+                    <div id="frames">
+                        {% include('partials/spinner.html') %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
