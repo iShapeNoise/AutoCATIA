@@ -13,11 +13,11 @@ def htmx_product_properties():
 
     update_properties(product, request.form)
 
-    default_properties = get_properties(product, 'default')
-    user_defined_properties = get_properties(product, 'user')
+    default_attributes = get_properties(product, 'default')
+    user_attributes = get_properties(product, 'user')
 
     return render_template(
-        'partials/form_product_properties.html',
-        default_properties=default_properties,
-        user_defined_properties=user_defined_properties
+        'partials/form_attributes.html',
+        default_attributes=default_attributes,
+        user_attributes=user_attributes
     )

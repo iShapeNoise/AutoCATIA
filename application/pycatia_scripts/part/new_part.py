@@ -10,44 +10,63 @@ from application.pycatia_scripts.settings import part_template
 
 def create_new_part(form: ImmutableMultiDict):
     """
-
-    :param form:
-    :return:
+    Create a new CATIA part with form data
     """
-
     output = get_output()
+
+    # Extract form data with debug
+    number = form.get('number', '001')
+    title = form.get('title', 'Part')
+    revision = form.get('revision', 'P01')
+
+    # Generate filename from form fields
+    part_number = f"{number}_{title}_{revision}"
+
+    print(f"=== DEBUG: Extracted number: '{number}' ===")
+    print(f"=== DEBUG: Generated part_number: '{part_number}' ===")
 
     application = get_app_object()
     documents = application.documents
 
-    output = check_part_number_exists(documents, output, form.get('part_number'))
-
+    # Check for existing part number
+    output = check_part_number_exists(documents, output, part_number)
     if output['errors']:
         return output
 
-    part_document = PartDocument(documents.add('Part').com_object)
-    update_properties(part_document.product, form)
+    try:
+        # Create part document
+        part_document = PartDocument(documents.add('Part').com_object)
 
-    part = part_document.part
+        # Update form with generated part_number for properties
+        form_data = dict(form)
+        form_data['part_number'] = part_number
 
-    if part_template['geometric_sets']:
-        hybrid_bodies = part.hybrid_bodies
-        for gs_name in part_template['geometric_sets']:
-            new_gs = hybrid_bodies.add()
-            new_gs.name = gs_name
+        # Update properties using the modified form data
+        update_properties(part_document.product, form_data)
 
-    if part_template['parameters']:
-        parameters = part.parameters
-        for parm in part_template['parameters']:
-            name = parm
-            type_ = part_template['parameters'][parm]['type'].upper()
-            value = part_template['parameters'][parm]['value']
-            allowed_dimensions = ['LENGTH']
-            if type_ in allowed_dimensions:
-                parameters.create_dimension(name, type_, value)
+        # Apply template structure
+        part = part_document.part
+        if part_template['geometric_sets']:
+            hybrid_bodies = part.hybrid_bodies
+            for gs_name in part_template['geometric_sets']:
+                new_gs = hybrid_bodies.add()
+                new_gs.name = gs_name
 
-    part.update()
+        if part_template['parameters']:
+            parameters = part.parameters
+            for parm in part_template['parameters']:
+                name = parm
+                type_ = part_template['parameters'][parm]['type'].upper()
+                value = part_template['parameters'][parm]['value']
+                allowed_dimensions = ['LENGTH']
+                if type_ in allowed_dimensions:
+                    parameters.create_dimension(name, type_, value)
 
-    output['data'] = f'New Part "{form.get("part_number")}" created.'
+        part.update()
+        output['data'] = f'New Part "{part_number}" created.'
+
+    except Exception as e:
+        output['errors'].append(f'Failed to create part: {e}')
+        print(f"=== DEBUG: Part creation error: {e} ===")
 
     return output

@@ -2,8 +2,10 @@
 <div class="row">
     {% for default_property in default_properties %}
         <div class="col-6">
-            <label for="form{{ default_property }}" class="form-label">{{ default_property }}</label>
-            {% if default_property == 'Source' %}
+            <label for="form{{ default_property }}" class="form-label">
+                {% if default_property == 'nomenclature' %}Standard{% else %}{{ default_property }}{% endif %}
+            </label>
+            {% if default_property == 'source' %}
                 <select name="{{ default_property }}" class="form-control rounded-0" id="form{{ default_property }}">
                     <option value="Unknown" {% if default_properties[default_property] == 'Unknown' %}selected{% endif %}>Unknown</option>
                     <option value="Built" {% if default_properties[default_property] == 'Built' %}selected{% endif %}>Built</option>

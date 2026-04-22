@@ -1,0 +1,113 @@
+<!-- Default Attributes Section -->
+<h3 class="mt-2">Default Attributes</h3>
+<div class="row">
+    {% for default_property in default_properties %}
+        <div class="col-6">
+            <label for="form{{ default_property }}" class="form-label">
+                {% if default_property == 'nomenclature' %}Standard{% else %}{{ default_property }}{% endif %}
+            </label>
+            {% if default_property == 'source' %}
+                <select name="{{ default_property }}" class="form-control rounded-0" id="form{{ default_property }}">
+                    <option value="Unknown" {% if default_properties[default_property] == 'Unknown' %}selected{% endif %}>Unknown</option>
+                    <option value="Built" {% if default_properties[default_property] == 'Built' %}selected{% endif %}>Built</option>
+                    <option value="Bought" {% if default_properties[default_property] == 'Bought' %}selected{% endif %}>Bought</option>
+                </select>
+            {% else %}
+                <input name="{{ default_property }}" type="text" class="form-control rounded-0" id="form{{ default_property }}"
+                       value="{{ default_properties[default_property] or '' }}">
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+
+<!-- User Attributes Section -->
+<h3 class="mt-4">User Attributes</h3>
+<div class="row">
+    <div class="col-6">
+        <label for="formNumber" class="form-label">Number</label>
+        <input name="number" type="text" class="form-control rounded-0" id="formNumber"
+               value="{{ user_attributes.get('number', '001') }}">
+    </div>
+    <div class="col-6">
+        <label for="formTitle" class="form-label">Title</label>
+        <input name="title" type="text" class="form-control rounded-0" id="formTitle"
+               value="{{ user_attributes.get('title', 'Part') }}">
+    </div>
+    <div class="col-6">
+        <label for="formExtraTitle" class="form-label">Extra Title</label>
+        <input name="extra_title" type="text" class="form-control rounded-0" id="formExtraTitle"
+               value="{{ user_attributes.get('extra_title', '') }}">
+    </div>
+    <div class="col-6">
+        <label for="formMaterial" class="form-label">Material</label>
+        <input name="material" type="text" class="form-control rounded-0" id="formMaterial"
+               value="{{ user_attributes.get('material', '') }}">
+    </div>
+    <div class="col-6">
+        <label for="formBlank" class="form-label">Blank</label>
+        <input name="blank" type="text" class="form-control rounded-0" id="formBlank"
+               value="{{ user_attributes.get('blank', '') }}">
+    </div>
+    <div class="col-6">
+        <label for="formCreatedBy" class="form-label">Created By</label>
+        <input name="created_by" type="text" class="form-control rounded-0" id="formCreatedBy"
+               value="{{ user_attributes.get('created_by', '') }}">
+    </div>
+    <div class="col-6">
+        <label for="formApprovedBy" class="form-label">Approved By</label>
+        <input name="approved_by" type="text" class="form-control rounded-0" id="formApprovedBy"
+               value="{{ user_attributes.get('approved_by', '') }}">
+    </div>
+    <div class="col-6">
+        <label for="formDate" class="form-label">Date</label>
+        <input name="date" type="text" class="form-control rounded-0" id="formDate"
+               value="{{ user_attributes.get('date', '[ dd / mm / yyyy ]') }}">
+        <small class="text-muted">Format: DD/MM/YYYY</small>
+    </div>
+</div>
+
+<script>
+// File overwrite confirmation function
+function checkFileExists(fileName) {
+    return new Promise((resolve) => {
+        // Check if file exists via CATIA API
+        fetch(`/htmx/check_file_exists?file=${encodeURIComponent(fileName)}`)
+            .then(response => response.json())
+            .then(data => resolve(data.exists))
+            .catch(() => resolve(false));
+    });
+}
+
+async function confirmOverwrite(fileName) {
+    const exists = await checkFileExists(fileName);
+    if (exists) {
+        return confirm(`File "${fileName}" already exists. Do you want to overwrite?`);
+    }
+    return true;
+}
+
+// Update form submissions to check for file existence
+document.addEventListener('DOMContentLoaded', function() {
+    const forms = ['partForm', 'productForm'];
+    forms.forEach(formId => {
+        const form = document.getElementById(formId);
+        if (form) {
+            form.addEventListener('submit', async function(e) {
+                const partNumber = document.querySelector('[name="part_number"]')?.value;
+                const projectPath = document.querySelector('[name="project_path"]')?.value;
+
+                if (partNumber && projectPath) {
+                    const fileName = `${partNumber}.CATPart`; // or .CATProduct for products
+                    const fullPath = projectPath.endsWith('\\') ?
+                        projectPath + fileName : projectPath + '\\' + fileName;
+
+                    const canProceed = await confirmOverwrite(fullPath);
+                    if (!canProceed) {
+                        e.preventDefault();
+                    }
+                }
+            });
+        }
+    });
+});
+</script>

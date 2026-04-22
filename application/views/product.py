@@ -17,13 +17,13 @@ def product():
 @app.route('/product/new')
 @catia_v5_required
 def product_new():
-    default_properties = get_properties(None, 'default')
-    user_defined_properties = get_properties(None, 'user')
+    from application.pycatia_scripts.settings import load_settings
+    settings_data = load_settings()
 
     return render_template(
         'product_new.html',
-        default_properties=default_properties,
-        user_defined_properties=user_defined_properties
+        default_attributes=settings_data.get('default_attributes', {}),
+        user_attributes=settings_data.get('user_attributes', {})
     )
 
 @app.route('/product/edit')
@@ -42,16 +42,16 @@ def product_edit():
         selected_product = open_products[0]
 
     # Get properties for the selected product if available
-    default_properties = {}
-    user_defined_properties = {}
+    default_attributes = {}
+    user_attributes = {}
 
     if selected_product:
         try:
             pt_product_document, errors = get_product_document(product_only=False)
             if not errors:
                 product = pt_product_document.product
-                default_properties = get_properties(product, 'default')
-                user_defined_properties = get_properties(product, 'user')
+                default_attributes = get_properties(product, 'default')
+                user_attributes = get_properties(product, 'user')
         except:
             pass
 
@@ -59,8 +59,8 @@ def product_edit():
         'product_edit.html',
         open_products=open_products,
         selected_product=selected_product,
-        default_properties=default_properties,
-        user_defined_properties=user_defined_properties
+        default_attributes=default_attributes,
+        user_attributes=user_attributes
     )
 
 

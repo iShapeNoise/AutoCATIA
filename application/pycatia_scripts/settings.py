@@ -15,6 +15,27 @@ def read_json(f: Path):
 def create_default_settings(userdata_path: Path):
     """Create default settings in userdata/ folder"""
     default_settings = {
+        # New attribute sections
+        'default_attributes': {
+            'part_number': '',
+            'revision': '',
+            'nomenclature': '',
+            'definition': '',
+            'source': 'Unknown',
+            'description': ''
+        },
+        'user_attributes': {
+            'title': '',
+            'extra_title': '',
+            'document_type': '',
+            'created_by': '',
+            'approved_by': '',
+            'material': '',
+            'blank': '',
+            'date': '[ dd / mm / yyyy ]',
+            'scale': '1:1',
+            'number': '001' 
+        },
         'drawing_template': {
             'border_offset': 10,
             'company_details': {
@@ -25,20 +46,10 @@ def create_default_settings(userdata_path: Path):
                     'email: yenz4xyz@gmail.com'
                 ]
             },
+            # Keep only automatic parameters
             'parameters': {
-                'SCALE': '1:1',
-                'DOCUMENT-TYPE': '',
-                'CREATED-BY': '',
-                'APPROVED-BY': '',
-                'TITLE': '',
-                'EXTRA-TITLE': '',
-                'NUMBER': '',
-                'MATERIAL': '',
-                'BLANK': '',
-                'REVISION': '',
-                'DATE': '[ dd / mm / yyyy ]',
-                'FORMAT': '',
-                'PAGE': '1/1'
+                'FORMAT': '',  # Auto-filled from paper size
+                'PAGE': '1/1'  # Auto-managed
             },
             'logo': '',
             'projection_method': 'PM_EU.jpg',
@@ -58,13 +69,7 @@ def create_default_settings(userdata_path: Path):
             }
         },
         'product_template': {
-            'user_ref_properties': {
-                'TITLE': '',
-                'DRAWN BY': '',
-                'CHECKED BY': '',
-                'DATE APPROVED': '',
-                'REVISION': 'A'
-            },
+            # Removed user_ref_properties as they're now in user_attributes
         },
         'drawing': {
             'pdf': {'exclude_sheets': ['Details', 'DXF']},

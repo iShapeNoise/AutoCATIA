@@ -3,14 +3,61 @@
 {% block content %}
     {{ render_menu('part')|safe }}
     <div class="container mt-3">
-        <form hx-post="/htmx/part/create_new" hx-target="#create_new" hx-swap="innerHtml" hx-indicator="#create_new">
+        <form id="partForm" hx-post="/htmx/part/create_new" hx-target="#create_new" hx-swap="innerHtml" hx-indicator="#create_new">
             <div class="mt-2 border border-secondary rounded p-3 mb-3 bg-dark bg-opacity-50" id="create_new">
                 {% include('partials/spinner.html') %}
-                {% include('partials/form_product_properties.html') %}
+                {% include('partials/form_attributes_create.html') %}
+            </div>
+
+            <!-- Create Button -->
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary" onclick="updatePartNumber()">
+                    Create Part
+                </button>
             </div>
         </form>
-        <div class="mt-2" id="create_new">
+
+        <div id="create_new">
             {% include('partials/spinner.html') %}
         </div>
     </div>
+
+    <script>
+        function updatePartNumber() {
+            const title = document.querySelector('[name="title"]')?.value || 'Part';
+            const revision = document.querySelector('[name="revision"]')?.value || 'P01';
+            const partNumber = `001_${title}_${revision}`;
+
+            const partNumberField = document.querySelector('[name="part_number"]');
+            if (partNumberField) {
+                partNumberField.value = partNumber;
+            }
+        }
+
+        // Set default values and pattern on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default title
+            const titleField = document.querySelector('[name="title"]');
+            if (titleField && !titleField.value) {
+                titleField.value = 'Part';
+            }
+
+            // Set default revision
+            const revisionField = document.querySelector('[name="revision"]');
+            if (revisionField && !revisionField.value) {
+                revisionField.value = 'P01';
+            }
+
+            // Set initial part number pattern
+            updatePartNumber();
+
+            // Add event listeners to update part number when fields change
+            if (titleField) {
+                titleField.addEventListener('input', updatePartNumber);
+            }
+            if (revisionField) {
+                revisionField.addEventListener('input', updatePartNumber);
+            }
+        });
+    </script>
 {% endblock %}

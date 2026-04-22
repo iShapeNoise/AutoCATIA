@@ -31,17 +31,25 @@
             <div class="row mt-3">
                 <div class="col-12">
                   <h4 class="text-white border-bottom border-white pb-1 mb-3">{{ lang_manager.t('pages.product.edit_product_properties', 'Product Properties') }}</h4>
-                    <form
-                            hx-post="/htmx/product/properties"
-                            hx-target="#product_properties_result"
-                            hx-swap="innerHtml"
-                            hx-indicator="#product_properties_result"
-                    >
+                  <form
+                      id="productPropertiesForm"
+                      hx-post="/htmx/product/properties"
+                      hx-target="#product_properties_result"
+                      hx-swap="innerHtml"
+                      hx-indicator="#product_properties_result"
+                  >
                         <div id="product_properties_result">
-                            {% include('partials/spinner.html') %}
-                            {% include('partials/form_product_properties.html') %}
+                            {% include('partials/form_attributes_edit.html') %}
                         </div>
                     </form>
+                    <!-- Update Button Section -->
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <button type="submit" form="productPropertiesForm" class="btn btn-primary">
+                                Update Product
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- Product Tools Section -->

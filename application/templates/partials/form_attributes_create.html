@@ -1,0 +1,163 @@
+<!-- Default Attributes Section -->
+<h3 class="mt-2">Default Attributes</h3>
+<div class="row">
+    <div class="col-6">
+        <label for="formPartNumber" class="form-label">File Name</label>
+        <input name="part_number" type="text" class="form-control rounded-0" id="formPartNumber"
+               value="{number}_{title}_{revision}" readonly>
+        <small class="text-muted">Auto-generated from Number, Title, and Revision</small>
+    </div>
+    <div class="col-6">
+        <label for="formRevision" class="form-label">Revision</label>
+        <input name="revision" type="text" class="form-control rounded-0" id="formRevision"
+               value="P01">
+        <small class="text-muted">ISO 19650 revision format</small>
+    </div>
+</div>
+
+<!-- Additional Default Attributes -->
+<div class="row mt-3">
+    <div class="col-6">
+        <label for="formSource" class="form-label">Source</label>
+        <select name="source" class="form-control rounded-0" id="formSource">
+            <option value="Unknown">Unknown</option>
+            <option value="Built">Built</option>
+            <option value="Bought">Bought</option>
+        </select>
+    </div>
+    <div class="col-6">
+        <label for="formDefinition" class="form-label">Definition</label>
+        <input name="definition" type="text" class="form-control rounded-0" id="formDefinition"
+               value="">
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-6">
+        <label for="formDescription" class="form-label">Description</label>
+        <input name="description" type="text" class="form-control rounded-0" id="formDescription"
+               value="">
+    </div>
+    <div class="col-6">
+        <label for="formNomenclature" class="form-label">Standard</label>
+        <input name="nomenclature" type="text" class="form-control rounded-0" id="formNomenclature"
+               value="">
+    </div>
+</div>
+
+<!-- User Attributes Section -->
+<h3 class="mt-4">User Attributes</h3>
+<div class="row">
+    <div class="col-6">
+        <label for="formNumber" class="form-label">Number</label>
+        <input name="number" type="text" class="form-control rounded-0" id="formNumber"
+               value="001">
+        <small class="text-muted">File number prefix</small>
+    </div>
+    <div class="col-6">
+        <label for="formTitle" class="form-label">Title</label>
+        <input name="title" type="text" class="form-control rounded-0" id="formTitle"
+               value="Part">
+        <small class="text-muted">Part or Product description</small>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-6">
+        <label for="formExtraTitle" class="form-label">Extra Title</label>
+        <input name="extra_title" type="text" class="form-control rounded-0" id="formExtraTitle"
+               value="">
+    </div>
+    <div class="col-6">
+        <label for="formDocumentType" class="form-label">Document Type</label>
+        <input name="document_type" type="text" class="form-control rounded-0" id="formDocumentType"
+               value="">
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-6">
+        <label for="formCreatedBy" class="form-label">Created By</label>
+        <input name="created_by" type="text" class="form-control rounded-0" id="formCreatedBy"
+               value="">
+    </div>
+    <div class="col-6">
+        <label for="formApprovedBy" class="form-label">Approved By</label>
+        <input name="approved_by" type="text" class="form-control rounded-0" id="formApprovedBy"
+               value="">
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-6">
+        <label for="formMaterial" class="form-label">Material</label>
+        <input name="material" type="text" class="form-control rounded-0" id="formMaterial"
+               value="">
+    </div>
+    <div class="col-6">
+        <label for="formBlank" class="form-label">Blank</label>
+        <input name="blank" type="text" class="form-control rounded-0" id="formBlank"
+               value="">
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-6">
+        <label for="formDate" class="form-label">Date</label>
+        <input name="date" type="text" class="form-control rounded-0" id="formDate"
+               value="">
+    </div>
+    <div class="col-6">
+        <label for="formScale" class="form-label">Scale</label>
+        <input name="scale" type="text" class="form-control rounded-0" id="formScale"
+               value="">
+    </div>
+</div>
+
+<!-- Project Settings Section -->
+<h3 class="mt-4">Project Settings</h3>
+<div class="row">
+    <div class="col-12">
+        <label for="formProjectPath" class="form-label">Project Path</label>
+        <input name="project_path" type="text" class="form-control rounded-0" id="formProjectPath"
+               value="">
+        <small class="text-muted">Directory where the CATPart file will be saved</small>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const partNumberField = document.getElementById('formPartNumber');
+    const numberField = document.getElementById('formNumber');
+    const titleField = document.getElementById('formTitle');
+    const revisionField = document.getElementById('formRevision');
+
+    // Store the Number field value to prevent fallback
+    let storedNumber = '001';
+
+    function updatePartNumber() {
+        // Always use the stored number, not fallback
+        const number = storedNumber || numberField.value || '001';
+        const title = titleField.value || 'Part';
+        const revision = revisionField.value || 'P01';
+
+        const generatedPartNumber = `${number}_${title}_${revision}`;
+        partNumberField.value = generatedPartNumber;
+
+        console.log(`=== DEBUG: Number: ${number}, Title: ${title}, Revision: ${revision} ===`);
+        console.log(`=== DEBUG: Generated: ${generatedPartNumber} ===`);
+    }
+
+    // Update stored number when field changes
+    numberField.addEventListener('input', function() {
+        storedNumber = this.value || '001';
+        updatePartNumber();
+    });
+
+    titleField.addEventListener('input', updatePartNumber);
+    revisionField.addEventListener('input', updatePartNumber);
+
+    // Initialize
+    updatePartNumber();
+});
+</script>

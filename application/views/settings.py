@@ -1,12 +1,11 @@
 from pathlib import Path
 import json
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, session
 from application import app
 from application.views.view_wrappers import catia_v5_required
 from application.pycatia_scripts.language import lang_manager
 from application.views.url_prefixes import htmx
 from application.pycatia_scripts.settings import load_settings
-from flask import render_template, request, redirect, url_for, flash, session
 import os
 from werkzeug.utils import secure_filename
 
@@ -65,7 +64,6 @@ def settings():
                 # Clear session to force LanguageManager to read from settings
                 session.pop('language', None)
 
-
             # Handle theme setting
             theme = request.form.get('THEME', 'dark')
             if theme:
@@ -81,6 +79,32 @@ def settings():
             settings_data['notifications']['enabled'] = notifications_enabled
             settings_data['notifications']['visibility_seconds'] = visibility_seconds
 
+            # Handle default attributes
+            if 'default_attributes' not in settings_data:
+                settings_data['default_attributes'] = {}
+
+            default_attr_fields = [
+                'part_number', 'revision', 'nomenclature', 'definition',
+                'source', 'description'
+            ]
+
+            for field in default_attr_fields:
+                value = request.form.get(field, '')
+                settings_data['default_attributes'][field] = value
+
+            # Handle user attributes
+            if 'user_attributes' not in settings_data:
+                settings_data['user_attributes'] = {}
+
+            user_attr_fields = [
+                'title', 'extra_title', 'document_type', 'created_by',
+                'approved_by', 'material', 'blank', 'date', 'scale'
+            ]
+
+            for field in user_attr_fields:
+                value = request.form.get(field, '')
+                settings_data['user_attributes'][field] = value
+
             # Handle B.O.M. settings
             bom_columns = request.form.getlist('bom_columns')
             if 'bom' not in settings_data:
@@ -89,7 +113,7 @@ def settings():
             settings_data['bom']['columns'] = {}
             all_bom_columns = [
                 'title', 'created_by', 'subject', 'description',
-                'keywords', 'category', 'status', 'material',  
+                'keywords', 'category', 'status', 'material',
                 'mass', 'part_number', 'rev', 'project',
                 'custom', 'date', 'last_saved_by', 'last_modified_time',
                 'checked_by', 'manager', 'company', 'hyperlink_base',
@@ -118,39 +142,6 @@ def settings():
             for option in gdt_options:
                 settings_data[option] = request.form.get(option) == 'on'
 
-            # Handle drawing options
-            text_field_enabled = request.form.get('text_field_enabled') == 'on'
-            gdt_defaults_enabled = request.form.get('gdt_defaults_enabled') == 'on'
-
-            settings_data['drawing_template']['text_field_enabled'] = text_field_enabled
-            settings_data['drawing_template']['gdt_defaults_enabled'] = gdt_defaults_enabled
-
-            # Handle GD&T defaults
-            gdt_fields = [
-                'gdt_general_abc', 'gdt_general_ab', 'gdt_welded_structure',
-                'gdt_of_rz_63', 'gdt_ofz_general', 'gdt_ofz_wxy',
-                'gdt_ofz_main_specs', 'gdt_ofz_main_raw', 'gdt_ofz_main',
-                'gdt_edges_iso', 'gdt_thermally_cut'
-            ]
-
-            for field in gdt_fields:
-                value = request.form.get(field) == 'on'
-                settings_data['drawing_template'][field] = value
-
-            # Handle drawing template parameters
-            if 'parameters' not in settings_data['drawing_template']:
-                settings_data['drawing_template']['parameters'] = {}
-
-            template_params = [
-                'SCALE', 'DOCUMENT-TYPE', 'CREATED-BY', 'APPROVED-BY',
-                'TITLE', 'EXTRA-TITLE', 'NUMBER', 'MATERIAL', 'BLANK',
-                'REVISION', 'DATE', 'FORMAT', 'PAGE'
-            ]
-
-            for param in template_params:
-                value = request.form.get(param, '')
-                settings_data['drawing_template']['parameters'][param] = value
-
             # Save settings
             with open(settings_path, 'w', encoding='utf-8') as f:
                 json.dump(settings_data, f, indent=2, ensure_ascii=False)
@@ -163,13 +154,15 @@ def settings():
             flash(lang_manager.t('pages.settings.save_error', f'Error saving settings: {e}'), 'danger')
             return redirect(url_for('settings'))
 
-    # Extract parameters for the drawing template form
-    parameters = drawing_template.get('parameters', {})
+    # Extract attributes for the form
+    default_attributes = settings_data.get('default_attributes', {})
+    user_attributes = settings_data.get('user_attributes', {})
 
     return render_template('settings.html',
                          current_logo=current_logo,
                          current_projection_method=current_projection_method,
                          available_logos=available_logos,
                          drawing_template=drawing_template,
-                         parameters=parameters,
+                         default_attributes=default_attributes,
+                         user_attributes=user_attributes,
                          settings=settings_data)

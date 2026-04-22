@@ -82,8 +82,10 @@ def add_text_field_values(sheet: DrawingSheet, text_field_x: float, text_field_y
     from pycatia.enumeration.enumeration_types import cat_text_anchor_position
     from application.pycatia_scripts.settings import load_settings
 
-    # Load settings to get template parameters
+    # Load settings to get new attribute structure
     settings_data = load_settings()
+    user_attrs = settings_data.get('user_attributes', {})
+    default_attrs = settings_data.get('default_attributes', {})
     template_params = settings_data.get('drawing_template', {}).get('parameters', {})
 
     background_view, factory_2d, main_view = get_background_view_and_factory(sheet)
@@ -99,79 +101,79 @@ def add_text_field_values(sheet: DrawingSheet, text_field_x: float, text_field_y
     # Third row values
     third_row_y = text_field_y + 1
 
-    # Scale value
-    scale_value = template_params.get('SCALE', '') or " "
+    # Scale value (from user_attributes)
+    scale_value = user_attrs.get('scale', '') or " "
     scale_text = texts.add(scale_value, text_field_x + 1, first_row_y)
     scale_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(scale_text, size=fnt_size)
 
-    # Document type value
-    doc_type_value = template_params.get('DOCUMENT-TYPE', '') or " "
+    # Document type value (from user_attributes)
+    doc_type_value = user_attrs.get('document_type', '') or " "
     doc_text = texts.add(doc_type_value, text_field_x + 13, first_row_y)
     doc_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(doc_text, size=fnt_size)
 
-    # Material value
-    material_value = template_params.get('MATERIAL', '') or " "
+    # Material value (from user_attributes)
+    material_value = user_attrs.get('material', '') or " "
     material_text = texts.add(material_value, text_field_x + 65, first_row_y)
     material_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(material_text, size=fnt_size)
 
-    # Created by value
-    created_by_value = template_params.get('CREATED-BY', '') or " "
+    # Created by value (from user_attributes)
+    created_by_value = user_attrs.get('created_by', '') or " "
     created_text = texts.add(created_by_value, text_field_x + 35, second_row_y)
     created_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(created_text, size=fnt_size)
 
-    # Approved by value
-    approved_by_value = template_params.get('APPROVED-BY', '') or " "
+    # Approved by value (from user_attributes)
+    approved_by_value = user_attrs.get('approved_by', '') or " "
     approved_text = texts.add(approved_by_value, text_field_x + 35, third_row_y)
     approved_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(approved_text, size=fnt_size)
 
-    # Title value
-    title_value = template_params.get('TITLE', '') or " "
+    # Title value (from user_attributes)
+    title_value = user_attrs.get('title', '') or " "
     title_text = texts.add(title_value, text_field_x + 78, second_row_y)
     title_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(title_text, size=fnt_size)
 
-    # Extra Title value
-    extra_title_value = template_params.get('EXTRA-TITLE', '') or " "
+    # Extra Title value (from user_attributes)
+    extra_title_value = user_attrs.get('extra_title', '') or " "
     extra_title_text = texts.add(extra_title_value, text_field_x + 78, third_row_y)
     extra_title_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(extra_title_text, size=fnt_size)
 
-    # Blank value
-    blank_value = template_params.get('BLANK', '') or " "
+    # Blank value (from user_attributes)
+    blank_value = user_attrs.get('blank', '') or " "
     blank_text = texts.add(blank_value, text_field_x + 101, first_row_y)
     blank_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(blank_text, size=fnt_size)
 
-    # Number value
-    number_value = template_params.get('NUMBER', '') or " "
+    # Number value (from default_attributes)
+    number_value = default_attrs.get('part_number', '') or " "
     number_text = texts.add(number_value, text_field_x + 133, second_row_y)
     number_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(number_text, size=fnt_size)
 
-    # Revision value - always create text element
-    revision_value = template_params.get('REVISION', '') or " "
+    # Revision value (from default_attributes)
+    revision_value = default_attrs.get('revision', '') or " "
     revision_text = texts.add(revision_value, text_field_x + 133, third_row_y)
     revision_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(revision_text, size=fnt_size)
 
-    # Date value - always create text element
-    date_value = datetime.now().strftime("%d/%m/%y")
+    # Date value (from user_attributes)
+    date_value = user_attrs.get('date', '') or datetime.now().strftime("%d/%m/%y")
     date_text = texts.add(date_value, text_field_x + 139, third_row_y)
     date_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(date_text, size=fnt_size)
 
-    # Format value - always create text element
+    # Format value - KEEP AS AUTOMATIC (from template_params)
     format_value = template_params.get('FORMAT', '') or " "
     format_text = texts.add(format_value, text_field_x + 159, third_row_y)
     format_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(format_text, size=fnt_size)
 
-    # Page value - always create text element
+    # Page value - KEEP AS AUTOMATIC (from template_params)
     page_value = template_params.get('PAGE', '') or " "
     page_text = texts.add(page_value, text_field_x + 168, third_row_y)
     page_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
