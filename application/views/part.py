@@ -2,6 +2,7 @@ from flask import render_template
 from application.support.properties import get_properties
 from application import app
 from application.views.view_wrappers import catia_v5_required
+from application.support.properties import get_properties_with_titles
 
 
 @app.route('/part')
@@ -15,13 +16,13 @@ def part():
 @app.route('/part/new')
 @catia_v5_required
 def part_new():
-    from application.pycatia_scripts.settings import load_settings
-    settings_data = load_settings()
+    default_properties = get_properties_with_titles(None, 'default', 'part')
+    user_defined_properties = get_properties_with_titles(None, 'user', 'part')
 
     return render_template(
         'part_new.html',
-        default_attributes=settings_data.get('default_attributes', {}),
-        user_attributes=settings_data.get('user_attributes', {})
+        default_properties=default_properties,
+        user_defined_properties=user_defined_properties
     )
 
 

@@ -13,16 +13,27 @@ def htmx_create_new_product():
     data = output['data']
     errors = output['errors']
 
+    if errors:
+        return {
+            'success': False,
+            'message': 'Error creating product: ' + '; '.join(errors)
+        }
+
+    # Get the newly created product's properties
     pt_product_document, errors = get_product_document()
     product = pt_product_document.product
 
-    default_attributes = get_properties(product, 'default')
-    user_attributes = get_properties(product, 'user')
+    default_properties = get_properties(product, 'default')
+    user_defined_properties = get_properties(product, 'user')
 
-    return render_template(
-        'partials/form_attributes.html',
-        default_attributes=default_attributes,
-        user_attributes=user_attributes,
-        data=data,
-        errors=errors
-    )
+    # Return success with form update
+    return {
+        'success': True,
+        'message': data,  # data is already a string message
+        'html': render_template(
+            'partials/form_product_properties.html',
+            default_properties=default_properties,
+            user_defined_properties=user_defined_properties,
+            form_type='product'
+        )
+    }

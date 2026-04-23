@@ -5,46 +5,47 @@ from application.pycatia_scripts.part.new_part import create_new_part
 from application.support.documents import get_product_document
 from application.views.url_prefixes import htmx
 from application.support.properties import get_properties
+from application.pycatia_scripts.settings import load_settings
 
 
 @app.route(f'{htmx}/part/create_new', methods=['POST'])
 def htmx_create_new_part():
-    # DEBUG: Log request arrival
-    print("=== DEBUG: HTMX endpoint htmx_create_new_part called ===")
-
-    # DEBUG: Print all form data received
-    print("=== DEBUG: Form data received at HTMX endpoint ===")
-    for key, value in request.form.items():
-        print(f"{key}: {value}")
-    print("================================")
-
     output = create_new_part(request.form)
     data = output['data']
     errors = output['errors']
 
-    # Only get properties if part creation was successful
-    default_attributes = {}
-    user_attributes = {}
+    if errors:
+        # Return JSON for error popup
+        return {
+            'success': False,
+            'message': 'Error creating part: ' + '; '.join(errors),
+            'data': None
+        }
 
-    if not errors:
-        try:
-            pt_product_document, doc_errors = get_product_document(product_only=False)
-            if not doc_errors:
-                product = pt_product_document.product
-                default_attributes = get_properties(product, 'default')
-                user_attributes = get_properties(product, 'user')
-        except Exception as e:
-            print(f"=== DEBUG: Error getting properties: {e} ===")
+    # Get the newly created part's properties for form update
+    pt_product_document, get_errors = get_product_document(product_only=False)
+    product = pt_product_document.product
 
-    print(f"=== DEBUG: Data: {data}, Errors: {errors} ===")
+    # Get both default and user properties from the new part
+    default_properties = get_properties(product, 'default')
+    user_defined_properties = get_properties(product, 'user')
 
-    return render_template(
-        'partials/form_attributes.html',
-        default_attributes=default_attributes,
-        user_attributes=user_attributes,
-        data=data,
-        errors=errors
+    # Render form HTML for UI update
+    form_html = render_template(
+        'partials/form_product_properties.html',
+        default_properties=default_properties,
+        user_defined_properties=user_defined_properties,
+        form_type='part',
+        data=None,  # Don't show success message in form
+        errors=[]   # Don't show errors in form
     )
+
+    # Return JSON for success popup and form update
+    return {
+        'success': True,
+        'message': data,
+        'form_html': form_html
+    }
 
 
 @app.route(f'{htmx}/check_file_exists', methods=['GET'])

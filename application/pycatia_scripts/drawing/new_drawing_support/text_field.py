@@ -76,105 +76,114 @@ def add_logo_to_cell(sheet: DrawingSheet, text_field_x: float, text_field_y: flo
 
 def add_text_field_values(sheet: DrawingSheet, text_field_x: float, text_field_y: float):
     """
-    Add text values from settings underneath the labels in text field cells
+    Add text values from Part/Product properties and drawing settings
     """
     from .background_view import get_background_view_and_factory
     from pycatia.enumeration.enumeration_types import cat_text_anchor_position
     from application.pycatia_scripts.settings import load_settings
+    from application.support.documents import get_product_document
 
-    # Load settings to get new attribute structure
+    # Load settings
     settings_data = load_settings()
-    user_attrs = settings_data.get('user_attributes', {})
-    default_attrs = settings_data.get('default_attributes', {})
-    template_params = settings_data.get('drawing_template', {}).get('parameters', {})
+    drawing_params = settings_data.get('drawing_template', {}).get('parameters', {})
+
+    # Get current product to read properties
+    try:
+        pt_product_document, _ = get_product_document(product_only=False)
+        product = pt_product_document.product
+
+        # Get default and user properties from product
+        default_props = get_properties(product, 'default')
+        user_props = get_properties(product, 'user')
+    except:
+        default_props = {}
+        user_props = {}
 
     background_view, factory_2d, main_view = get_background_view_and_factory(sheet)
     texts = background_view.texts
 
-    # Font size for values (larger than labels)
+    # Font size for values
     fnt_size = 2.5
 
-    # First row values
+    # Row positions
     first_row_y = text_field_y + 21
-    # Second row values
     second_row_y = text_field_y + 12
-    # Third row values
     third_row_y = text_field_y + 1
 
-    # Scale value (from user_attributes)
-    scale_value = user_attrs.get('scale', '') or " "
+    # Scale - from drawing parameters (automatic)
+    scale_value = drawing_params.get('scale', '') or " "
     scale_text = texts.add(scale_value, text_field_x + 1, first_row_y)
     scale_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(scale_text, size=fnt_size)
 
-    # Document type value (from user_attributes)
-    doc_type_value = user_attrs.get('document_type', '') or " "
+    # Document type - from drawing parameters
+    doc_type_value = drawing_params.get('document-type', '') or " "
     doc_text = texts.add(doc_type_value, text_field_x + 13, first_row_y)
     doc_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(doc_text, size=fnt_size)
 
-    # Material value (from user_attributes)
-    material_value = user_attrs.get('material', '') or " "
+    # Material - from user attributes
+    material_value = user_props.get('material', '') or " "
     material_text = texts.add(material_value, text_field_x + 65, first_row_y)
     material_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(material_text, size=fnt_size)
 
-    # Created by value (from user_attributes)
-    created_by_value = user_attrs.get('created_by', '') or " "
+    # Created by - from user attributes
+    created_by_value = user_props.get('created_by', '') or " "
     created_text = texts.add(created_by_value, text_field_x + 35, second_row_y)
     created_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(created_text, size=fnt_size)
 
-    # Approved by value (from user_attributes)
-    approved_by_value = user_attrs.get('approved_by', '') or " "
+    # Approved by - from user attributes
+    approved_by_value = user_props.get('approved_by', '') or " "
     approved_text = texts.add(approved_by_value, text_field_x + 35, third_row_y)
     approved_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(approved_text, size=fnt_size)
 
-    # Title value (from user_attributes)
-    title_value = user_attrs.get('title', '') or " "
+    # Title - from user attributes
+    title_value = user_props.get('title', '') or " "
     title_text = texts.add(title_value, text_field_x + 78, second_row_y)
     title_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(title_text, size=fnt_size)
 
-    # Extra Title value (from user_attributes)
-    extra_title_value = user_attrs.get('extra_title', '') or " "
+    # Extra Title - from user attributes
+    extra_title_value = user_props.get('extra_title', '') or " "
     extra_title_text = texts.add(extra_title_value, text_field_x + 78, third_row_y)
     extra_title_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(extra_title_text, size=fnt_size)
 
-    # Blank value (from user_attributes)
-    blank_value = user_attrs.get('blank', '') or " "
+    # Blank - from user attributes
+    blank_value = user_props.get('blank', '') or " "
     blank_text = texts.add(blank_value, text_field_x + 101, first_row_y)
     blank_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(blank_text, size=fnt_size)
 
-    # Number value (from default_attributes)
-    number_value = default_attrs.get('part_number', '') or " "
+    # Number - from user attributes
+    number_value = user_props.get('number', '') or " "
     number_text = texts.add(number_value, text_field_x + 133, second_row_y)
     number_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(number_text, size=fnt_size)
 
-    # Revision value (from default_attributes)
-    revision_value = default_attrs.get('revision', '') or " "
+    # Revision - from default attributes
+    revision_value = default_props.get('revision', '') or " "
     revision_text = texts.add(revision_value, text_field_x + 133, third_row_y)
     revision_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(revision_text, size=fnt_size)
 
-    # Date value (from user_attributes)
-    date_value = user_attrs.get('date', '') or datetime.now().strftime("%d/%m/%y")
+    # Date - from user attributes or current date
+    date_value = user_props.get('date', '') or datetime.now().strftime("%d/%m/%y")
     date_text = texts.add(date_value, text_field_x + 139, third_row_y)
     date_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(date_text, size=fnt_size)
 
-    # Format value - KEEP AS AUTOMATIC (from template_params)
-    format_value = template_params.get('FORMAT', '') or " "
+    # Format - from drawing parameters
+    format_value = drawing_params.get('format', '') or " "
     format_text = texts.add(format_value, text_field_x + 159, third_row_y)
     format_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(format_text, size=fnt_size)
 
-    # Page value - KEEP AS AUTOMATIC (from template_params)
-    page_value = template_params.get('PAGE', '') or " "
+    # Page - from drawing parameters
+    page_value = drawing_params.get('page', '') or " "
     page_text = texts.add(page_value, text_field_x + 168, third_row_y)
     page_text.anchor_position = cat_text_anchor_position.index('catBottomLeft')
     set_text_properties(page_text, size=fnt_size)

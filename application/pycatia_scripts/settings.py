@@ -2,6 +2,7 @@ from pathlib import Path
 import os
 import json
 
+
 def read_json(f: Path):
     """Reads the contents of the json file `f` and returns the data."""
     data = None
@@ -11,6 +12,7 @@ def read_json(f: Path):
     except (FileNotFoundError, json.JSONDecodeError) as e:
         print(f"Error reading {f}: {e}")
     return data
+
 
 def create_default_settings(userdata_path: Path):
     """Create default settings in userdata/ folder"""
@@ -25,16 +27,14 @@ def create_default_settings(userdata_path: Path):
             'description': ''
         },
         'user_attributes': {
+            'number': '',
             'title': '',
             'extra_title': '',
-            'document_type': '',
             'created_by': '',
             'approved_by': '',
             'material': '',
             'blank': '',
-            'date': '[ dd / mm / yyyy ]',
-            'scale': '1:1',
-            'number': '001' 
+            'date': '[ dd / mm / yyyy ]'
         },
         'drawing_template': {
             'border_offset': 10,
@@ -48,8 +48,10 @@ def create_default_settings(userdata_path: Path):
             },
             # Keep only automatic parameters
             'parameters': {
-                'FORMAT': '',  # Auto-filled from paper size
-                'PAGE': '1/1'  # Auto-managed
+                'scale': '1:1',
+                'document_type': '',
+                'format': '',
+                'page': '1/1'
             },
             'logo': '',
             'projection_method': 'PM_EU.jpg',
@@ -61,19 +63,13 @@ def create_default_settings(userdata_path: Path):
             },
             'units': ['METRIC', 'MILLIMETRES']
         },
+        # Keep other existing sections
         'part_template': {
             'geometric_sets': ['ReferenceGeometry', 'MasterGeometry', 'ConstructionGeometry'],
             'parameters': {
                 'Thickness': {'type': 'length', 'value': 2},
                 'InternalBendRadius': {'type': 'length', 'value': 2}
             }
-        },
-        'product_template': {
-            # Removed user_ref_properties as they're now in user_attributes
-        },
-        'drawing': {
-            'pdf': {'exclude_sheets': ['Details', 'DXF']},
-            'dxf': {'include_sheets': ['DXF']}
         },
         'notifications': {
             'enabled': True,

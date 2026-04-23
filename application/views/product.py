@@ -1,5 +1,5 @@
 from flask import render_template
-
+from application.support.properties import get_properties_with_titles  
 from application import app
 from application.support.properties import get_properties
 from application.support.documents import get_product_document
@@ -13,17 +13,16 @@ def product():
         'product.html',
     )
 
-
 @app.route('/product/new')
 @catia_v5_required
 def product_new():
-    from application.pycatia_scripts.settings import load_settings
-    settings_data = load_settings()
+    default_properties = get_properties_with_titles(None, 'default', 'product')
+    user_defined_properties = get_properties_with_titles(None, 'user', 'product')
 
     return render_template(
         'product_new.html',
-        default_attributes=settings_data.get('default_attributes', {}),
-        user_attributes=settings_data.get('user_attributes', {})
+        default_properties=default_properties,
+        user_defined_properties=user_defined_properties
     )
 
 @app.route('/product/edit')
@@ -57,6 +56,7 @@ def product_edit():
 
     return render_template(
         'product_edit.html',
+        form_type='product',
         open_products=open_products,
         selected_product=selected_product,
         default_attributes=default_attributes,
