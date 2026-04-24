@@ -6,9 +6,11 @@ from win32.lib.pywintypes import com_error
 from application.pycatia_scripts.settings import product_template, drawing_template
 from application.pycatia_scripts.settings import load_settings, settings_data
 
-# Define property lists at module level 
+# Define property lists at module level
 default_property_list = list(settings_data.get('default_attributes', {}).keys())
 user_defined_property_list = list(settings_data.get('user_attributes', {}).keys())
+#user_defined_property_list = list(product_template.get('user_ref_properties', {}).keys())
+
 
 def get_properties(product: Product | None, type_: str):
     """
@@ -33,25 +35,22 @@ def get_properties(product: Product | None, type_: str):
                 if type_ == 'default':
                     properties[property] = getattr(product, property)
                 elif type_ == 'user':
-                    user_ref_properties = product.user_ref_properties
+                    # Handle both Part and Product objects
+                    if hasattr(product, 'user_ref_properties'):
+                        # Product object - direct access
+                        user_ref_properties = product.user_ref_properties
+                    else:
+                        # Part object - access through product interface
+                        user_ref_properties = product.product.user_ref_properties
+
                     if user_ref_properties:
-                        try:
-                            # German COM interface workaround
-                            cad_property = user_ref_properties.item(property)
-                            properties[property] = cad_property.value
-                        except (CATIAApplicationException, com_error):
-                            # If item() fails, try to create and get the property
-                            try:
-                                user_ref_properties.create_string(property, '')
-                                cad_property = user_ref_properties.item(property)
-                                properties[property] = cad_property.value
-                            except (CATIAApplicationException, com_error):
-                                # Final fallback - use empty string
-                                properties[property] = ''
+                        cad_property = user_ref_properties.item(property)
+                        properties[property] = cad_property.value
             except (AttributeError, CATIAApplicationException):
                 properties[property] = ''
                 if type_ == 'user':
-                    properties[property] = settings_data.get('user_attributes', {}).get(property, '')
+                    # Use correct template key
+                    properties[property] = product_template.get('user_ref_properties', {}).get(property, '')
 
     return properties
 
@@ -125,60 +124,44 @@ def update_default_properties(product: Product, form: ImmutableMultiDict):
                     print(f"=== DEBUG: Error setting {key}: {e} ===")
 
 
-def update_user_defined_properties(product: Product, form: ImmutableMultiDict):
+def update_user_defined_properties(product, form):
     """
-    Update User Defined Attributes with automatic date generation for new parts
+    Update User Defined Attributes for both Part and Product objects
     """
-
-    from datetime import datetime
-
     print("=== DEBUG: Starting User Defined Attributes update ===")
 
     # Get user attributes from settings
     user_attrs = settings_data.get('user_attributes', {})
 
-    if not user_attrs:
-        return
-
-
-    user_ref_properties = product.user_ref_properties
-
-    for attr_name in user_attrs.keys():
-        # Special handling for date field - auto-generate for new parts
-        if attr_name == 'date':
-            # Check if this is a new part (form has date field but it's empty)
-            form_date = form.get('date', '')
-            if not form_date:  # Empty means new part, generate date
+    for key in form.keys():
+        if key in user_attrs:
+            # Handle date field - set current date if empty
+            if key.lower() == 'date' and not form.get(key):
+                from datetime import datetime
                 date_value = datetime.now().strftime("%d/%m/%Y")
-            else:  # Has value means editing existing part
-                date_value = form_date
+            else:
+                date_value = form.get(key)
 
-            # Create/update the date field using the original name
+            # Get the correct product interface for user properties
+            if hasattr(product, 'part'):
+                # This is a Part object, use its product interface
+                user_ref_properties = product.product.user_ref_properties
+            else:
+                # This is a Product object, use directly
+                user_ref_properties = product.user_ref_properties
+
             try:
-                existing_prop = user_ref_properties.item('date')
-                existing_prop.value = date_value
+                user_ref_property = user_ref_properties.item(key)
+                user_ref_property.value = date_value
+                print(f"=== DEBUG: Updated {key} = {date_value} ===")
             except CATIAApplicationException:
-                # Create new date field
-                user_ref_properties.create_string('date', date_value)
+                user_ref_properties.create_string(key, date_value)
+                print(f"=== DEBUG: Created {key} = {date_value} ===")
             except com_error:
-                # Alternative creation method
-                user_ref_properties.create_string('date', date_value)
-            continue
+                user_ref_properties.create_string(key, date_value)
+                print(f"=== DEBUG: Created {key} = {date_value} (com_error) ===")
 
-        # Handle other user attributes normally
-        value = form.get(attr_name, '')
-
-        try:
-            existing_prop = user_ref_properties.item(attr_name)
-            existing_prop.value = value
-        except CATIAApplicationException:
-            user_ref_properties.create_string(attr_name, value)
-        except com_error as e:
-            # Try alternative creation method
-            try:
-                user_ref_properties.create_string(attr_name, value)
-            except Exception as e2:
-                print(f"=== DEBUG: Failed to create UDA '{attr_name}': {e2} ===")
+    print("=== DEBUG: User Defined Attributes update complete ===")
 
 
 def update_properties(product: Product, form: ImmutableMultiDict):

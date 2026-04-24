@@ -1,18 +1,13 @@
-<h3 class="">Default Attributes</h3>
+<h3 class="mt-2">Default Attributes</h3>
 <div class="row">
     {% for default_property in default_properties %}
         <div class="col-6">
-            <label for="form{{ default_property }}" class="form-label">
-                {% if default_property == 'nomenclature' %}Standard{% else %}{{ default_property|title }}{% endif %}
-            </label>
+            <label for="form{{ default_property }}" class="form-label">{{ default_property|title }}</label>
             {% if default_property == 'source' %}
                 <select name="{{ default_property }}" class="form-control rounded-0" id="form{{ default_property }}">
-                    <option value="Unknown"
-                            {% if default_properties[default_property] == 'Unknown' %}selected{% endif %}>Unknown</option>
-                    <option value="Built"
-                            {% if default_properties[default_property] == 'Built' %}selected{% endif %}>Built</option>
-                    <option value="Bought"
-                            {% if default_properties[default_property] == 'Bought' %}selected{% endif %}>Bought</option>
+                    <option value="Unknown" {% if default_properties[default_property] == 'Unknown' %}selected{% endif %}>Unknown</option>
+                    <option value="Built" {% if default_properties[default_property] == 'Built' %}selected{% endif %}>Built</option>
+                    <option value="Bought" {% if default_properties[default_property] == 'Bought' %}selected{% endif %}>Bought</option>
                 </select>
             {% else %}
                 <input name="{{ default_property }}" type="text" class="form-control rounded-0" id="form{{ default_property }}"
@@ -20,18 +15,17 @@
             {% endif %}
         </div>
     {% endfor %}
+</div>
 
 <!-- User Defined Attributes Section -->
 <h3 class="mt-4">User Defined Attributes</h3>
 <div class="row">
     {% for user_property in user_defined_properties %}
-        {% if user_property not in ['_form_title', '_form_type'] %}
-            <div class="col-6">
-                <label for="form{{ user_property }}" class="form-label">{{ user_property|title }}</label>
-                <input name="{{ user_property }}" type="text" class="form-control rounded-0" id="form{{ user_property }}"
-                       value="{{ user_defined_properties[user_property] or '' }}">
-            </div>
-        {% endif %}
+        <div class="col-6">
+            <label for="form{{ user_property }}" class="form-label">{{ user_property|title }}</label>
+            <input name="{{ user_property }}" type="text" class="form-control rounded-0" id="form{{ user_property }}"
+                   value="{{ user_defined_properties[user_property] or '' }}">
+        </div>
     {% endfor %}
 </div>
 

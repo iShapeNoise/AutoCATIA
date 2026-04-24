@@ -4,7 +4,6 @@ from pycatia.exception_handling import CATIAApplicationException
 
 from application.pycatia_scripts.the_document import PTDrawingDocument
 from application.pycatia_scripts.the_document import PTPartDocument
-
 from application.pycatia_scripts.the_document import PTProductDocument
 
 
@@ -40,7 +39,6 @@ def get_drawing_document() -> Tuple[PTDrawingDocument | None, List]:
 
 def get_product_document(product_only: bool = True) -> Tuple[PTProductDocument | None, List]:
     """
-
     :param product_only:
     :return:
     """

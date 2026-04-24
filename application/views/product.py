@@ -1,5 +1,5 @@
 from flask import render_template
-from application.support.properties import get_properties_with_titles  
+from application.support.properties import get_properties_with_titles
 from application import app
 from application.support.properties import get_properties
 from application.support.documents import get_product_document
@@ -28,39 +28,29 @@ def product_new():
 @app.route('/product/edit')
 @catia_v5_required
 def product_edit():
-    from application.pycatia_scripts.product.edit_product import check_open_products
-    from application.support.documents import get_product_document
-    from application.support.properties import get_properties
+    from application.support.load_properties import get_open_products, load_product_properties
 
     # Get open products
-    open_products = check_open_products()
+    open_products = get_open_products()
 
-    # Set selected product
-    selected_product = ''
-    if len(open_products) == 1:
-        selected_product = open_products[0]
+    # Select product automatically if only one, or empty if multiple
+    selected_product = open_products[0] if len(open_products) == 1 else ''
 
-    # Get properties for the selected product if available
-    default_attributes = {}
-    user_attributes = {}
+    # Load properties for selected product
+    default_properties = {}
+    user_defined_properties = {}
+    errors = []
 
     if selected_product:
-        try:
-            pt_product_document, errors = get_product_document(product_only=False)
-            if not errors:
-                product = pt_product_document.product
-                default_attributes = get_properties(product, 'default')
-                user_attributes = get_properties(product, 'user')
-        except:
-            pass
+        default_properties, user_defined_properties, errors = load_product_properties(selected_product)
 
     return render_template(
         'product_edit.html',
-        form_type='product',
         open_products=open_products,
         selected_product=selected_product,
-        default_attributes=default_attributes,
-        user_attributes=user_attributes
+        default_properties=default_properties,
+        user_defined_properties=user_defined_properties,
+        errors=errors
     )
 
 
