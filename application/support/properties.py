@@ -12,6 +12,16 @@ user_defined_property_list = list(settings_data.get('user_attributes', {}).keys(
 #user_defined_property_list = list(product_template.get('user_ref_properties', {}).keys())
 
 
+def get_source_display_value(value):
+    """Convert numeric source values to display strings"""
+    source_mapping = {
+        '0': 'Unknown',
+        '1': 'Built',
+        '2': 'Bought'
+    }
+    return source_mapping.get(str(value), 'Unknown')
+
+
 def get_properties(product: Product | None, type_: str):
     """
     :param product:
@@ -33,24 +43,28 @@ def get_properties(product: Product | None, type_: str):
         if product:
             try:
                 if type_ == 'default':
-                    properties[property] = getattr(product, property)
+                    properties[property] = getattr(product, property, '')
                 elif type_ == 'user':
-                    # Handle both Part and Product objects
+                    # Handle user-defined properties
                     if hasattr(product, 'user_ref_properties'):
-                        # Product object - direct access
                         user_ref_properties = product.user_ref_properties
-                    else:
-                        # Part object - access through product interface
-                        user_ref_properties = product.product.user_ref_properties
-
-                    if user_ref_properties:
-                        cad_property = user_ref_properties.item(property)
-                        properties[property] = cad_property.value
+                        if user_ref_properties:
+                            cad_property = user_ref_properties.item(property)
+                            properties[property] = cad_property.value
             except (AttributeError, CATIAApplicationException):
                 properties[property] = ''
                 if type_ == 'user':
-                    # Use correct template key
-                    properties[property] = product_template.get('user_ref_properties', {}).get(property, '')
+                    properties[property] = product_template['user_ref_properties'].get(property, '')
+        else:
+            # When no product is provided, load from settings
+            if type_ == 'default':
+                # Load from default_attributes in settings
+                default_attrs = settings_data.get('default_attributes', {})
+                properties[property] = default_attrs.get(property, '')
+            elif type_ == 'user':
+                # Load from user_attributes in settings
+                user_attrs = settings_data.get('user_attributes', {})
+                properties[property] = user_attrs.get(property, '')
 
     return properties
 
@@ -81,20 +95,23 @@ def update_default_properties(product: Product, form: ImmutableMultiDict):
                     setattr(product, key, value)
                 except Exception as e:
                     print(f"=== DEBUG: Error setting {key}: {e} ===")
-            # Special handling for source - use enum for language independence
+            # Special handling for source - use numeric values for language independence
             elif key == 'source':
                 try:
                     source_value = form.get(key)
-                    if source_value not in ['Unknown', '']:
-                        # Map English values to enum indices
-                        source_mapping = {
-                            'Unknown': 0,
-                            'Built': 1,
-                            'Bought': 2
-                        }
-                        enum_value = source_mapping.get(source_value, 0)
-                        # Use enum-based approach for language independence
-                        product.source = enum_value
+                    # Convert string to integer for CATIA enum
+                    if source_value and source_value.isdigit():
+                        enum_value = int(source_value)
+                        # Validate enum range (0=Unknown, 1=Built, 2=Bought)
+                        if 0 <= enum_value <= 2:
+                            product.source = enum_value
+                            print(f"=== DEBUG: Set source to {enum_value} ===")
+                        else:
+                            print(f"=== DEBUG: Invalid source value {enum_value}, using 0 ===")
+                            product.source = 0
+                    else:
+                        # Fallback for empty or invalid values
+                        product.source = 0
                 except Exception as e:
                     print(f"=== DEBUG: Error setting source: {e} ===")
             # Special handling for description - German interface workaround
@@ -102,20 +119,13 @@ def update_default_properties(product: Product, form: ImmutableMultiDict):
                 try:
                     # Try standard approach first
                     setattr(product, key, value)
-                    # Retry with German interface if needed
-                    if value and value.strip():
-                        try:
-                            # Alternative approach for German interface
-                            product.Description = value
-                        except:
-                            pass
-                except Exception as e:
-                    # Try alternative approach for German interface
+                except (AttributeError, TypeError):
+                    # Fall back to German interface (capitalized property name)
                     try:
-                        if value and value.strip():
-                            product.Description = value
-                    except:
-                        pass
+                        product.description = value
+                    except AttributeError:
+                        # If both approaches fail, log the error but don't crash
+                        print(f"Warning: Could not set description property on product")
             # Handle other default properties
             else:
                 try:
@@ -135,10 +145,12 @@ def update_user_defined_properties(product, form):
 
     for key in form.keys():
         if key in user_attrs:
+            value = form.get(key)
             # Handle date field - set current date if empty
-            if key.lower() == 'date' and not form.get(key):
-                from datetime import datetime
-                date_value = datetime.now().strftime("%d/%m/%Y")
+            if key.lower() == 'date':
+                if not value or value == '[ dd / mm / yyyy ]':
+                    from datetime import datetime
+                    date_value = datetime.now().strftime("%d/%m/%Y")
             else:
                 date_value = form.get(key)
 
@@ -166,13 +178,41 @@ def update_user_defined_properties(product, form):
 
 def update_properties(product: Product, form: ImmutableMultiDict):
     """
-    Update both Default and User Defined properties
+    Update properties for both Part and Product objects
     """
-    # Update Default Attributes
-    update_default_properties(product, form)
+    print("=== DEBUG: Starting properties update ===")
 
-    # Update User Defined Attributes - NOW ENABLED
-    update_user_defined_properties(product, form)
+    # Update default properties with error handling
+    for key in form.keys():
+        if key in default_property_list:
+            try:
+                setattr(product, key, form.get(key))
+                print(f"=== DEBUG: Successfully set {key} = {form.get(key)} ===")
+            except CATIAApplicationException as e:
+                print(f"=== DEBUG: Could not set {key}: {e} ===")
+                # Skip this property or use alternative method
+                continue
+
+    # Update user-defined properties with automatic date handling
+    for key in form.keys():
+        if key in user_defined_property_list:
+            # Handle automatic date setting
+            if key.lower() == 'date' and (not form.get(key) or form.get(key) == '[ dd / mm / yyyy ]'):
+                from datetime import datetime
+                date_value = datetime.now().strftime("%d/%m/%Y")
+            else:
+                date_value = form.get(key)
+
+            try:
+                user_ref_properties = product.user_ref_properties
+                user_ref_property = user_ref_properties.item(key)
+                user_ref_property.value = date_value
+            except CATIAApplicationException:
+                user_ref_properties.create_string(key, date_value)
+            except com_error:
+                user_ref_properties.create_string(key, date_value)
+
+    print("=== DEBUG: Properties update complete ===")
 
 
 def get_form_title(form_type: str) -> str:

@@ -20,21 +20,21 @@ def create_default_settings(userdata_path: Path):
         # New attribute sections
         'default_attributes': {
             'part_number': '',
-            'revision': '',
+            'revision': 'P01',
             'nomenclature': '',
             'definition': '',
-            'source': 'Unknown',
+            'source': '0',
             'description': ''
         },
         'user_attributes': {
-            'number': '',
+            'number': '001',
             'title': '',
             'extra_title': '',
             'created_by': '',
             'approved_by': '',
             'material': '',
             'blank': '',
-            'date': '[ dd / mm / yyyy ]'
+            'date': ''
         },
         'drawing_template': {
             'border_offset': 10,

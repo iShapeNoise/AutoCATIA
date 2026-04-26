@@ -1,39 +1,37 @@
 from flask import request, render_template
-
 from application import app
-from application.pycatia_scripts.product.new_product import create_new_product
-from application.support.documents import get_product_document
-from application.support.properties import get_properties
 from application.views.url_prefixes import htmx
-
+from application.pycatia_scripts.product.new_product import create_new_product
+from application.support.properties import update_user_defined_properties
+from application.support.documents import get_product_document
 
 @app.route(f'{htmx}/product/create_new', methods=['POST'])
 def htmx_create_new_product():
-    output = create_new_product(request.form)
-    data = output['data']
-    errors = output['errors']
+    try:
+        # Create the product
+        result = create_new_product(request.form)
 
-    if errors:
-        return {
-            'success': False,
-            'message': 'Error creating product: ' + '; '.join(errors)
-        }
+        # Get the created product document
+        pt_product_document, errors = get_product_document()
+        product = pt_product_document.product
 
-    # Get the newly created product's properties
-    pt_product_document, errors = get_product_document()
-    product = pt_product_document.product
+        # Reload properties after saving
+        from application.support.properties import get_properties
+        default_properties = get_properties(product, 'default')
+        user_defined_properties = get_properties(product, 'user')
 
-    default_properties = get_properties(product, 'default')
-    user_defined_properties = get_properties(product, 'user')
-
-    # Return success with form update
-    return {
-        'success': True,
-        'message': data,  # data is already a string message
-        'html': render_template(
+        return render_template(
             'partials/form_product_properties.html',
             default_properties=default_properties,
             user_defined_properties=user_defined_properties,
-            form_type='product'
+            data=result.get('data', ''),
+            errors=result.get('errors', [])
         )
-    }
+    except Exception as e:
+        return render_template(
+            'partials/form_product_properties.html',
+            default_properties={},
+            user_defined_properties={},
+            data='',
+            errors=[f'Error creating product: {str(e)}']
+        )

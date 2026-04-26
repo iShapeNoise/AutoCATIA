@@ -1,6 +1,7 @@
 from pycatia.product_structure_interfaces.product_document import ProductDocument
 from werkzeug.datastructures import ImmutableMultiDict
-from application.support.properties import update_properties_enum
+from application.support.properties import update_properties
+from application.pycatia_scripts.common import check_part_number_exists
 from application.pycatia_scripts.common import get_output
 from application.pycatia_scripts.com_objects import get_app_object
 from application.pycatia_scripts.settings import product_template
@@ -53,6 +54,7 @@ def create_new_product(form: ImmutableMultiDict):
     product_document = ProductDocument(documents.add('Product').com_object)
 
     # Update properties using enum-based approach
+    from application.support.properties import update_properties_enum
     update_properties_enum(product_document.product, form)
 
     # Set product_number directly after enum update
@@ -60,9 +62,21 @@ def create_new_product(form: ImmutableMultiDict):
     print(f"=== DEBUG: Final product_number set: {product_number} ===")
 
     # Products don't have geometric sets or parameters like parts
-    # Skip part-specific creation logic
+    # But we can set up user-defined reference properties from template
+    if product_template.get('user_ref_properties'):
+        user_ref_properties = product_document.product.user_ref_properties
+        for prop_name, default_value in product_template['user_ref_properties'].items():
+            try:
+                # Check if property already exists
+                user_ref_properties.item(prop_name)
+            except:
+                # Create property if it doesn't exist
+                user_ref_properties.create_string(prop_name, default_value)
 
-    # Save document
+    # REMOVED: product_document.update() - ProductDocument doesn't have this method
+    # Products are assembly containers and don't need geometric updates
+
+    # Save document to project folder
     project_path = form.get('project_path', '')
     if project_path:
         try:
@@ -72,6 +86,12 @@ def create_new_product(form: ImmutableMultiDict):
             print(f"=== DEBUG: Document saved to: {full_path} ===")
         except Exception as e:
             print(f"=== DEBUG: Save error: {e} ===")
+    else:
+        # If no project path, save to current directory
+        try:
+            product_document.save()
+            print("=== DEBUG: Document saved to current directory ===")
+        except Exception as e:
+            print(f"=== DEBUG: Save error: {e} ===")
 
-    output['data'] = f'New Product "{product_number}" created.'
     return output

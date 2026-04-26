@@ -49,12 +49,14 @@ class PTProductDocument(PTActiveDocument):
         part_number = self.product.part_number
         definition = self.product.definition
         nomenclature = self.product.nomenclature
+        description = self.product.description
 
         details = {
             'definition': definition,
             'nomenclature': nomenclature,
             'part_number': part_number,
-            'revision': revision
+            'revision': revision,
+            'description': description
         }
 
         return details
@@ -78,12 +80,15 @@ class PTPartDocument(PTActiveDocument):
         part_number = self.product.part_number
         definition = self.product.definition
         nomenclature = self.product.nomenclature
+        description = self.product.description
+
 
         details = {
             'definition': definition,
             'nomenclature': nomenclature,
             'part_number': part_number,
-            'revision': revision
+            'revision': revision,
+            'description': description
         }
 
         return details

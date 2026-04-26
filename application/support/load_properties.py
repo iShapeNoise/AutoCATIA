@@ -35,19 +35,16 @@ def load_part_properties(part_name: str) -> Tuple[Dict, Dict, List]:
         # Get the CATIA application
         application = get_app_object()
         if not application:
-            errors.append('CATIA application not found')
+            errors.append('Cannot connect to CATIA application')
             return {}, {}, errors
 
+        # Find and activate the part
         documents = application.documents
         target_doc = None
 
-        # Find the target part document
         for i in range(documents.count):
             doc = documents.item(i + 1)
-            doc_name = doc.name
-            # Remove .CATPart extension if present for comparison
-            clean_name = doc_name.replace('.CATPart', '').replace('.catpart', '')
-            if clean_name == part_name.replace('.CATPart', '').replace('.catpart', ''):
+            if doc.name == part_name or doc.name == part_name.replace('.CATPart', ''):
                 target_doc = doc
                 break
 
@@ -55,23 +52,23 @@ def load_part_properties(part_name: str) -> Tuple[Dict, Dict, List]:
             errors.append(f'Part "{part_name}" not found in open documents')
             return {}, {}, errors
 
-        # Activate the document using the correct method
-        target_doc.activate()  # This is the correct way to switch documents
+        # Activate the document
+        target_doc.activate()
 
-        # Now get the part document properties
+        # Get the part document wrapper
         pt_part_document, doc_errors = get_part_document()
-        errors.extend(doc_errors)
-
         if doc_errors:
+            errors.extend(doc_errors)
             return {}, {}, errors
 
-        part = pt_part_document.part
+        # Get properties using the product interface
         product = pt_part_document.product
-
-        # Get properties using the existing function
-        from application.support.properties import get_properties
         default_properties = get_properties(product, 'default')
         user_defined_properties = get_properties(product, 'user')
+
+        # DEBUG: Print source value specifically
+        print(f"=== DEBUG: Source field value from CATIA: '{default_properties.get('source', 'NOT_FOUND')}' ===")
+        print(f"=== DEBUG: All default properties: {default_properties} ===")
 
         return default_properties, user_defined_properties, errors
 

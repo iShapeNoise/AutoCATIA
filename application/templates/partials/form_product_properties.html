@@ -4,11 +4,13 @@
         <div class="col-6">
             <label for="form{{ default_property }}" class="form-label">{{ default_property|title }}</label>
             {% if default_property == 'source' %}
-                <select name="{{ default_property }}" class="form-control rounded-0" id="form{{ default_property }}">
-                    <option value="Unknown" {% if default_properties[default_property] == 'Unknown' %}selected{% endif %}>Unknown</option>
-                    <option value="Built" {% if default_properties[default_property] == 'Built' %}selected{% endif %}>Built</option>
-                    <option value="Bought" {% if default_properties[default_property] == 'Bought' %}selected{% endif %}>Bought</option>
-                </select>
+                <input name="{{ default_property }}"
+                       type="text"
+                       class="form-control rounded-0"
+                       id="form{{ default_property }}"
+                       value="{{ default_properties[default_property] or '0' }}"
+                       placeholder="0">
+                <small class="form-text text-muted">Please use one of these numbers: 0-Unknown, 1-Built, 2-Bought</small>
             {% else %}
                 <input name="{{ default_property }}" type="text" class="form-control rounded-0" id="form{{ default_property }}"
                        value="{{ default_properties[default_property] or '' }}">
@@ -17,8 +19,7 @@
     {% endfor %}
 </div>
 
-<!-- User Defined Attributes Section -->
-<h3 class="mt-4">User Defined Attributes</h3>
+<h3 class="mt-2">User Defined Attributes</h3>
 <div class="row">
     {% for user_property in user_defined_properties %}
         <div class="col-6">
@@ -27,6 +28,10 @@
                    value="{{ user_defined_properties[user_property] or '' }}">
         </div>
     {% endfor %}
+</div>
+
+<div class="text-center mt-2">
+    <button name="submit" class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1" value="submit">Submit</button>
 </div>
 
 {% if data %}

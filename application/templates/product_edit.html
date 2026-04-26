@@ -7,8 +7,9 @@
         <div class="mb-4 mt-3 border border-secondary rounded p-3 mb-3 bg-dark bg-opacity-50">
             <h4 class="text-white border-bottom border-white pb-1 mb-3">Product</h4>
             <div class="row">
-                <div class="mb-3">
-                    <label for="product_select" class="form-label">Select Product</label>
+                <label for="product_select" class="form-label">Select Product</label>
+                <div class="mb-3 col-md-10">
+
                     <select class="form-select" id="product_select" name="selected_product">
                         {% if open_products %}
                             {% if open_products|length == 1 %}
@@ -26,12 +27,15 @@
                         {% endif %}
                     </select>
                 </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1" onclick="loadProductProperties()">Load</button>
+                </div>
             </div>
-            <!-- Product Properties Section -->
+            <!-- Part Properties Section -->
             <div class="row mt-3">
                 <div class="col-12">
-                  <h4 class="text-white border-bottom border-white pb-1 mb-3">{{ lang_manager.t('pages.product.edit_product_properties', 'Product Properties') }}</h4>
-                    <form
+                    <h4 class="text-white border-bottom border-white pb-1 mb-3">Product Properties</h4>
+                    <form id="product_properties_form"
                             hx-post="/htmx/product/properties"
                             hx-target="#product_properties_result"
                             hx-swap="innerHtml"
@@ -44,6 +48,7 @@
                     </form>
                 </div>
             </div>
+
             <!-- Product Tools Section -->
             <div class="mb-4 mt-3">
                 <!-- Reorder Tree Section -->
@@ -69,55 +74,73 @@
         </div>
     </div>
 
-{% endblock %}
+    <script>
+        // Validate product selection before executing operations
+        function validateProductSelection() {
+            const selectedProduct = document.getElementById('product_select').value;
 
-{% block scripts %}
-<script>
-    // Validate product selection before executing operations
-    function validateProductSelection() {
-        const selectedProduct = document.getElementById('product_select').value;
-
-        if (!selectedProduct || selectedProduct === "No product opened in CATIA") {
-            alert('Please select a product before performing this operation.');
-            return false;
+            if (!selectedProduct || selectedProduct === "No product opened in CATIA") {
+                alert('Please select a product before performing this operation.');
+                return false;
+            }
+            return true;
         }
-        return true;
-    }
 
-    // Add validation to all forms
-    document.addEventListener('DOMContentLoaded', function() {
-        // Add validation to reorder tree form
-        const reorderForm = document.querySelector('#reorder_tree form');
-        if (reorderForm) {
-            reorderForm.addEventListener('submit', function(e) {
-                if (!validateProductSelection()) {
-                    e.preventDefault();
-                    return false;
-                }
+        // Load product properties function
+        window.loadProductProperties = function() {
+            if (!validateProductSelection()) {
+                return;
+            }
+
+            const selectedProduct = document.getElementById('product_select').value;
+            console.log('Loading properties for product:', selectedProduct);
+
+            // Create form data
+            const formData = new FormData();
+            formData.append('selected_product', selectedProduct);
+
+            // Use HTMX to load properties
+            htmx.ajax('POST', '/htmx/product/load_properties', {
+                target: '#product_properties_result',
+                swap: 'innerHTML',
+                values: { 'selected_product': selectedProduct }
             });
-        }
+        };
 
-        // Add validation to renumber instances form
-        const renumberForm = document.querySelector('#renumber_instances form');
-        if (renumberForm) {
-            renumberForm.addEventListener('submit', function(e) {
-                if (!validateProductSelection()) {
-                    e.preventDefault();
-                    return false;
-                }
-            });
-        }
+        // Add validation to all forms
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add validation to reorder tree form
+            const reorderForm = document.querySelector('#reorder_tree form');
+            if (reorderForm) {
+                reorderForm.addEventListener('submit', function(e) {
+                    if (!validateProductSelection()) {
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+            }
 
-        // Add validation to product properties form
-        const propertiesForm = document.querySelector('#product_properties form');
-        if (propertiesForm) {
-            propertiesForm.addEventListener('submit', function(e) {
-                if (!validateProductSelection()) {
-                    e.preventDefault();
-                    return false;
-                }
-            });
-        }
-    });
-</script>
+            // Add validation to renumber instances form
+            const renumberForm = document.querySelector('#renumber_instances form');
+            if (renumberForm) {
+                renumberForm.addEventListener('submit', function(e) {
+                    if (!validateProductSelection()) {
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+            }
+
+            // Add validation to product properties form
+            const propertiesForm = document.querySelector('#product_properties form');
+            if (propertiesForm) {
+                propertiesForm.addEventListener('submit', function(e) {
+                    if (!validateProductSelection()) {
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+            }
+        });
+    </script>
 {% endblock %}
