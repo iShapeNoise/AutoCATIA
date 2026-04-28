@@ -40,7 +40,7 @@
         <form
                 class="row align-items-center"
                 hx-post="/htmx/drawing/save_as_pdf"
-                hx-target="#save_as"
+                hx-target="#confirmation_message"
                 hx-swap="innerHtml"
                 hx-indicator="#save_as"
         >
@@ -57,19 +57,28 @@
                      hx-trigger="load">
                 </div>
             </div>
-
+            <div class="row mt-2">
+                <div class="col">
+                    <label for="formFileName" class="form-label">File Name</label>
+                    <input name="file_name" type="text" class="form-control rounded-0" id="formFileName"
+                           value="{{ open_drawings[0] if open_drawings else '' }}" placeholder="Enter filename without extension">
+                </div>
+            </div>
+            <div class="text-center mt-2">  
+                <button type="submit" class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1">
+                    Save PDF
+                </button>
+            </div>
         </form>
-        <ul class="mt-4 alert alert-danger text-center">
-            If PDF already exists it will be overwritten.
-        </ul>
-        <div class="text-center mt-2">
-            <button name="save_as" class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1" value="save_as" script="on click remove #save_as">
-                Save As
-            </button>
+
+        <div class="mt-4" id="confirmation_message">
+            <ul class="alert alert-danger text-center">
+                If PDF already exists it will be overwritten.
+            </ul>
         </div>
-        <div id="save_as">
+
+        <div id="save_as" class="d-none">
             {% include('partials/spinner.html') %}
         </div>
-    </div>
 
 {% endblock %}

@@ -19,53 +19,48 @@
             <div class="alert alert-warning" id="multiple-drawings-warning" style="display: none;">
                 {{ lang_manager.t('pages.drawing.multiple_drawings_warning', 'There are more than one Drawing opened, please close the ones not needed, before adding a new page') }}
             </div>
-            <!-- Drawing and Pages Selection Row -->
+            <!-- Drawing Selection Row -->
             <div class="row mb-4 mt-4 border border-secondary rounded p-3 mb-3 bg-dark bg-opacity-50">
                 <h4 class="text-white border-bottom border-white pb-1 mb-3">{{ lang_manager.t('pages.drawing.update_pages', 'Update Page') }}</h4>
                 <!-- Drawing Selection Column -->
-                <div class="col-md-6 mb-4">
-                    <div class="mb-3">
-                        <label for="drawing_select" class="form-label">1. Select Drawing</label>
-                        <select class="form-select" id="drawing_select" name="selected_drawing">
-                            {% if open_drawings %}
-                                {% if open_drawings|length == 1 %}
-                                    {% for drawing in open_drawings %}
-                                        <option value="{{ drawing }}" selected>{{ drawing }}</option>
-                                    {% endfor %}
-                                {% else %}
-                                    <option value="">Please select a drawing...</option>
-                                    {% for drawing in open_drawings %}
-                                        <option value="{{ drawing }}">{{ drawing }}</option>
-                                    {% endfor %}
-                                {% endif %}
-                            {% else %}
-                                <option value="">No drawings found</option>
-                            {% endif %}
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Update Pages Column -->
-                <div class="col-md-6 mb-4">
-                    <div class="mb-3">
-                        <label for="page_select" class="form-label">2. Select Page</label>
-                        <select class="form-select" id="page_select" name="selected_page">
-                            {% if sheets %}
-                                {% for sheet in sheets %}
-                                    <option value="{{ sheet }}">{{ sheet }}</option>
+                <div class="col-md-8 mb-4">
+                    <label for="drawing_select" class="form-label">Select Drawing</label>
+                    <select class="form-select" id="drawing_select" name="selected_drawing">
+                        {% if open_drawings %}
+                            {% if open_drawings|length == 1 %}
+                                {% for drawing in open_drawings %}
+                                    <option value="{{ drawing }}" selected>{{ drawing }}</option>
                                 {% endfor %}
                             {% else %}
-                                <option value="">No pages found</option>
+                                <option value="">Please select a drawing...</option>
+                                {% for drawing in open_drawings %}
+                                    <option value="{{ drawing }}">{{ drawing }}</option>
+                                {% endfor %}
                             {% endif %}
-                        </select>
-                    </div>
+                        {% else %}
+                            <option value="">No drawings found</option>
+                        {% endif %}
+                    </select>
                 </div>
-                <div class="text-center">
-                    <button type="button" class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1" onclick="updateSelectedPage()">
-                        Update Page
+
+                <!-- Load Button Column -->
+                <div class="col-md-4 mb-4 d-flex align-items-end">
+                    <button type="button"
+                            class="btn btn-dark btn-sm border-white p-1 m-1 rounded-1 w-100"
+                            hx-post="/htmx/drawing/load_pages"
+                            hx-target="#pages_table"
+                            hx-include="#drawing_select"
+                            hx-indicator="#pages_table">
+                        Load Pages
                     </button>
                 </div>
             </div>
+
+            <!-- Pages Table will be loaded here -->
+            <div id="pages_table">
+                <!-- Table will be loaded via HTMX when Load button is clicked -->
+            </div>
+
             <div id="result"></div>
         </div>
     </div>
@@ -82,63 +77,71 @@
             console.log('DEBUG:', message, data || '');
         }
 
-        // Handle modal form submission
-        document.getElementById('appendPageBtn').addEventListener('click', function() {
-            debugLog('Append button clicked');
+        // Handle modal form submission - only if element exists
+        const appendPageBtn = document.getElementById('appendPageBtn');
+        if (appendPageBtn) {
+            appendPageBtn.addEventListener('click', function() {
+                debugLog('Append button clicked');
 
-            const format = document.getElementById('pageFormat').value;
-            const pageName = document.getElementById('pageName').value;
-            const documentType = document.getElementById('documentType').value;
-            const partNumber = document.getElementById('partNumber').value;
+                const format = document.getElementById('pageFormat').value;
+                const pageName = document.getElementById('pageName').value;
+                const documentType = document.getElementById('documentType').value;
+                const partNumber = document.getElementById('partNumber').value;
 
-            debugLog('Form data collected', {
-                format: format,
-                page_name: pageName,
-                document_type: documentType,
-                partNumber: partNumber
+                debugLog('Form data collected', {
+                    format: format,
+                    page_name: pageName,
+                    document_type: documentType,
+                    partNumber: partNumber
+                });
+
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('pageInfoModal'));
+                if (modal) {
+                    modal.hide();
+                    debugLog('Modal closed');
+                }
+
+                // Show spinner
+                document.getElementById('drawing_result').innerHTML = '<div class="text-center p-3"><div class="spinner-border" role="status"></div></div>';
             });
+        }
 
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('pageInfoModal'));
-            if (modal) {
-                modal.hide();
-                debugLog('Modal closed');
-            }
+        // Set format when modal is shown - only if element exists
+        const pageInfoModal = document.getElementById('pageInfoModal');
+        if (pageInfoModal) {
+            pageInfoModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const format = button.getAttribute('data-format');
+                document.getElementById('pageFormat').value = format;
+                debugLog('Modal shown with format', format);
+            });
+        }
 
-            // Show spinner
-            document.getElementById('drawing_result').innerHTML = '<div class="text-center p-3"><div class="spinner-border" role="status"></div></div>';
-        });
-
-        // Set format when modal is shown
-        document.getElementById('pageInfoModal').addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget;
-            const format = button.getAttribute('data-format');
-            document.getElementById('pageFormat').value = format;
-            debugLog('Modal shown with format', format);
-        });
-
-        // Handle GD&T Defaults checkbox state
+        // Handle GD&T Defaults checkbox state - only if element exists
         document.addEventListener('DOMContentLoaded', function() {
             const gdtMainCheckbox = document.getElementById('gdt_enabled');
-            const gdtSubCheckboxes = document.querySelectorAll('[id^="gdt_"]:not(#gdt_enabled)');
+            if (gdtMainCheckbox) {
+                const gdtSubCheckboxes = document.querySelectorAll('[id^="gdt_"]:not(#gdt_enabled)');
 
-            function updateGdtSubCheckboxes() {
-                const isEnabled = gdtMainCheckbox.checked;
-                gdtSubCheckboxes.forEach(checkbox => {
-                    checkbox.disabled = !isEnabled;
-                    if (isEnabled) {
-                        checkbox.parentElement.classList.remove('opacity-50');
-                    } else {
-                        checkbox.parentElement.classList.add('opacity-50');
-                    }
-                });
+                function updateGdtSubCheckboxes() {
+                    const isEnabled = gdtMainCheckbox.checked;
+                    gdtSubCheckboxes.forEach(checkbox => {
+                        checkbox.disabled = !isEnabled;
+                        if (isEnabled) {
+                            checkbox.parentElement.classList.remove('opacity-50');
+                        } else {
+                            checkbox.parentElement.classList.add('opacity-50');
+                        }
+                    });
+                }
+
+                // Set initial state
+                updateGdtSubCheckboxes();
+
+                // Update on change
+                gdtMainCheckbox.addEventListener('change', updateGdtSubCheckboxes);
             }
-
-            // Set initial state
-            updateGdtSubCheckboxes();
-
-            // Update on change
-            gdtMainCheckbox.addEventListener('change', updateGdtSubCheckboxes);
         });
     </script>
 {% endblock %}

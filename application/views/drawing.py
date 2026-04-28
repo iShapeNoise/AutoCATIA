@@ -104,7 +104,7 @@ def drawing_add_views():
 @app.route('/drawing/edit_views')
 @catia_v5_required
 def drawing_edit_views():
-    return render_template('drawing_edit_views.html')  
+    return render_template('drawing_edit_views.html')
 
 
 @app.route('/drawing/bom')
@@ -117,10 +117,21 @@ def drawing_bom():
 @catia_v5_required
 def drawing_save_as():
     from application.views.htmx.drawing_htmx import save_as
-    exclude_sheets = ', '.join(settings_data['drawing']['pdf']['exclude_sheets'])
+    from application.pycatia_scripts.drawing.add_page import check_open_drawings
+
+    # Get open drawings for dropdown
+    open_drawings = check_open_drawings()
+
+    # Handle missing drawing settings
+    drawing_settings = settings_data.get('drawing', {})
+    pdf_settings = drawing_settings.get('pdf', {})
+    exclude_sheets_list = pdf_settings.get('exclude_sheets', ['Details', 'DXF'])
+    exclude_sheets = ', '.join(exclude_sheets_list)
+
     return render_template(
         'drawing_save_as.html',
         exclude_sheets=exclude_sheets,
+        open_drawings=open_drawings
     )
 
 
@@ -128,10 +139,21 @@ def drawing_save_as():
 @catia_v5_required
 def drawing_save_as_pdf():
     from application.views.htmx.drawing_htmx import save_as
-    exclude_sheets = ', '.join(settings_data['drawing']['pdf']['exclude_sheets'])
+    from application.pycatia_scripts.drawing.add_page import check_open_drawings
+
+    # Get open drawings for dropdown
+    open_drawings = check_open_drawings()
+
+    # Handle missing drawing settings
+    drawing_settings = settings_data.get('drawing', {})
+    pdf_settings = drawing_settings.get('pdf', {})
+    exclude_sheets_list = pdf_settings.get('exclude_sheets', ['Details', 'DXF'])
+    exclude_sheets = ', '.join(exclude_sheets_list)
+
     return render_template(
         'drawing_save_as_pdf.html',
         exclude_sheets=exclude_sheets,
+        open_drawings=open_drawings,
     )
 
 
@@ -139,10 +161,21 @@ def drawing_save_as_pdf():
 @catia_v5_required
 def drawing_save_as_dxf():
     from application.views.htmx.drawing_htmx import save_as
-    include_sheets = ', '.join(settings_data['drawing']['dxf']['include_sheets'])
+    from application.pycatia_scripts.drawing.add_page import check_open_drawings
+
+    # Get open drawings for dropdown
+    open_drawings = check_open_drawings()
+
+    # Handle missing drawing settings
+    drawing_settings = settings_data.get('drawing', {})
+    dxf_settings = drawing_settings.get('dxf', {})
+    include_sheets_list = dxf_settings.get('include_sheets', ['DXF'])
+    include_sheets = ', '.join(include_sheets_list)
+
     return render_template(
         'drawing_save_as_dxf.html',
         include_sheets=include_sheets,
+        open_drawings=open_drawings
     )
 
 

@@ -14,15 +14,17 @@ def random_str(length: int = 8):
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))
 
 
-def save_as_pdf(exclude_sheets: str | None = None, target_directory: str | None = None):
+def save_as_pdf(exclude_sheets: str | None = None, target_directory: str | None = None,
+                file_name: str | None = None, selected_drawing: str | None = None):
     """
-    :param str include_sheets: a comma delimited str of sheet names
+    :param str exclude_sheets: a comma delimited str of sheet names
+    :param str file_name: custom filename without extension
+    :param str selected_drawing: selected drawing name
     """
 
     pt_drawing_document, errors = get_drawing_document()
 
     output = get_output()
-
     output['errors'] = output['errors'] + errors
 
     if not target_directory:
@@ -38,7 +40,10 @@ def save_as_pdf(exclude_sheets: str | None = None, target_directory: str | None 
 
     drawing_doc = pt_drawing_document.drawing_document
     random_prefix = random_str()
-    temp_name = random_prefix + drawing_doc.name
+
+    # Use custom filename or drawing name
+    base_name = file_name if file_name else drawing_doc.name.rsplit('.', 1)[0]
+    temp_name = random_prefix + base_name
     pdf_name = Path(target_directory, temp_name).with_suffix('.pdf')
 
     drawing_doc.export_data(pdf_name, 'pdf', overwrite=True)
@@ -46,7 +51,7 @@ def save_as_pdf(exclude_sheets: str | None = None, target_directory: str | None 
     # find all the temp named pdfs files and combine them
     pdfs = sorted(Path(target_directory).glob(f'{random_prefix}*.*'))
 
-    target_pdf = Path(target_directory, drawing_doc.name).with_suffix('.pdf')
+    target_pdf = Path(target_directory, base_name).with_suffix('.pdf')
     delete_files = []
     merger = PdfWriter()
     for pdf in pdfs:
@@ -59,7 +64,7 @@ def save_as_pdf(exclude_sheets: str | None = None, target_directory: str | None 
         merger.close()
         for f in delete_files:
             f.unlink()
-        output['data'] = f'PDF "{target_pdf}" created.'
+        output['data'] = f'PDF "{target_pdf}" created successfully.'
     except:
         output['errors'].append('There was a problem creating PDF or deleting source PDFS.')
 

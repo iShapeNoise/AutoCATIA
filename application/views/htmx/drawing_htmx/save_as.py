@@ -10,8 +10,11 @@ from application.pycatia_scripts.drawing.save_drawing import save_as_pdf
 def htmx_drawing_save_as_pdf():
     exclude = request.form.get('exclude_sheet') or None
     target_directory = request.form.get('target_directory') or None
+    file_name = request.form.get('file_name') or None
+    selected_drawing = request.form.get('selected_drawing')
 
-    output = save_as_pdf(exclude_sheets=exclude, target_directory=target_directory)
+    output = save_as_pdf(exclude_sheets=exclude, target_directory=target_directory,
+                        file_name=file_name, selected_drawing=selected_drawing)
     data = output['data']
     errors = output['errors']
 
@@ -21,7 +24,7 @@ def htmx_drawing_save_as_pdf():
     if data:
         return render_template('partials/success.html', data=data)
 
-    return render_template('partials/error.html')
+    return render_template('partials/error.html', error='Unknown error occurred')
 
 
 @app.route(f'{htmx}/drawing/save_as_dxf', methods=['POST'])

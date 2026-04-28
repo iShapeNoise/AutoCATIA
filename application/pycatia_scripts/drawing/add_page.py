@@ -235,6 +235,7 @@ def get_sheets_for_drawing(drawing_name):
     try:
         application = get_app_object()
         if not application:
+            print("DEBUG: No CATIA application")
             return []
 
         documents = application.documents
@@ -243,24 +244,36 @@ def get_sheets_for_drawing(drawing_name):
         # Find the drawing by name
         for i in range(documents.count):
             doc = documents.item(i + 1)
-            if doc.name == drawing_name:
+            # Compare with display name (without extension)
+            display_name = doc.name.replace('.CATDrawing', '').replace('.catdrawing', '')
+            print(f"DEBUG: Checking document: {doc.name} -> display_name: {display_name}")
+            if display_name == drawing_name:
                 target_drawing = doc
+                print(f"DEBUG: Found target drawing: {doc.name}")
                 break
 
         if not target_drawing:
+            print(f"DEBUG: Target drawing '{drawing_name}' not found")
             return []
 
         # Convert to DrawingDocument and get sheets
         from pycatia.drafting_interfaces.drawing_document import DrawingDocument
         drawing_doc = DrawingDocument(target_drawing.com_object)
         sheets = drawing_doc.sheets
+        print(f"DEBUG: Sheets collection count: {sheets.count}")
 
         sheet_names = []
-        for sheet in sheets:
-            sheet_names.append(sheet.name)
+        for i in range(sheets.count):
+            sheet = sheets.item(i + 1)
+            sheet_name = sheet.name
+            sheet_names.append(sheet_name)
+            print(f"DEBUG: Found sheet: {sheet_name}")
 
+        print(f"DEBUG: Returning {len(sheet_names)} sheet names: {sheet_names}")
         return sheet_names
 
     except Exception as e:
         print(f"Error getting sheets for {drawing_name}: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return []

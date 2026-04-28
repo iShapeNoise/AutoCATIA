@@ -5,9 +5,10 @@ from application.views import home
 from application.views import part
 from application.views import product
 from application.views import tools
-from application.views.htmx import tools_htmx 
+from application.views.htmx import tools_htmx
 from application.views import settings
 from application.views.htmx import part_htmx
 from application.views.htmx import drawing_htmx
 from application.views.htmx import product_htmx
 from application.views.htmx import document_queries
+from application.views.htmx.drawing_htmx import load_pages
