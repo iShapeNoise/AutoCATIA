@@ -12,22 +12,14 @@ user_defined_property_list = list(settings_data.get('user_attributes', {}).keys(
 #user_defined_property_list = list(product_template.get('user_ref_properties', {}).keys())
 
 
-def get_source_display_value(value):
-    """Convert numeric source values to display strings"""
-    source_mapping = {
-        '0': 'Unknown',
-        '1': 'Built',
-        '2': 'Bought'
-    }
-    return source_mapping.get(str(value), 'Unknown')
-
-
 def get_properties(product: Product | None, type_: str):
     """
     :param product:
     :param type_: Must be either default or user
     :return:
     """
+    from application.pycatia_scripts.settings import settings_data
+
     property_list = []
     if type_ == 'default':
         property_list = default_property_list
@@ -38,33 +30,39 @@ def get_properties(product: Product | None, type_: str):
 
     # Always include all properties in the list, even if product is None
     for property in property_list:
-        properties[property] = ''  # Default to empty string
+        properties[property] = ''
 
         if product:
             try:
                 if type_ == 'default':
-                    properties[property] = getattr(product, property, '')
+                    properties[property] = getattr(product, property)
                 elif type_ == 'user':
-                    # Handle user-defined properties
-                    if hasattr(product, 'user_ref_properties'):
-                        user_ref_properties = product.user_ref_properties
-                        if user_ref_properties:
-                            cad_property = user_ref_properties.item(property)
-                            properties[property] = cad_property.value
+                    user_ref_properties = product.user_ref_properties
+                    if user_ref_properties:
+                        cad_property = user_ref_properties.item(property)
+                        properties[property] = cad_property.value
             except (AttributeError, CATIAApplicationException):
                 properties[property] = ''
                 if type_ == 'user':
-                    properties[property] = product_template['user_ref_properties'].get(property, '')
-        else:
-            # When no product is provided, load from settings
-            if type_ == 'default':
-                # Load from default_attributes in settings
-                default_attrs = settings_data.get('default_attributes', {})
-                properties[property] = default_attrs.get(property, '')
-            elif type_ == 'user':
-                # Load from user_attributes in settings
-                user_attrs = settings_data.get('user_attributes', {})
-                properties[property] = user_attrs.get(property, '')
+                    properties[property] = product_template.get('user_ref_properties', {}).get(property, '')
+
+    # Special handling for new forms (product is None) - construct part_number
+    if product is None and type_ == 'default':
+        # Get values from settings for new forms
+        drawing_params = settings_data.get('drawing_template', {}).get('parameters', {})
+        user_ref_props = settings_data.get('product_template', {}).get('user_ref_properties', {})
+
+        # Get the three components
+        number = user_ref_props.get('NUMBER', '001')  # From user defined
+        title = user_ref_props.get('TITLE', 'Product')  # From user defined
+        revision = drawing_params.get('REVISION', 'P01')  # From default attributes
+
+        # Construct part_number
+        properties['part_number'] = f"{number}_{title}_{revision}"
+
+        # Also set individual values for form display
+        properties['source'] = drawing_params.get('SOURCE', '0')
+        properties['revision'] = revision
 
     return properties
 

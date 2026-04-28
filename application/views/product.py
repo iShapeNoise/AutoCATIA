@@ -29,28 +29,24 @@ def product_new():
 @catia_v5_required
 def product_edit():
     from application.support.load_properties import get_open_products, load_product_properties
+    from application.pycatia_scripts.product.edit_product import check_open_products
 
     # Get open products
-    open_products = get_open_products()
+    open_products = check_open_products()
 
     # Select product automatically if only one, or empty if multiple
     selected_product = open_products[0] if len(open_products) == 1 else ''
 
-    # Load properties for selected product
-    default_properties = {}
-    user_defined_properties = {}
-    errors = []
-
-    if selected_product:
-        default_properties, user_defined_properties, errors = load_product_properties(selected_product)
+    # Always start with empty properties for stable layout
+    default_properties = get_properties(None, 'default')
+    user_defined_properties = get_properties(None, 'user')
 
     return render_template(
         'product_edit.html',
         open_products=open_products,
         selected_product=selected_product,
         default_properties=default_properties,
-        user_defined_properties=user_defined_properties,
-        errors=errors
+        user_defined_properties=user_defined_properties
     )
 
 

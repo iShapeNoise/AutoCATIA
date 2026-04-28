@@ -1,7 +1,7 @@
 from flask import request, render_template
 from application import app
-from application.support.load_properties import load_part_properties
 from application.views.url_prefixes import htmx
+from application.support.load_properties import load_part_properties
 
 
 @app.route(f'{htmx}/part/load_properties', methods=['POST'])

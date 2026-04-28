@@ -13,7 +13,9 @@ def check_open_products():
         for i in range(documents.count):
             doc = documents.item(i + 1)
             if doc.name.endswith('.CATProduct'):
-                product_names.append(doc.name)
+                # Remove .CATProduct extension for display
+                clean_name = doc.name.replace('.CATProduct', '')
+                product_names.append(clean_name)
 
         return product_names
     except:

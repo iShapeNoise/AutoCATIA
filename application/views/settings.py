@@ -97,8 +97,8 @@ def settings():
                 settings_data['user_attributes'] = {}
 
             user_attr_fields = [
-                'title', 'extra_title', 'document_type', 'created_by',
-                'approved_by', 'material', 'blank', 'date', 'scale'
+                'number', 'title', 'extra_title', 'document_type', 'created_by',
+                'approved_by', 'material', 'blank', 'date'
             ]
 
             for field in user_attr_fields:

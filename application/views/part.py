@@ -16,8 +16,10 @@ def part():
 @app.route('/part/new')
 @catia_v5_required
 def part_new():
-    default_properties = get_properties_with_titles(None, 'default', 'part')
-    user_defined_properties = get_properties_with_titles(None, 'user', 'part')
+    from application.support.properties import get_properties
+
+    default_properties = get_properties(None, 'default')
+    user_defined_properties = get_properties(None, 'user')
 
     return render_template(
         'part_new.html',
