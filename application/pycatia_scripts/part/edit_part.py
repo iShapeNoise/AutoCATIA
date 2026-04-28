@@ -10,10 +10,18 @@ def check_open_parts():
         documents = application.documents
         part_names = []
 
+        # Check if active document is a Drawing - if so, don't list any parts
+        try:
+            active_doc = application.active_document
+            if hasattr(active_doc, 'name') and active_doc.name.lower().endswith('.catdrawing'):
+                return []  # Don't list parts when in a Drawing
+        except:
+            pass
+
         for i in range(documents.count):
             doc = documents.item(i + 1)
             if doc.name.endswith('.CATPart'):
-                # Remove .CATPart extension for display
+                # Only include parts if not in a Drawing context
                 clean_name = doc.name.replace('.CATPart', '')
                 part_names.append(clean_name)
 

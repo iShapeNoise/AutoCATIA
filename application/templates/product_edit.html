@@ -142,5 +142,23 @@
                 });
             }
         });
+        window.loadPartProperties = function() {
+            const selectedPart = document.getElementById('part_select').value;
+            if (!selectedPart) {
+                alert('Please select a part first.');  
+                return;
+            }
+
+            // Create form data
+            const formData = new FormData();
+            formData.append('selected_part', selectedPart);
+
+            // Make HTMX request
+            htmx.ajax('POST', '/htmx/product/load_part_properties', {
+                target: '#product_properties_result',
+                swap: 'innerHTML',
+                values: formData
+            });
+        };
     </script>
 {% endblock %}
