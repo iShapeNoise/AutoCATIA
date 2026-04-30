@@ -21,7 +21,7 @@ Sections:
 * Settings >> Company specific settings like logo and template layouts s.o.
 
 
-pycatia-tools has been built such that adding additional functionality to suit
+AutoCATIA has been built such that adding additional functionality to suit
 your purposes is a straight forward process. There is currently no guide
 supporting this. However, reading the source code should give enough hints on
 how to add functionality.
