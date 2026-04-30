@@ -26,7 +26,8 @@
       "geometric_set": "Geometrisches Set",
       "file_name": "Dateiname",
       "target_directory": "Zielverzeichnis",
-      "select_csv": "CSV-Datei auswählen"
+      "select_csv": "CSV-Datei auswählen",
+      "document_type_part": "Fertigung"
     },
     "product": {
       "new_product": "Neues Produkt erstellen",
@@ -44,7 +45,8 @@
       "edit_product_properties": "Produkteigenschaften",
       "no_product_opened": "Kein Produkt in CATIA",
       "please_choose_product": "Wähle ein Produkt",
-      "select_product": "Wähle Produkt"
+      "select_product": "Wähle Produkt",
+      "document_type_product": "Baugruppe"  
     },
     "drawing": {
       "new": "Neue Zeichnung",
@@ -182,7 +184,7 @@
   },
   "labels": {
     "scale": "Maßstab",
-    "document_type": "Dokumentenart",
+    "document_type": "Dokumententyp",
     "material": "Werkstoff",
     "blank": "Halbzeug",
     "created_by": "Erstellt durch",

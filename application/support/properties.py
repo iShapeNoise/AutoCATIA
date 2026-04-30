@@ -37,10 +37,24 @@ def get_properties(product: Product | None, type_: str):
                 if type_ == 'default':
                     properties[property] = getattr(product, property)
                 elif type_ == 'user':
-                    user_ref_properties = product.user_ref_properties
-                    if user_ref_properties:
-                        cad_property = user_ref_properties.item(property)
-                        properties[property] = cad_property.value
+                    # Add retry logic for COM interface issues
+                    max_retries = 3
+                    for attempt in range(max_retries):
+                        try:
+                            user_ref_properties = product.user_ref_properties
+                            if user_ref_properties:
+                                cad_property = user_ref_properties.item(property)
+                                properties[property] = cad_property.value
+                                break  # Success, exit retry loop
+                        except (CATIAApplicationException, com_error) as e:
+                            if attempt == max_retries - 1:
+                                # Last attempt failed, use fallback
+                                properties[property] = product_template.get('user_ref_properties', {}).get(property, '')
+                                print(f"=== DEBUG: Failed to get {property} after {max_retries} attempts, using fallback ===")
+                            else:
+                                # Brief pause before retry
+                                import time
+                                time.sleep(0.1)
             except (AttributeError, CATIAApplicationException):
                 properties[property] = ''
                 if type_ == 'user':
@@ -144,13 +158,26 @@ def update_user_defined_properties(product, form):
     for key in form.keys():
         if key in user_attrs:
             value = form.get(key)
+
+            # Handle document_type with context-aware defaults
+            if key == 'document_type' and not value:
+                # Check if this is a Part or Product
+                if hasattr(product, 'part'):
+                    # This is a Part object
+                    value = 'Engineering'
+                else:
+                    # This is a Product object
+                    value = 'Assembly'
+
             # Handle date field - set current date if empty
-            if key.lower() == 'date':
+            elif key.lower() == 'date':
                 if not value or value == '[ dd / mm / yyyy ]':
                     from datetime import datetime
                     date_value = datetime.now().strftime("%d/%m/%Y")
+                else:
+                    date_value = value
             else:
-                date_value = form.get(key)
+                date_value = value
 
             # Get the correct product interface for user properties
             if hasattr(product, 'part'):
@@ -213,6 +240,16 @@ def update_properties(product: Product, form: ImmutableMultiDict):
     print("=== DEBUG: Properties update complete ===")
 
 
+def get_form_document_type(form_type: str) -> str:
+    """
+    Get the appropriate document type based on form type
+    """
+    if form_type == 'product':
+        return 'Assembly'
+    else:
+        return 'Engineering'
+
+
 def get_form_title(form_type: str) -> str:
     """
     Get the appropriate title based on form type
@@ -231,7 +268,11 @@ def get_properties_with_titles(product: Product | None, type_: str, form_type: s
     :param form_type: 'part' or 'product'
     :return: Properties dictionary with form type metadata
     """
+    # Get properties first - this initializes the properties dictionary
     properties = get_properties(product, type_)
 
+    # Set document_type default for new forms based on form type
+    if product is None and type_ == 'user':
+        properties['document_type'] = get_form_document_type(form_type)
 
     return properties

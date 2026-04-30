@@ -53,7 +53,7 @@ def create_new_product(form: ImmutableMultiDict):
     # Create product document
     product_document = ProductDocument(documents.add('Product').com_object)
 
-    # Update properties using enum-based approach
+    # Update properties using enum-based approach (includes document_type with default)
     from application.support.properties import update_properties_enum
     update_properties_enum(product_document.product, form)
 
@@ -73,8 +73,8 @@ def create_new_product(form: ImmutableMultiDict):
                 # Create property if it doesn't exist
                 user_ref_properties.create_string(prop_name, default_value)
 
-    # REMOVED: product_document.update() - ProductDocument doesn't have this method
-    # Products are assembly containers and don't need geometric updates
+    # REMOVED: Hardcoded document_type setting - now handled by update_properties_enum
+    # The properties system will set the default "Assembly" value for products
 
     # Save document to project folder
     project_path = form.get('project_path', '')
@@ -94,4 +94,5 @@ def create_new_product(form: ImmutableMultiDict):
         except Exception as e:
             print(f"=== DEBUG: Save error: {e} ===")
 
+    output['data'] = f'New Product "{product_number}" created.'
     return output

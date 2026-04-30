@@ -10,45 +10,45 @@
                 </tr>
             </thead>
             <tbody>
-                {% for page in pages %}
-                <tr>
-                    <td>{{ page }}</td>
-                    <td style="text-align: center;">
-                        <input type="hidden" name="page_name" value="{{ page }}">
-                        <div class="btn-group" role="group">
-                            <button type="button"
-                                    class="btn btn-sm btn-outline-light {% if loop.first %}disabled{% endif %}"
-                                    hx-post="/htmx/drawing/move_page_up"
-                                    hx-include="#drawing_select, [name='page_name']"
-                                    hx-target="#pages_table_container"
-                                    hx-swap="innerHTML"
-                                    title="Move Up">
-                                ↑
-                            </button>
-                            <button type="button"
-                                    class="btn btn-sm btn-outline-light {% if loop.last %}disabled{% endif %}"
-                                    hx-post="/htmx/drawing/move_page_down"
-                                    hx-include="#drawing_select, [name='page_name']"
-                                    hx-target="#pages_table_container"
-                                    hx-swap="innerHTML"
-                                    title="Move Down">
-                                ↓
-                            </button>
-                        </div>
-                    </td>
-                    <td style="text-align: center;">
-                        <button type="button"
-                                class="btn btn-sm btn-primary"
-                                hx-post="/htmx/drawing/edit_page"
-                                hx-include="#drawing_select, [name='page_name']"
-                                hx-target="#drawing_result"
-                                hx-swap="innerHTML"
-                                title="Edit Page">
-                            Edit
-                        </button>
-                    </td>
-                </tr>
-                {% endfor %}
+              {% for page in pages %}
+              <tr>
+                  <td>{{ page }}</td>
+                  <td style="text-align: center;">
+                      <input type="hidden" name="page_name" id="page_name_{{ loop.index0 }}" value="{{ page }}">
+                      <div class="btn-group" role="group">
+                          <button type="button"
+                                  class="btn btn-sm btn-outline-light {% if loop.first %}disabled{% endif %}"
+                                  hx-post="/htmx/drawing/move_page_up"
+                                  hx-include="#drawing_select, #page_name_{{ loop.index0 }}"
+                                  hx-target="#pages_table"
+                                  hx-swap="innerHTML"
+                                  title="Move Up">
+                              ↑
+                          </button>
+                          <button type="button"
+                                  class="btn btn-sm btn-outline-light {% if loop.last %}disabled{% endif %}"
+                                  hx-post="/htmx/drawing/move_page_down"
+                                  hx-include="#drawing_select, #page_name_{{ loop.index0 }}"
+                                  hx-target="#pages_table"
+                                  hx-swap="innerHTML"
+                                  title="Move Down">
+                              ↓
+                          </button>
+                      </div>
+                  </td>
+                  <td style="text-align: center;">
+                      <button type="button"
+                              class="btn btn-dark btn-sm w-80 border-white p-1 m-1 rounded-1"
+                              hx-post="/htmx/drawing/load_edit_page"
+                              hx-include="#drawing_select, [name='page_name']"
+                              hx-target="#drawing_result"
+                              hx-swap="innerHTML"
+                              title="Edit Page">
+                          Edit
+                      </button>
+                  </td>
+              </tr>
+              {% endfor %}
             </tbody>
         </table>
     </div>

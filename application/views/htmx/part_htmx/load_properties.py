@@ -11,10 +11,9 @@ from pycatia.enumeration.enumeration_types import cat_work_mode_type
 
 @app.route(f'{htmx}/part/load_properties', methods=['POST'])
 def htmx_load_part_properties():
-    """
-    Load properties from selected part and render form
-    """
+    """Load properties from selected part and render form"""
     selected_part = request.form.get('selected_part')
+    print(f"=== DEBUG: Loading part: {selected_part} ===")
 
     if not selected_part:
         return render_template(
@@ -26,54 +25,63 @@ def htmx_load_part_properties():
         )
 
     try:
-        # Get CATIA application and active document
+        # Get CATIA application
         caa = catia()
-        document = caa.active_document
-        product = document.product
+        documents = caa.documents
+        print(f"=== DEBUG: Found {documents.count} open documents ===")
 
-        # Ensure all components are loaded
-        product.apply_work_mode(cat_work_mode_type.index("DESIGN_MODE"))
+        # Find and activate the part directly
+        target_doc = None
+        for i in range(documents.count):
+            doc = documents.item(i + 1)
+            doc_name = doc.name
+            print(f"=== DEBUG: Checking document: {doc_name} ===")
 
-        # Find the selected part in the product structure
-        part_path = None
-        for sub_product in product.products:
-            if sub_product.is_catpart():
-                # Get the reference product (the actual CATPart document)
-                reference_product = sub_product.reference_product
-                current_part_path = reference_product.path()
+            # Check for exact match or match without extension
+            if (doc_name == selected_part or
+                doc_name == selected_part.replace('.CATPart', '') or
+                doc_name == selected_part + '.CATPart'):
+                target_doc = doc
+                print(f"=== DEBUG: Found matching document: {doc_name} ===")
+                break
 
-                # Check if this matches the selected part
-                if selected_part in str(current_part_path) or sub_product.name in selected_part:
-                    part_path = current_part_path
-                    break
-
-        if not part_path:
+        if not target_doc:
+            error_msg = f'Part "{selected_part}" not found in open documents'
+            print(f"=== DEBUG: {error_msg} ===")
             return render_template(
                 'partials/form_product_properties.html',
                 default_properties={},
                 user_defined_properties={},
-                errors=['Part not found in product structure'],
+                errors=[error_msg],
                 form_type='part'
             )
 
-        # Open the part file
-        caa.documents.open(part_path)
+        # Activate the document
+        print(f"=== DEBUG: Activating document ===")
+        target_doc.activate()
 
-        # Now get the part document and properties
-        pt_part_document, errors = get_part_document()
+        # Get the part document wrapper
+        print(f"=== DEBUG: Getting part document wrapper ===")
+        pt_part_document, doc_errors = get_part_document()
 
-        if errors:
+        if doc_errors:
+            print(f"=== DEBUG: Document wrapper errors: {doc_errors} ===")
             return render_template(
                 'partials/form_product_properties.html',
                 default_properties={},
                 user_defined_properties={},
-                errors=errors,
+                errors=doc_errors,
                 form_type='part'
             )
 
-        part = pt_part_document.part
-        default_properties = get_properties(part, 'default')
-        user_defined_properties = get_properties(part, 'user')
+        # Get properties
+        print(f"=== DEBUG: Getting properties from product ===")
+        product = pt_part_document.product
+        default_properties = get_properties(product, 'default')
+        user_defined_properties = get_properties(product, 'user')
+
+        print(f"=== DEBUG: Retrieved {len(default_properties)} default properties ===")
+        print(f"=== DEBUG: Retrieved {len(user_defined_properties)} user properties ===")
 
         return render_template(
             'partials/form_product_properties.html',
@@ -83,10 +91,24 @@ def htmx_load_part_properties():
         )
 
     except (CATIAApplicationException, com_error) as e:
+        error_msg = f'CATIA Error loading part properties: {str(e)}'
+        print(f"=== DEBUG: {error_msg} ===")
         return render_template(
             'partials/form_product_properties.html',
             default_properties={},
             user_defined_properties={},
-            errors=[f'Error loading part properties: {str(e)}'],
+            errors=[error_msg],
+            form_type='part'
+        )
+    except Exception as e:
+        error_msg = f'Unexpected error loading part properties: {str(e)}'
+        print(f"=== DEBUG: {error_msg} ===")
+        import traceback
+        print(f"=== DEBUG: Traceback: {traceback.format_exc()} ===")
+        return render_template(
+            'partials/form_product_properties.html',
+            default_properties={},
+            user_defined_properties={},
+            errors=[error_msg],
             form_type='part'
         )

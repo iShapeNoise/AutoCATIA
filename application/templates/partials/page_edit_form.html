@@ -1,0 +1,126 @@
+<div class="row mb-4 mt-4 border border-secondary rounded p-3 mb-3 bg-dark bg-opacity-50">
+    <h4 class="h5 text-white border-bottom border-white pb-1 mb-3">Edit Page: {{ page_name }}</h4>
+
+    <!-- Hidden fields for identification -->
+    <input type="hidden" name="selected_drawing" value="{{ selected_drawing }}">
+    <input type="hidden" name="original_page_name" value="{{ page_name }}">
+
+    <!-- Options Section -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="text_field_enabled" id="edit_text_field_enabled" checked>
+                <label class="form-check-label" for="edit_text_field_enabled">Text Field</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="gdt_enabled" id="edit_gdt_enabled">
+                <label class="form-check-label" for="edit_gdt_enabled">GD&T Defaults</label>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <button type="button" class="btn btn-primary" id="add_gdt_symbol_btn">
+                Add GD&T Symbol
+            </button>
+        </div>
+    </div>
+
+    <!-- Properties Section -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="edit_part_number" class="form-label">Part Number</label>
+                <input type="text" class="form-control" id="edit_part_number"
+                       value="{{ part_number }}" readonly>
+                <div class="form-text">Derived from Part file (not editable)</div>
+            </div>
+            <div class="mb-3">
+                <label for="edit_page_name" class="form-label">Page Name</label>
+                <input type="text" class="form-control" id="edit_page_name" name="edit_page_name"
+                       value="{{ page_name }}" required>
+                <div class="invalid-feedback">
+                    Please provide a page name.
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="edit_document_type" class="form-label">Document Type</label>
+                <input type="text" class="form-control" id="edit_document_type" name="edit_document_type"
+                       value="{{ document_type }}" placeholder="Enter document type">
+            </div>
+            <div class="mb-3">
+                <label for="edit_format" class="form-label">Format</label>
+                <select class="form-select" id="edit_format" name="edit_format">
+                    <option value="A0" {% if current_format == 'A0' %}selected{% endif %}>A0</option>
+                    <option value="A1" {% if current_format == 'A1' %}selected{% endif %}>A1</option>
+                    <option value="A2" {% if current_format == 'A2' %}selected{% endif %}>A2</option>
+                    <option value="A3" {% if current_format == 'A3' %}selected{% endif %}>A3</option>
+                    <option value="A4-portrait" {% if current_format == 'A4-portrait' %}selected{% endif %}>A4 Portrait</option>
+                    <option value="A4-landscape" {% if current_format == 'A4-landscape' %}selected{% endif %}>A4 Landscape</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mt-3">
+        <div class="col-12">
+            <button type="button" class="btn btn-success" id="update_page_btn">
+                Update Page
+            </button>
+            <button type="button" class="btn btn-secondary" id="cancel_edit_btn">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Handle format change to update text field
+document.getElementById('edit_format').addEventListener('change', function() {
+    // Add logic to update text field when format changes
+    console.log('Format changed to:', this.value);
+    // You could add an AJAX call here to update the text field based on format
+});
+
+// Handle GD&T Defaults checkbox
+document.getElementById('edit_gdt_enabled').addEventListener('change', function() {
+    const gdtOptions = document.querySelectorAll('[id^="edit_gdt_"]:not(#edit_gdt_enabled)');
+    gdtOptions.forEach(checkbox => {
+        checkbox.disabled = !this.checked;
+        checkbox.parentElement.classList.toggle('opacity-50', !this.checked);
+    });
+});
+
+// Handle update page button
+document.getElementById('update_page_btn').addEventListener('click', function() {
+    const formData = new FormData();
+    formData.append('selected_drawing', '{{ selected_drawing }}');
+    formData.append('page_name', '{{ page_name }}');  // Original page name
+    formData.append('new_page_name', document.getElementById('edit_page_name').value);
+    formData.append('document_type', document.getElementById('edit_document_type').value);
+    formData.append('format', document.getElementById('edit_format').value);
+
+    htmx.ajax('POST', '/htmx/drawing/update_page_properties', {
+        values: Object.fromEntries(formData),
+        target: '#page_edit_container',
+        swap: 'innerHTML'
+    });
+});
+
+// Handle cancel button
+document.getElementById('cancel_edit_btn').addEventListener('click', function() {
+    document.getElementById('page_edit_container').innerHTML = '';
+});
+
+// Add GD&T Symbol button handler
+document.getElementById('add_gdt_symbol_btn').addEventListener('click', function() {
+    // Placeholder for GD&T symbol functionality
+    alert('GD&T Symbol functionality to be implemented');
+});
+
+// Clear validation on input
+document.getElementById('edit_page_name').addEventListener('input', function() {
+    this.classList.remove('is-invalid');
+});
+</script>

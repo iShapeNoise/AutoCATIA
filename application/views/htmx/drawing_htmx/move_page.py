@@ -44,7 +44,8 @@ def htmx_move_page_up():
             )
 
         # Get drawing and sheets
-        drawing_document = target_drawing.drawing_document()
+        from pycatia.drafting_interfaces.drawing_document import DrawingDocument
+        drawing_document = DrawingDocument(target_drawing.com_object)
         drawing = drawing_document.drawing_root
         sheets_collection = drawing.sheets
 
@@ -73,6 +74,9 @@ def htmx_move_page_up():
 
         # Apply new order
         drawing.reorder_sheets(tuple(new_order))
+
+        # Force refresh to ensure CATIA updates the sheet collection
+        drawing.update()
 
         # Get updated pages list
         pages = get_sheets_for_drawing(selected_drawing)
@@ -129,7 +133,8 @@ def htmx_move_page_down():
             )
 
         # Get drawing and sheets
-        drawing_document = target_drawing.drawing_document()
+        from pycatia.drafting_interfaces.drawing_document import DrawingDocument
+        drawing_document = DrawingDocument(target_drawing.com_object)
         drawing = drawing_document.drawing_root
         sheets_collection = drawing.sheets
 
@@ -158,6 +163,9 @@ def htmx_move_page_down():
 
         # Apply new order
         drawing.reorder_sheets(tuple(new_order))
+
+        # Force refresh to ensure CATIA updates the sheet collection
+        drawing.update()
 
         # Get updated pages list
         pages = get_sheets_for_drawing(selected_drawing)

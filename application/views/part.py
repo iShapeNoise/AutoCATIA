@@ -17,9 +17,8 @@ def part():
 @catia_v5_required
 def part_new():
     from application.support.properties import get_properties
-
-    default_properties = get_properties(None, 'default')
-    user_defined_properties = get_properties(None, 'user')
+    default_properties = get_properties_with_titles(None, 'default', 'part')
+    user_defined_properties = get_properties_with_titles(None, 'user', 'part')
 
     return render_template(
         'part_new.html',

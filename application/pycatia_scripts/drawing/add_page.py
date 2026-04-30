@@ -242,10 +242,10 @@ def get_sheets_for_drawing(drawing_name):
             doc = documents.item(i + 1)
             # Compare with display name (without extension)
             display_name = doc.name.replace('.CATDrawing', '').replace('.catdrawing', '')
-            print(f"DEBUG: Checking document: {doc.name} -> display_name: {display_name}")
+            # print(f"DEBUG: Checking document: {doc.name} -> display_name: {display_name}")
             if display_name == drawing_name:
                 target_drawing = doc
-                print(f"DEBUG: Found target drawing: {doc.name}")
+                # print(f"DEBUG: Found target drawing: {doc.name}")
                 break
 
         if not target_drawing:
@@ -256,16 +256,16 @@ def get_sheets_for_drawing(drawing_name):
         from pycatia.drafting_interfaces.drawing_document import DrawingDocument
         drawing_doc = DrawingDocument(target_drawing.com_object)
         sheets = drawing_doc.sheets
-        print(f"DEBUG: Sheets collection count: {sheets.count}")
+        # print(f"DEBUG: Sheets collection count: {sheets.count}")
 
         sheet_names = []
         for i in range(sheets.count):
             sheet = sheets.item(i + 1)
             sheet_name = sheet.name
             sheet_names.append(sheet_name)
-            print(f"DEBUG: Found sheet: {sheet_name}")
+            # print(f"DEBUG: Found sheet: {sheet_name}")
 
-        print(f"DEBUG: Returning {len(sheet_names)} sheet names: {sheet_names}")
+        # print(f"DEBUG: Returning {len(sheet_names)} sheet names: {sheet_names}")
         return sheet_names
 
     except Exception as e:

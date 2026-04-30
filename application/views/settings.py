@@ -97,7 +97,7 @@ def settings():
                 settings_data['user_attributes'] = {}
 
             user_attr_fields = [
-                'number', 'title', 'extra_title', 'document_type', 'created_by',
+                'number', 'document_type', 'title', 'extra_title', 'created_by',
                 'approved_by', 'material', 'blank', 'date'
             ]
 

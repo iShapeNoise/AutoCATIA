@@ -28,6 +28,7 @@ def create_default_settings(userdata_path: Path):
         },
         'user_attributes': {
             'number': '001',
+            'document_type': '',
             'title': '',
             'extra_title': '',
             'created_by': '',

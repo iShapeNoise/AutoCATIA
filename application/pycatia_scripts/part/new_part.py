@@ -54,7 +54,14 @@ def create_new_part(form: ImmutableMultiDict):
     # Create part document
     part_document = PartDocument(documents.add('Part').com_object)
 
-    # Update properties using enum-based approach
+    # Set default document type for parts before updating properties
+    # This ensures the form value or default "Engineering" is used
+    if not form.get('document_type'):
+        form = form.copy() if hasattr(form, 'copy') else dict(form)
+        if isinstance(form, dict):
+            form['document_type'] = 'Engineering'
+
+    # Update properties using enum-based approach (includes document_type)
     from application.support.properties import update_properties_enum
     update_properties_enum(part_document.product, form)
 
