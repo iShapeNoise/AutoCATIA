@@ -56,7 +56,7 @@
                                              {% if settings.get('gdt_enabled', false) %}checked{% endif %}>
                                       <label class="form-check-label" for="gdt_enabled">GD&T Defaults</label>
                                   </div>
-                                </div>
+                               </div>
                             </div>
                         </div>
                         <!-- GD&T Options Section -->
@@ -67,21 +67,21 @@
                                     <div class="col-md-3">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="gdt_general_abc" id="gdt_general_abc"
-                                                   {% if settings.gdt_general_abc %}checked{% endif %}>
+                                                   {% if settings.get('gdt_general_abc', false) %}checked{% endif %}>
                                             <label class="form-check-label text-white" for="gdt_general_abc">
                                                 General Tolerances: ABC
                                             </label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="gdt_general_ab" id="gdt_general_ab"
-                                                   {% if settings.gdt_general_ab %}checked{% endif %}>
+                                                   {% if settings.get('gdt_general_ab', false) %}checked{% endif %}>
                                             <label class="form-check-label text-white" for="gdt_general_ab">
                                                 General Tolerances: AB
                                             </label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="gdt_welded_structure" id="gdt_welded_structure"
-                                                   {% if settings.gdt_welded_structure %}checked{% endif %}>
+                                                   {% if settings.get('gdt_welded_structure', false) %}checked{% endif %}>
                                             <label class="form-check-label text-white" for="gdt_welded_structure">
                                                 General Tolerances for welded structure
                                             </label>
@@ -90,21 +90,21 @@
                                     <div class="col-md-3">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="gdt_of_rz_63" id="gdt_of_rz_63"
-                                                   {% if settings.gdt_of_rz_63 %}checked{% endif %}>
+                                                   {% if settings.get('gdt_of_rz_63', false) %}checked{% endif %}>
                                             <label class="form-check-label text-white" for="gdt_of_rz_63">
                                                 OF Rz 63 (all) ISO 21920
                                             </label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="gdt_ofz_general" id="gdt_ofz_general"
-                                                   {% if settings.gdt_ofz_general %}checked{% endif %}>
+                                                   {% if settings.get('gdt_ofz_general', false) %}checked{% endif %}>
                                             <label class="form-check-label text-white" for="gdt_ofz_general">
                                                 OFZ General
                                             </label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="gdt_ofz_wxy" id="gdt_ofz_wxy"
-                                                   {% if settings.gdt_ofz_wxy %}checked{% endif %}>
+                                                   {% if settings.get('gdt_ofz_wxy', false) %}checked{% endif %}>
                                             <label class="form-check-label text-white" for="gdt_ofz_wxy">
                                                 OFZ w x y
                                             </label>
@@ -113,21 +113,21 @@
                                     <div class="col-md-3">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="gdt_ofz_main_specs" id="gdt_ofz_main_specs"
-                                                   {% if settings.gdt_ofz_main_specs %}checked{% endif %}>
+                                                   {% if settings.get('gdt_ofz_main_specs', false) %}checked{% endif %}>
                                             <label class="form-check-label text-white" for="gdt_ofz_main_specs">
                                                 OFZ Main with specs
                                             </label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="gdt_ofz_main_raw" id="gdt_ofz_main_raw"
-                                                   {% if settings.gdt_ofz_main_raw %}checked{% endif %}>
+                                                   {% if settings.get('gdt_ofz_main_raw', false) %}checked{% endif %}>
                                             <label class="form-check-label text-white" for="gdt_ofz_main_raw">
                                                 OFZ Main raw ()
                                             </label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="gdt_ofz_main" id="gdt_ofz_main"
-                                                   {% if settings.gdt_ofz_main %}checked{% endif %}>
+                                                   {% if settings.get('gdt_ofz_main', false) %}checked{% endif %}>
                                             <label class="form-check-label text-white" for="gdt_ofz_main">
                                                 OFZ Main ()
                                             </label>
@@ -136,14 +136,14 @@
                                     <div class="col-md-3">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="gdt_edges_iso" id="gdt_edges_iso"
-                                                   {% if settings.gdt_edges_iso %}checked{% endif %}>
+                                                   {% if settings.get('gdt_edges_iso', false) %}checked{% endif %}>
                                             <label class="form-check-label text-white" for="gdt_edges_iso">
                                                 Edges ISO 13715
                                             </label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="gdt_thermally_cut" id="gdt_thermally_cut"
-                                                   {% if settings.gdt_thermally_cut %}checked{% endif %}>
+                                                   {% if settings.get('gdt_thermally_cut', false) %}checked{% endif %}>
                                             <label class="form-check-label text-white" for="gdt_thermally_cut">
                                                 Thermally cut
                                             </label>
@@ -254,99 +254,99 @@
                                 </div>
                             </button>
                         </div>
-                   </div>
+                    </div>
+                 </div>
+                 <div id="drawing_result" class="mt-3">
+                     {% include('partials/spinner.html') %}
+                 </div>
              </div>
-        </div>
+         </div>
     </div>
-    <div id="drawing_result" class="mt-3">
-        {% include('partials/spinner.html') %}
-    </div>
+    <!-- Page Information Modal -->
+    {% include('partials/page_info_modal.html') %}
 
-<!-- Page Information Modal -->
-{% include('partials/page_info_modal.html') %}
-
-<script>
-    // Debug function to log form data
-    function debugLog(message, data = null) {
-        console.log('DEBUG:', message, data || '');
-    }
-
-    // Handle modal form submission
-    document.getElementById('appendPageBtn').addEventListener('click', function() {
-        debugLog('Append button clicked');
-
-        const format = document.getElementById('pageFormat').value;
-        const pageName = document.getElementById('pageName').value;
-        const documentType = document.getElementById('documentType').value;
-        const partNumber = document.getElementById('partNumber').value;
-
-        debugLog('Form data collected', {
-            format: format,
-            page_name: pageName,
-            document_type: documentType,
-            partNumber: partNumber
-        });
-
-        // Close modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('pageInfoModal'));
-        if (modal) {
-            modal.hide();
-            debugLog('Modal closed');
+    <script>
+        // Debug function to log form data
+        function debugLog(message, data = null) {
+            console.log('DEBUG:', message, data || '');
         }
 
-        // Show spinner
-        document.getElementById('drawing_result').innerHTML = '<div class="text-center p-3"><div class="spinner-border" role="status"></div></div>';
+        // Handle modal form submission
+        document.getElementById('appendPageBtn').addEventListener('click', function() {
+            debugLog('Append button clicked');
 
-        // Submit to HTMX endpoint
-        debugLog('Submitting to HTMX endpoint', `/htmx/drawing/add_page/${format}`);
+            const format = document.getElementById('pageFormat').value;
+            const pageName = document.getElementById('pageName').value;
+            const documentType = document.getElementById('documentType').value;
+            const partNumber = document.getElementById('partNumber').value;
 
-        htmx.ajax('POST', `/htmx/drawing/add_page/${format}`, {
-            target: '#drawing_result',
-            swap: 'innerHTML',
-            values: {
-                'page_name': pageName,
-                'document_type': documentType,
-                'partNumber': partNumber
-            }
-        }).then(function(response) {
-            debugLog('HTMX request completed', response);
-        }).catch(function(error) {
-            debugLog('HTMX request failed', error);
-            document.getElementById('drawing_result').innerHTML =
-                '<div class="alert alert-danger">Error creating page: ' + error + '</div>';
-        });
-    });
-
-    // Set format when modal is shown
-    document.getElementById('pageInfoModal').addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
-        const format = button.getAttribute('data-format');
-        document.getElementById('pageFormat').value = format;
-        debugLog('Modal shown with format', format);
-    });
-
-    // Handle GD&T Defaults checkbox state
-    document.addEventListener('DOMContentLoaded', function() {
-        const gdtMainCheckbox = document.getElementById('gdt_enabled');
-        const gdtSubCheckboxes = document.querySelectorAll('[id^="gdt_"]:not(#gdt_enabled)');
-
-        function updateGdtSubCheckboxes() {
-            const isEnabled = gdtMainCheckbox.checked;
-            gdtSubCheckboxes.forEach(checkbox => {
-                checkbox.disabled = !isEnabled;
-                if (isEnabled) {
-                    checkbox.parentElement.classList.remove('opacity-50');
-                } else {
-                    checkbox.parentElement.classList.add('opacity-50');
-                }
+            debugLog('Form data collected', {
+                format: format,
+                page_name: pageName,
+                document_type: documentType,
+                partNumber: partNumber
             });
-        }
 
-        // Set initial state
-        updateGdtSubCheckboxes();
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('pageInfoModal'));
+            if (modal) {
+                modal.hide();
+                debugLog('Modal closed');
+            }
 
-        // Update on change
-        gdtMainCheckbox.addEventListener('change', updateGdtSubCheckboxes);
-    });
-</script>
+            // Show spinner
+            document.getElementById('drawing_result').innerHTML = '<div class="text-center p-3"><div class="spinner-border" role="status"></div></div>';
+
+            // Submit to HTMX endpoint
+            debugLog('Submitting to HTMX endpoint', `/htmx/drawing/add_page/${format}`);
+
+            htmx.ajax('POST', `/htmx/drawing/add_page/${format}`, {
+                target: '#drawing_result',
+                swap: 'innerHTML',
+                values: {
+                    'page_name': pageName,
+                    'document_type': documentType,
+                    'partNumber': partNumber
+                }
+            }).then(function(response) {
+                debugLog('HTMX request completed', response);
+            }).catch(function(error) {
+                debugLog('HTMX request failed', error);
+                document.getElementById('drawing_result').innerHTML =
+                    '<div class="alert alert-danger">Error creating page: ' + error + '</div>';
+            });
+        });
+
+        // Set format when modal is shown
+        document.getElementById('pageInfoModal').addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const format = button.getAttribute('data-format');
+            document.getElementById('pageFormat').value = format;
+            debugLog('Modal shown with format', format);
+        });
+
+        // Handle GD&T Defaults checkbox state
+        document.addEventListener('DOMContentLoaded', function() {
+            const gdtMainCheckbox = document.getElementById('gdt_enabled');
+            const gdtSubCheckboxes = document.querySelectorAll('[id^="gdt_"]:not(#gdt_enabled)');
+
+            function updateGdtSubCheckboxes() {
+                const isEnabled = gdtMainCheckbox.checked;
+                gdtSubCheckboxes.forEach(checkbox => {
+                    checkbox.disabled = !isEnabled;
+                    if (isEnabled) {
+                        checkbox.parentElement.classList.remove('opacity-50');
+                    } else {
+                        checkbox.parentElement.classList.add('opacity-50');
+                    }
+                });
+            }
+
+            // Set initial state
+            updateGdtSubCheckboxes();
+
+            // Update on change
+            gdtMainCheckbox.addEventListener('change', updateGdtSubCheckboxes);
+        });
+    </script>
 {% endblock %}

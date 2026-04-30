@@ -1,54 +1,57 @@
 {% if pages %}
-<div class="table-responsive mt-3">
-    <table class="table table-dark table-striped table-hover">
-        <thead>
-            <tr>
-                <th style="width: 60%;">Page Name</th>
-                <th style="width: 20%; text-align: center;">Move</th>
-                <th style="width: 20%; text-align: center;">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for page in pages %}
-            <tr>
-                <td>{{ page }}</td>
-                <td style="text-align: center;">
-                    <div class="btn-group" role="group">
+<div class="row mb-4 mt-4 border border-secondary rounded p-3 mb-3 bg-dark bg-opacity-50">
+    <div class="table-responsive mt-3">
+        <table class="table table-dark table-striped table-hover">
+            <thead>
+                <tr>
+                    <th style="width: 60%;">Page Name</th>
+                    <th style="width: 20%; text-align: center;">Move</th>
+                    <th style="width: 20%; text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for page in pages %}
+                <tr>
+                    <td>{{ page }}</td>
+                    <td style="text-align: center;">
+                        <input type="hidden" name="page_name" value="{{ page }}">
+                        <div class="btn-group" role="group">
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-light {% if loop.first %}disabled{% endif %}"
+                                    hx-post="/htmx/drawing/move_page_up"
+                                    hx-include="#drawing_select, [name='page_name']"
+                                    hx-target="#pages_table_container"
+                                    hx-swap="innerHTML"
+                                    title="Move Up">
+                                ↑
+                            </button>
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-light {% if loop.last %}disabled{% endif %}"
+                                    hx-post="/htmx/drawing/move_page_down"
+                                    hx-include="#drawing_select, [name='page_name']"
+                                    hx-target="#pages_table_container"
+                                    hx-swap="innerHTML"
+                                    title="Move Down">
+                                ↓
+                            </button>
+                        </div>
+                    </td>
+                    <td style="text-align: center;">
                         <button type="button"
-                                class="btn btn-sm btn-outline-light {% if loop.first %}disabled{% endif %}"
-                                hx-post="/htmx/drawing/move_page_up"
-                                hx-include="#drawing_select"
-                                hx-target="#pages_table_container"
+                                class="btn btn-sm btn-primary"
+                                hx-post="/htmx/drawing/edit_page"
+                                hx-include="#drawing_select, [name='page_name']"
+                                hx-target="#drawing_result"
                                 hx-swap="innerHTML"
-                                title="Move Up">
-                            ↑
+                                title="Edit Page">
+                            Edit
                         </button>
-                        <button type="button"
-                                class="btn btn-sm btn-outline-light {% if loop.last %}disabled{% endif %}"
-                                hx-post="/htmx/drawing/move_page_down"
-                                hx-include="#drawing_select"
-                                hx-target="#pages_table_container"
-                                hx-swap="innerHTML"
-                                title="Move Down">
-                            ↓
-                        </button>
-                    </div>
-                </td>
-                <td style="text-align: center;">
-                    <button type="button"
-                            class="btn btn-sm btn-primary"
-                            hx-post="/htmx/drawing/edit_page"
-                            hx-include="#drawing_select"
-                            hx-target="#drawing_result"
-                            hx-swap="innerHTML"
-                            title="Edit Page">
-                        Edit
-                    </button>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% else %}
 <div class="alert alert-warning mt-3">

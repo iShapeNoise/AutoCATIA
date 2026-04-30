@@ -9,17 +9,17 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
-                      <div class="form-check">
-                          <input class="form-check-input" type="checkbox" name="text_field_enabled" id="text_field_enabled"
-                                 {% if settings.get('text_field_enabled', false) %}checked{% endif %}>
-                          <label class="form-check-label" for="text_field_enabled">Text Field</label>
-                      </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="text_field_enabled" id="text_field_enabled"
+                                   {% if settings.get('text_field_enabled', false) %}checked{% endif %}>
+                            <label class="form-check-label" for="text_field_enabled">Text Field</label>
+                        </div>
 
-                      <div class="form-check">
-                          <input class="form-check-input" type="checkbox" name="gdt_enabled" id="gdt_enabled"
-                                 {% if settings.get('gdt_enabled', false) %}checked{% endif %}>
-                          <label class="form-check-label" for="gdt_enabled">GD&T Defaults</label>
-                      </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="gdt_enabled" id="gdt_enabled"
+                                   {% if settings.get('gdt_enabled', false) %}checked{% endif %}>
+                            <label class="form-check-label" for="gdt_enabled">GD&T Defaults</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -340,7 +340,6 @@
             const isEnabled = gdtMainCheckbox.checked;
             gdtSubCheckboxes.forEach(checkbox => {
                 checkbox.disabled = !isEnabled;
-                // Add or remove visual feedback
                 if (isEnabled) {
                     checkbox.parentElement.classList.remove('opacity-50');
                 } else {

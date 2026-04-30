@@ -26,7 +26,7 @@ def htmx_load_pages():
 
         return render_template(
             'partials/drawing_pages_table.html',
-            sheets=sheets,
+            pages=sheets,
             selected_drawing=selected_drawing
         )
 

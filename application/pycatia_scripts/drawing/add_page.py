@@ -23,23 +23,19 @@ def check_open_drawings():
             return []
 
         documents = application.documents
-        print(f"DEBUG: Found {documents.count} total documents")
 
         drawing_names = []
 
         for i in range(documents.count):
             doc = documents.item(i + 1)
             doc_name = doc.name
-            print(f"DEBUG: Document {i+1}: {doc_name}")
 
             # Check if it's a drawing document
             if doc_name.lower().endswith('.catdrawing'):
                 # Get the drawing name without extension for display
                 display_name = doc_name.replace('.CATDrawing', '').replace('.catdrawing', '')
                 drawing_names.append(display_name)
-                print(f"DEBUG: Added drawing: {display_name}")
 
-        print(f"DEBUG: Total drawings found: {drawing_names}")
         return drawing_names
 
     except Exception as e:
