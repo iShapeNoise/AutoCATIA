@@ -13,12 +13,12 @@ python library [pycatia](https://pycatia.readthedocs.io/en/latest/).
 The application contains a collection of tools to speed up common tasks.
 
 Sections:
-Documents >> List of all files opened in CATIA with save options
-Part >> Create and edit Part files
-Product >> Create and edit Product files
-Drawing >> Create and edit Drawings, Pages, Views, and B.O.M.s
-Tools >> Little helper programs like Image-to-Sketch converter s.o.
-Settings >> Company specific settings like logo and template layouts s.o.
+* Documents >> List of all files opened in CATIA with save options
+* Part >> Create and edit Part files
+* Product >> Create and edit Product files
+* Drawing >> Create and edit Drawings, Pages, Views, and B.O.M.s
+* Tools >> Little helper programs like Image-to-Sketch converter s.o.
+* Settings >> Company specific settings like logo and template layouts s.o.
 
 
 pycatia-tools has been built such that adding additional functionality to suit
